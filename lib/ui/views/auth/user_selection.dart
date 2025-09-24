@@ -1,8 +1,8 @@
-import 'package:estate360Security/ui/common/ui_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../common/app_colors.dart';
+import '../../common/ui_helpers.dart';
 import '../../components/submit_button.dart';
 import 'auth_view.dart';
 import 'package:animate_do/animate_do.dart';

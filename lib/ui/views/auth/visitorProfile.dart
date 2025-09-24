@@ -1,6 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:estate360Security/core/utils/string_util.dart';
-import 'package:estate360Security/ui/common/ui_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -8,7 +6,9 @@ import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.locator.dart';
 import '../../../core/data/models/gate_pass_model.dart';
 import '../../../core/network/interceptors.dart';
+import '../../../core/utils/string_util.dart';
 import '../../common/app_colors.dart';
+import '../../common/ui_helpers.dart';
 
 class VisitorProfileDialog extends StatefulWidget {
   final GatePassModel gatePass;

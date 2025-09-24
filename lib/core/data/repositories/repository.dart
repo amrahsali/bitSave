@@ -1,6 +1,6 @@
 import 'dart:ffi';
 
-import 'package:estate360Security/core/data/repositories/repository_interface.dart';
+import 'package:bitSave/core/data/repositories/repository_interface.dart';
 import 'package:dio/dio.dart';
 
 import '../../../app/app.locator.dart';

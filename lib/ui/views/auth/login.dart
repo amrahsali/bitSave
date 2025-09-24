@@ -1,4 +1,3 @@
-import 'package:estate360Security/ui/views/auth/verifyEmail.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';

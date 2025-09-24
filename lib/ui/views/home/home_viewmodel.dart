@@ -35,7 +35,7 @@ class HomeViewModel extends BaseViewModel {
 
 
   final List<Widget> pages = [
-    DashboardView(),
+    DashboardView(), // Dashboard
     Savings(),// Home
     const Reports(), // Reports
     UserProfilePage(), // Profile

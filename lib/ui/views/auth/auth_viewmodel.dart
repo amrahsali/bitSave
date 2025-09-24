@@ -2,11 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:estate360Security/ui/views/auth/verifyEmail.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:intl_phone_field/phone_number.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:stacked/stacked.dart';
@@ -240,7 +238,7 @@ Future<void> resendOtp(String email) async {
       String deviceId = "";
       String deviceType = "";
       String operatingSystem = Platform.operatingSystem;
-      String timeZone = await FlutterTimezone.getLocalTimezone();
+      // String timeZone = await FlutterTimezone.getLocalTimezone();
       String? pushNotificationToken = '';
       print("pushNotificationToken: $pushNotificationToken");
       String appVersion = "";
@@ -269,7 +267,7 @@ Future<void> resendOtp(String email) async {
         "operatingSystem": operatingSystem,
         "pushNotificationToken": pushNotificationToken,
         "appVersion": appVersion,
-        "timeZone": timeZone,
+        // "timeZone": timeZone,
         "language": language,
       });
 
