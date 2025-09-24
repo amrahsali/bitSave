@@ -1,8 +1,8 @@
-import 'package:estate360Security/ui/common/ui_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import '../../../state.dart';
 import '../../common/app_colors.dart';
+import '../../common/ui_helpers.dart';
 import '../../components/submit_button.dart';
 import '../../views/Profile/profile_viewmodel.dart';
 

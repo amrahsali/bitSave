@@ -1,9 +1,9 @@
-import 'package:estate360Security/ui/common/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.locator.dart';
+import '../../common/app_colors.dart';
 import 'Reports_viewmodel.dart';
 import '../../../core/data/models/notification_model.dart';
 import '../../components/shimmer_widgets.dart';

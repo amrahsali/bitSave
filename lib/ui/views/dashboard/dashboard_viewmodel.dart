@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:estate360Security/ui/views/dashboard/profileDetailsDialog.dart';
+import 'package:bitSave/ui/views/dashboard/profileDetailsDialog.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.locator.dart';
@@ -15,7 +13,6 @@ import '../../../core/data/models/update.dart';
 import '../../../core/network/api_response.dart';
 import '../../../core/network/interceptors.dart';
 import 'package:flutter/material.dart';
-import '../../common/app_colors.dart';
 import '../auth/visitorProfile.dart';
 
 void prettyPrintJson(dynamic object, {String? tag}) {
@@ -56,8 +53,8 @@ class TodoItem {
 class DashboardViewModel extends BaseViewModel {
   final log = getLogger("DashboardViewModel");
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  Barcode? result;
-  QRViewController? controller;
+ // Barcode? result;
+ // QRViewController? controller;
   DashboardModel? dashboardData;
   Timer? _autoRefreshTimer;
 
@@ -183,27 +180,27 @@ class DashboardViewModel extends BaseViewModel {
     setBusy(false);
   }
 
-  Future<void> getNotifications() async {
-    setBusy(true);
-    try {
-      final response = await repo.getNotifications();
-      if (response.statusCode == 200 && response.data['success'] == true) {
-        notifications = (response.data['data'] as List)
-            .map((json) => NotificationModel.fromJson(json))
-            .toList();
-        notifications.sort((a, b) => b.sentAt.compareTo(a.sentAt));
-      } else {
-        log.e("Failed to fetch notifications: ${response.data['message']}");
-      }
-    } catch (e) {
-      log.e("Error fetching notifications: $e");
-    }
-    setBusy(false);
-  }
+  // Future<void> getNotifications() async {
+  //   setBusy(true);
+  //   try {
+  //     final response = await repo.getNotifications();
+  //     if (response.statusCode == 200 && response.data['success'] == true) {
+  //       notifications = (response.data['data'] as List)
+  //           .map((json) => NotificationModel.fromJson(json))
+  //           .toList();
+  //       notifications.sort((a, b) => b.sentAt.compareTo(a.sentAt));
+  //     } else {
+  //       log.e("Failed to fetch notifications: ${response.data['message']}");
+  //     }
+  //   } catch (e) {
+  //     log.e("Error fetching notifications: $e");
+  //   }
+  //   setBusy(false);
+  // }
 
   Future<void> refreshData() async {
     setBusy(true);
-    await getNotifications();
+    //await getNotifications();
     await getDashboardData();
     notifyListeners();
     setBusy(false);
@@ -281,42 +278,42 @@ class DashboardViewModel extends BaseViewModel {
     }
   }
 
-  void onQRViewCreated(QRViewController controller) {
-    this.controller = controller;
-    controller.scannedDataStream.listen((scanData) async {
-      result = scanData;
-      if (result != null) {
-        controller.pauseCamera();
-        setBusy(true);
-        final BuildContext? currentContext =
-            locator<NavigationService>().navigatorKey?.currentContext;
-
-        if (currentContext == null || !currentContext.mounted) {
-          log.e('No valid context available');
-          setBusy(false);
-          return;
-        }
-
-        bool isVerified = await verifyGatePass(
-          result!.code!,
-          currentContext,
-          onFailure: (reason) {
-            if (currentContext.mounted) {
-              locator<SnackbarService>().showSnackbar(
-                message: reason,
-                duration: const Duration(seconds: 3),
-              );
-            }
-          },
-        );
-
-        if (isVerified) {
-          notifyListeners();
-        }
-        setBusy(false);
-      }
-    });
-  }
+  // void onQRViewCreated(QRViewController controller) {
+  //   this.controller = controller;
+  //   controller.scannedDataStream.listen((scanData) async {
+  //     result = scanData;
+  //     if (result != null) {
+  //       controller.pauseCamera();
+  //       setBusy(true);
+  //       final BuildContext? currentContext =
+  //           locator<NavigationService>().navigatorKey?.currentContext;
+  //
+  //       if (currentContext == null || !currentContext.mounted) {
+  //         log.e('No valid context available');
+  //         setBusy(false);
+  //         return;
+  //       }
+  //
+  //       bool isVerified = await verifyGatePass(
+  //         result!.code!,
+  //         currentContext,
+  //         onFailure: (reason) {
+  //           if (currentContext.mounted) {
+  //             locator<SnackbarService>().showSnackbar(
+  //               message: reason,
+  //               duration: const Duration(seconds: 3),
+  //             );
+  //           }
+  //         },
+  //       );
+  //
+  //       if (isVerified) {
+  //         notifyListeners();
+  //       }
+  //       setBusy(false);
+  //     }
+  //   });
+  // }
 
   Future<bool> verifyPublicId(String publicId) async {
     setBusy(true);
@@ -332,7 +329,7 @@ class DashboardViewModel extends BaseViewModel {
 
   @override
   void dispose() {
-    controller?.dispose();
+    //controller?.dispose();
     _autoRefreshTimer?.cancel();
     super.dispose();
   }

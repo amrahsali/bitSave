@@ -1,9 +1,8 @@
 import 'dart:convert';
-
-import 'package:estate360Security/app/app.router.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.locator.dart';
+import '../../../app/app.router.dart';
 import '../../../core/data/models/user_model.dart';
 import '../../../core/network/api_response.dart';
 import '../../../core/network/interceptors.dart';

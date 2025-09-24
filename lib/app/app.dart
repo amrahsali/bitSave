@@ -37,6 +37,7 @@ import '../ui/views/startup/startup_view.dart';
     LazySingleton(classType: ApiService),
     LazySingleton(classType: LocalStorage),
     LazySingleton(classType: Repository),
+
     // @stacked-service
   ],
   bottomsheets: [

@@ -1,13 +1,15 @@
-import 'package:estate360Security/ui/common/ui_helpers.dart';
+import 'package:bitSave/core/network/noodless_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked/stacked.dart';
 import '../../common/app_colors.dart';
+import '../../common/ui_helpers.dart';
 import 'dashboard_viewmodel.dart';
 
 class DashboardView extends StackedView<DashboardViewModel> {
-   DashboardView({Key? key}) : super(key: key);
+  // final NodelessSdk sdk;
+   DashboardView({Key? key}) : super(key: key );
 
   @override
   Widget builder(BuildContext context, DashboardViewModel viewModel, Widget? child) {
@@ -140,6 +142,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
 
           Row(
             children: [
+             //  Balance(getInfoStream: widget.sdk.getInfoStream),
               Text(
                 '\u20A6${viewModel.totalBalance.toStringAsFixed(2)}',
                 style: TextStyle(
@@ -244,7 +247,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  'Crypto',
+                  'Bitcoin',
                   style: GoogleFonts.redHatDisplay(
                     color: Colors.white,
                     fontSize: 12,

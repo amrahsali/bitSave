@@ -1,4 +1,4 @@
-import 'package:estate360Security/ui/views/Profile/profile_viewmodel.dart';
+import 'package:bitSave/ui/views/Profile/profile_viewmodel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,7 +16,6 @@ import '../../dialogs/bottom_sheets/changePassword_bottom_sheet.dart';
 import '../../dialogs/bottom_sheets/editProfile_bottom_sheet.dart';
 import '../auth/auth_view.dart';
 import 'dart:io';
-import 'package:image_picker/image_picker.dart';
 
 class UserProfilePage extends StatefulWidget {
   const UserProfilePage({Key? key}) : super(key: key);
@@ -84,7 +83,7 @@ class UserProfilePage extends StatefulWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 GestureDetector(
-                  onTap: () => _showImageOverlay(context, viewModel),
+                  //onTap: () => _showImageOverlay(context, viewModel),
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
@@ -94,10 +93,10 @@ class UserProfilePage extends StatefulWidget {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white24,
-                          image: DecorationImage(
-                            image: _resolveProfileImageProvider(viewModel),
-                            fit: BoxFit.cover,
-                          ),
+                          // image: DecorationImage(
+                          //   image: _resolveProfileImageProvider(viewModel),
+                          //   fit: BoxFit.cover,
+                          // ),
                         ),
                       ),
                       Positioned(
@@ -235,240 +234,240 @@ class UserProfilePage extends StatefulWidget {
       );
     }
 
-    ImageProvider _resolveProfileImageProvider(ProfileViewModel viewModel) {
-      if (viewModel.confirmedImageFile != null) {
-        return FileImage(File(viewModel.confirmedImageFile!.path));
-      }
+    // ImageProvider _resolveProfileImageProvider(ProfileViewModel viewModel) {
+    //   if (viewModel.confirmedImageFile != null) {
+    //     return FileImage(File(viewModel.confirmedImageFile!.path));
+    //   }
+    //
+    //   final picture = profile.value.picture;
+    //   if (picture != null) {
+    //     try {
+    //       final dataField = picture.data;
+    //       if (dataField != null && dataField.toString().isNotEmpty) {
+    //         return MemoryImage(decodeBase64Image(dataField.toString()));
+    //       }
+    //     } catch (e) {
+    //       debugPrint('Error decoding base64 image: $e');
+    //     }
+    //
+    //     final url = picture.url?.toString();
+    //     if (url != null && url.isNotEmpty) {
+    //       final t = (viewModel.profileImageFreshness ?? 0);
+    //       final sep = url.contains('?') ? '&' : '?';
+    //       final finalUrl = t > 0 ? '$url$sep' 't=$t' : url;
+    //       return NetworkImage(finalUrl);
+    //     }
+    //   }
+    //
+    //   return const AssetImage('assets/images/lady.png');
+    // }
 
-      final picture = profile.value.picture;
-      if (picture != null) {
-        try {
-          final dataField = picture.data;
-          if (dataField != null && dataField.toString().isNotEmpty) {
-            return MemoryImage(decodeBase64Image(dataField.toString()));
-          }
-        } catch (e) {
-          debugPrint('Error decoding base64 image: $e');
-        }
-
-        final url = picture.url?.toString();
-        if (url != null && url.isNotEmpty) {
-          final t = (viewModel.profileImageFreshness ?? 0);
-          final sep = url.contains('?') ? '&' : '?';
-          final finalUrl = t > 0 ? '$url$sep' 't=$t' : url;
-          return NetworkImage(finalUrl);
-        }
-      }
-
-      return const AssetImage('assets/images/lady.png');
-    }
-
-    void _showImageOverlay(BuildContext context, ProfileViewModel viewModel) {
-      showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (ctx) {
-          return GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () => Navigator.of(ctx).pop(),
-            child: Container(
-              color: Colors.black54,
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40),
-                  child: Material(
-                    borderRadius: BorderRadius.circular(12),
-                    clipBehavior: Clip.hardEdge,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 420),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 160,
-                              height: 160,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: _resolveProfileImageProvider(viewModel),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              "${profile.value.firstName ?? ''} ${profile.value.lastName ?? ''}",
-                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(profile.value.email ?? '', style: const TextStyle(color: kcMediumGrey)),
-                            const SizedBox(height: 16),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: ElevatedButton.icon(
-                                    icon: const Icon(Icons.edit, color: kcWhiteColor),
-                                    label: const Text(
-                                      'Edit',
-                                      style: TextStyle(color: kcWhiteColor),
-                                      ),
-                                    onPressed: () {
-                                      Navigator.of(ctx).pop();
-                                      _showPickOptions(context, viewModel);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: kcPrimaryColor,
-                                      padding: const EdgeInsets.symmetric(vertical: 12),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: OutlinedButton(
-                                    onPressed: () => Navigator.of(ctx).pop(),
-                                    child: const Text('Close'),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      );
-    }
-
-    void _showPickOptions(BuildContext context, ProfileViewModel viewModel) {
-      showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.white,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-        ),
-        builder: (ctx) => SafeArea(
-          child: Wrap(
-            children: [
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text('Choose from gallery'),
-                onTap: () async {
-                  Navigator.of(ctx).pop();
-                  final XFile? file = await viewModel.pickImageFrom(ImageSource.gallery);
-                  if (file != null) {
-                    await _showConfirmImageDialog(context, viewModel, file);
-                  }
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.camera_alt),
-                title: const Text('Take a photo'),
-                onTap: () async {
-                  Navigator.of(ctx).pop();
-                  final XFile? file = await viewModel.pickImageFrom(ImageSource.camera);
-                  if (file != null) {
-                    await _showConfirmImageDialog(context, viewModel, file);
-                  }
-                },
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    Future<void> _showConfirmImageDialog(BuildContext context, ProfileViewModel viewModel, XFile picked) async {
-      final file = File(picked.path);
-
-      await showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (ctx) {
-          return GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () => Navigator.of(ctx).pop(),
-            child: Container(
-              color: Colors.black54,
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40),
-                  child: Material(
-                    borderRadius: BorderRadius.circular(12),
-                    clipBehavior: Clip.hardEdge,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 180,
-                            height: 180,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                image: FileImage(file),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          const Text('Confirm new profile picture?', style: TextStyle(fontSize: 16)),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: ElevatedButton(
-                                  onPressed: () async {
-                                    Navigator.of(ctx).pop();
-                                    viewModel.setConfirmedImageFile(picked);
-                                    final success = await viewModel.uploadProfileImageMultipart(file, profile.value.id ?? 0);
-                                    if (success) {
-                                      locator<SnackbarService>().showSnackbar(
-                                        message: "Profile picture updated successfully",
-                                        duration: const Duration(seconds: 2),
-                                      );
-                                    } else {
-                                      viewModel.clearConfirmedImageFile();
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(backgroundColor: kcPrimaryColor),
-                                  child: const Text(
-                                    'Confirm',
-                                    style: TextStyle(color: kcWhiteColor),
-                                    ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: OutlinedButton(
-                                  onPressed: () {
-                                    Navigator.of(ctx).pop();
-                                    viewModel.clearPickedImageFile();
-                                  },
-                                  child: const Text('Cancel'),
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      );
-    }
+    // void _showImageOverlay(BuildContext context, ProfileViewModel viewModel) {
+    //   showModalBottomSheet(
+    //     context: context,
+    //     isScrollControlled: true,
+    //     backgroundColor: Colors.transparent,
+    //     builder: (ctx) {
+    //       return GestureDetector(
+    //         behavior: HitTestBehavior.opaque,
+    //         onTap: () => Navigator.of(ctx).pop(),
+    //         child: Container(
+    //           color: Colors.black54,
+    //           child: Center(
+    //             child: Padding(
+    //               padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40),
+    //               child: Material(
+    //                 borderRadius: BorderRadius.circular(12),
+    //                 clipBehavior: Clip.hardEdge,
+    //                 child: Padding(
+    //                   padding: const EdgeInsets.all(16.0),
+    //                   child: ConstrainedBox(
+    //                     constraints: const BoxConstraints(maxWidth: 420),
+    //                     child: Column(
+    //                       mainAxisSize: MainAxisSize.min,
+    //                       children: [
+    //                         Container(
+    //                           width: 160,
+    //                           height: 160,
+    //                           decoration: BoxDecoration(
+    //                             shape: BoxShape.circle,
+    //                             image: DecorationImage(
+    //                               image: _resolveProfileImageProvider(viewModel),
+    //                               fit: BoxFit.cover,
+    //                             ),
+    //                           ),
+    //                         ),
+    //                         const SizedBox(height: 12),
+    //                         Text(
+    //                           "${profile.value.firstName ?? ''} ${profile.value.lastName ?? ''}",
+    //                           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    //                         ),
+    //                         const SizedBox(height: 8),
+    //                         Text(profile.value.email ?? '', style: const TextStyle(color: kcMediumGrey)),
+    //                         const SizedBox(height: 16),
+    //                         Row(
+    //                           children: [
+    //                             Expanded(
+    //                               child: ElevatedButton.icon(
+    //                                 icon: const Icon(Icons.edit, color: kcWhiteColor),
+    //                                 label: const Text(
+    //                                   'Edit',
+    //                                   style: TextStyle(color: kcWhiteColor),
+    //                                   ),
+    //                                 onPressed: () {
+    //                                   Navigator.of(ctx).pop();
+    //                                   _showPickOptions(context, viewModel);
+    //                                 },
+    //                                 style: ElevatedButton.styleFrom(
+    //                                   backgroundColor: kcPrimaryColor,
+    //                                   padding: const EdgeInsets.symmetric(vertical: 12),
+    //                                 ),
+    //                               ),
+    //                             ),
+    //                             const SizedBox(width: 12),
+    //                             Expanded(
+    //                               child: OutlinedButton(
+    //                                 onPressed: () => Navigator.of(ctx).pop(),
+    //                                 child: const Text('Close'),
+    //                               ),
+    //                             ),
+    //                           ],
+    //                         ),
+    //                       ],
+    //                     ),
+    //                   ),
+    //                 ),
+    //               ),
+    //             ),
+    //           ),
+    //         ),
+    //       );
+    //     },
+    //   );
+    // }
+    //
+    // void _showPickOptions(BuildContext context, ProfileViewModel viewModel) {
+    //   showModalBottomSheet(
+    //     context: context,
+    //     backgroundColor: Colors.white,
+    //     shape: const RoundedRectangleBorder(
+    //       borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+    //     ),
+    //     builder: (ctx) => SafeArea(
+    //       child: Wrap(
+    //         children: [
+    //           ListTile(
+    //             leading: const Icon(Icons.photo_library),
+    //             title: const Text('Choose from gallery'),
+    //             onTap: () async {
+    //               Navigator.of(ctx).pop();
+    //               final XFile? file = await viewModel.pickImageFrom(ImageSource.gallery);
+    //               if (file != null) {
+    //                 await _showConfirmImageDialog(context, viewModel, file);
+    //               }
+    //             },
+    //           ),
+    //           ListTile(
+    //             leading: const Icon(Icons.camera_alt),
+    //             title: const Text('Take a photo'),
+    //             onTap: () async {
+    //               Navigator.of(ctx).pop();
+    //               final XFile? file = await viewModel.pickImageFrom(ImageSource.camera);
+    //               if (file != null) {
+    //                 await _showConfirmImageDialog(context, viewModel, file);
+    //               }
+    //             },
+    //           ),
+    //         ],
+    //       ),
+    //     ),
+    //   );
+    // }
+    //
+    // Future<void> _showConfirmImageDialog(BuildContext context, ProfileViewModel viewModel, XFile picked) async {
+    //   final file = File(picked.path);
+    //
+    //   await showModalBottomSheet(
+    //     context: context,
+    //     isScrollControlled: true,
+    //     backgroundColor: Colors.transparent,
+    //     builder: (ctx) {
+    //       return GestureDetector(
+    //         behavior: HitTestBehavior.opaque,
+    //         onTap: () => Navigator.of(ctx).pop(),
+    //         child: Container(
+    //           color: Colors.black54,
+    //           child: Center(
+    //             child: Padding(
+    //               padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40),
+    //               child: Material(
+    //                 borderRadius: BorderRadius.circular(12),
+    //                 clipBehavior: Clip.hardEdge,
+    //                 child: Padding(
+    //                   padding: const EdgeInsets.all(16.0),
+    //                   child: Column(
+    //                     mainAxisSize: MainAxisSize.min,
+    //                     children: [
+    //                       Container(
+    //                         width: 180,
+    //                         height: 180,
+    //                         decoration: BoxDecoration(
+    //                           shape: BoxShape.circle,
+    //                           image: DecorationImage(
+    //                             image: FileImage(file),
+    //                             fit: BoxFit.cover,
+    //                           ),
+    //                         ),
+    //                       ),
+    //                       const SizedBox(height: 12),
+    //                       const Text('Confirm new profile picture?', style: TextStyle(fontSize: 16)),
+    //                       const SizedBox(height: 16),
+    //                       Row(
+    //                         children: [
+    //                           Expanded(
+    //                             child: ElevatedButton(
+    //                               onPressed: () async {
+    //                                 Navigator.of(ctx).pop();
+    //                                 viewModel.setConfirmedImageFile(picked);
+    //                                 final success = await viewModel.uploadProfileImageMultipart(file, profile.value.id ?? 0);
+    //                                 if (success) {
+    //                                   locator<SnackbarService>().showSnackbar(
+    //                                     message: "Profile picture updated successfully",
+    //                                     duration: const Duration(seconds: 2),
+    //                                   );
+    //                                 } else {
+    //                                   viewModel.clearConfirmedImageFile();
+    //                                 }
+    //                               },
+    //                               style: ElevatedButton.styleFrom(backgroundColor: kcPrimaryColor),
+    //                               child: const Text(
+    //                                 'Confirm',
+    //                                 style: TextStyle(color: kcWhiteColor),
+    //                                 ),
+    //                             ),
+    //                           ),
+    //                           const SizedBox(width: 12),
+    //                           Expanded(
+    //                             child: OutlinedButton(
+    //                               onPressed: () {
+    //                                 Navigator.of(ctx).pop();
+    //                                 viewModel.clearPickedImageFile();
+    //                               },
+    //                               child: const Text('Cancel'),
+    //                             ),
+    //                           ),
+    //                         ],
+    //                       )
+    //                     ],
+    //                   ),
+    //                 ),
+    //               ),
+    //             ),
+    //           ),
+    //         ),
+    //       );
+    //     },
+    //   );
+    // }
 
   }

@@ -11,7 +11,6 @@ import '../../../core/utils/local_stotage.dart';
 import '../../../state.dart';
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:image_picker/image_picker.dart';
 
 class ProfileViewModel extends BaseViewModel {
   final oldPassword = TextEditingController();
@@ -25,29 +24,29 @@ class ProfileViewModel extends BaseViewModel {
   bool isUpdateProfile = false;
 
   int profileImageFreshness = 0;
-  XFile? pickedImageFile;
-  XFile? confirmedImageFile;
-  final ImagePicker _picker = ImagePicker();
+  // XFile? pickedImageFile;
+  // XFile? confirmedImageFile;
+  // final ImagePicker _picker = ImagePicker();
 
   void toggleObscure() {
     obscure = !obscure;
     rebuildUi();
   }
 
-  void setConfirmedImageFile(XFile file) {
-    confirmedImageFile = file;
-    notifyListeners();
-  }
+  // void setConfirmedImageFile(XFile file) {
+  //   confirmedImageFile = file;
+  //   notifyListeners();
+  // }
 
-  void clearConfirmedImageFile() {
-    confirmedImageFile = null;
-    notifyListeners();
-  }
-
-  void clearPickedImageFile() {
-    pickedImageFile = null;
-    notifyListeners();
-  }
+  // void clearConfirmedImageFile() {
+  //   confirmedImageFile = null;
+  //   notifyListeners();
+  // }
+  //
+  // void clearPickedImageFile() {
+  //   pickedImageFile = null;
+  //   notifyListeners();
+  // }
 
   Future<void> goToAbout(String url) async {
     final Uri toLaunch =
@@ -93,25 +92,25 @@ class ProfileViewModel extends BaseViewModel {
   Future<void> getProfile() async {
   }
 
-  Future<XFile?> pickImageFrom(ImageSource source) async {
-    try {
-      final XFile? file = await _picker.pickImage(
-        source: source, 
-        imageQuality: 80,
-        maxWidth: 800,
-        maxHeight: 800,
-      );
-      if (file != null) {
-        pickedImageFile = file;
-        notifyListeners();
-      }
-      return file;
-    } catch (e) {
-      debugPrint('Error picking image: $e');
-      locator<SnackbarService>().showSnackbar(message: 'Error Selecting image: ${e.toString()}');
-      return null;
-    }
-  }
+  // Future<XFile?> pickImageFrom(ImageSource source) async {
+  //   try {
+  //     final XFile? file = await _picker.pickImage(
+  //       source: source,
+  //       imageQuality: 80,
+  //       maxWidth: 800,
+  //       maxHeight: 800,
+  //     );
+  //     if (file != null) {
+  //       pickedImageFile = file;
+  //       notifyListeners();
+  //     }
+  //     return file;
+  //   } catch (e) {
+  //     debugPrint('Error picking image: $e');
+  //     locator<SnackbarService>().showSnackbar(message: 'Error Selecting image: ${e.toString()}');
+  //     return null;
+  //   }
+  // }
 
   Future<bool> uploadProfileImageMultipart(File imageFile, int userId) async {
     try {
