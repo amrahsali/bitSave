@@ -141,6 +141,8 @@ class DashboardViewModel extends BaseViewModel {
   void handleReceiveAction(int accountType) {
     // Handle receive action
     print('Receive action for ${accountType == 0 ? 'Fiat' : 'Crypto'}');
+
+
   }
 
   void handleSwapAction(int accountType) {
