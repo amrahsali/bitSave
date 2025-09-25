@@ -5,11 +5,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked/stacked.dart';
 import '../../common/app_colors.dart';
 import '../../common/ui_helpers.dart';
+import '../../dialogs/recieve_dialog.dart';
+import '../../dialogs/send_dialog.dart';
+import 'balance.dart';
 import 'dashboard_viewmodel.dart';
 
 class DashboardView extends StackedView<DashboardViewModel> {
-  // final NodelessSdk sdk;
-   DashboardView({Key? key}) : super(key: key );
+  final NodelessSdk sdk = NodelessSdk();
+
+  DashboardView({Key? key}) : super(key: key);
 
   @override
   Widget builder(BuildContext context, DashboardViewModel viewModel, Widget? child) {
@@ -36,7 +40,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
             const SizedBox(height: 16),
             _buildAccountContent(viewModel),
             const SizedBox(height: 16),
-            _buildActionButtons(viewModel),
+            _buildActionButtons(context, viewModel),
             const SizedBox(height: 24),
             _buildTransactionsSection(viewModel),
           ],
@@ -50,7 +54,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Hi,Karimatu MH',
+          'Hi, Karimatu MH',
           style: GoogleFonts.redHatDisplay(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -127,9 +131,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
               ),
             ],
           ),
-
           const SizedBox(height: 16),
-
           Text(
             'Total Balance',
             style: GoogleFonts.redHatDisplay(
@@ -137,20 +139,10 @@ class DashboardView extends StackedView<DashboardViewModel> {
               fontSize: 14,
             ),
           ),
-
           const SizedBox(height: 4),
-
           Row(
             children: [
-             //  Balance(getInfoStream: widget.sdk.getInfoStream),
-              Text(
-                '\u20A6${viewModel.totalBalance.toStringAsFixed(2)}',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
+              Balance(getInfoStream: sdk.getInfoStream),
               const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -257,9 +249,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
               ),
             ],
           ),
-
           const SizedBox(height: 16),
-
           Text(
             'Total Portfolio Value',
             style: GoogleFonts.redHatDisplay(
@@ -267,9 +257,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
               fontSize: 14,
             ),
           ),
-
           const SizedBox(height: 4),
-
           Row(
             children: [
               Text(
@@ -288,7 +276,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  '₦${(viewModel.cryptoBalance * 50000).toStringAsFixed(2)}', // Example conversion rate
+                  '₦${(viewModel.cryptoBalance * 50000).toStringAsFixed(2)}',
                   style: GoogleFonts.redHatDisplay(
                     fontSize: 14,
                     color: Colors.white,
@@ -298,9 +286,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
               ),
             ],
           ),
-
           const SizedBox(height: 16),
-
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
@@ -339,7 +325,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
     );
   }
 
-  Widget _buildActionButtons(DashboardViewModel viewModel) {
+  Widget _buildActionButtons(BuildContext context, DashboardViewModel viewModel) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -353,13 +339,22 @@ class DashboardView extends StackedView<DashboardViewModel> {
           'assets/icons/square-arrow-up.svg',
           'Transfer',
           viewModel.selectedAccountType == 0 ? Colors.green : Colors.orange,
-              () => viewModel.handleWithdrawAction(viewModel.selectedAccountType),
+              () => showDialog(
+            context: context,
+            builder: (context) => SendPaymentDialog(sdk: sdk.instance!),
+          ),
         ),
         _buildActionButton(
           'assets/icons/square-arrow-down.svg',
           'Receive',
           viewModel.selectedAccountType == 0 ? Colors.purple : Colors.blue,
-              () => viewModel.handleReceiveAction(viewModel.selectedAccountType),
+              () => showDialog(
+            context: context,
+            builder: (context) => ReceivePaymentDialog(
+              sdk: sdk.instance!,
+              paymentEventStream: sdk.paymentEventStream,
+            ),
+          ),
         ),
         _buildActionButton(
           'assets/icons/Swap.svg',
@@ -412,7 +407,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
                       ),
                     ),
                   ),
-                  // SVG Icon
                   Center(
                     child: SizedBox(
                       width: 24,
@@ -461,7 +455,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
               child: Text(
                 'See all',
                 style: GoogleFonts.redHatDisplay(
-                  color:kcPrimaryColor,
+                  color: kcPrimaryColor,
                   fontSize: 14,
                 ),
               ),
@@ -484,9 +478,16 @@ class DashboardView extends StackedView<DashboardViewModel> {
 
   Widget _buildTransactionItem(Transaction transaction) {
     final bool isNegative = transaction.amount < 0;
-    final Color primaryColor = isNegative ? Color(0xFFF44336) : Color(0xFF4CAF50);
+    final Color primaryColor = isNegative ? const Color(0xFFF44336) : const Color(0xFF4CAF50);
     final Color bgColor = primaryColor.withOpacity(0.05);
 
+    final List<Color> avatarColors = [
+      Colors.red,
+      Colors.blue,
+      Colors.green,
+      Colors.orange,
+      Colors.purple,
+    ];
     final int colorIndex = transaction.recipient.hashCode % avatarColors.length;
     final Color avatarColor = avatarColors[colorIndex];
 
@@ -510,7 +511,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
             ),
             child: Row(
               children: [
-                // User Avatar with initial
                 Container(
                   width: 44,
                   height: 44,
@@ -529,10 +529,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                     ),
                   ),
                 ),
-
                 const SizedBox(width: 12),
-
-                // Transaction Details
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -558,9 +555,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                           ),
                         ],
                       ),
-
                       const SizedBox(height: 6),
-
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -581,7 +576,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
                               ),
                             ],
                           ),
-
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
@@ -611,11 +605,10 @@ class DashboardView extends StackedView<DashboardViewModel> {
     );
   }
 
-
-// Add this method for transaction details
   void _showTransactionDetails(Transaction transaction) {
     // Implement transaction details dialog
   }
+
   @override
   DashboardViewModel viewModelBuilder(BuildContext context) => DashboardViewModel();
 
@@ -626,7 +619,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
   }
 }
 
-// Custom animated tab bar for account types
 class _AnimatedAccountTabBar extends StatefulWidget {
   final int currentIndex;
   final Function(int) onTabChanged;
