@@ -70,6 +70,16 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.2.8
+
+flutter_native_splash:
+  color: "#432E9D"
+  android: true
+  ios: true
+  web: false
+  image: "assets/images/bitsavelogo.png"
+  fullscreen: true
+
 
 dependency_overrides:
   win32: ^5.14.0
@@ -97,12 +107,13 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
-    - assets/icons/
     - assets/animations/
-    - assets/svg_icons/
 
-flutter_launcher_icons:
+flutter_icons:
   android: true
   ios: true
   remove_alpha_ios: true
-  image_path: "assets/images/escurecopy.png"
+  image_path: "assets/images/bitsaveicon.png"
+  android_adaptive_icon:
+    foreground_image: "assets/images/bitsaveicon.png"
+    background_color: "#000000"

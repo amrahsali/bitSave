@@ -7,13 +7,11 @@ import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.locator.dart';
 import '../../../app/app.logger.dart';
 import '../../../core/data/models/dahsboard_model.dart';
-import '../../../core/data/models/gate_pass_model.dart';
 import '../../../core/data/models/notification_model.dart';
 import '../../../core/data/models/update.dart';
 import '../../../core/network/api_response.dart';
 import '../../../core/network/interceptors.dart';
 import 'package:flutter/material.dart';
-import '../auth/visitorProfile.dart';
 
 void prettyPrintJson(dynamic object, {String? tag}) {
   final encoder = const JsonEncoder.withIndent('  ');
@@ -208,114 +206,6 @@ class DashboardViewModel extends BaseViewModel {
     setBusy(false);
   }
 
-  Future<bool> verifyGatePass(
-      String verificationCode, BuildContext context,
-      {required Null Function(String reason) onFailure}) async {
-    try {
-      setBusy(true);
-      try {
-        final decodedString = utf8.decode(base64.decode(verificationCode));
-        final decodedData = jsonDecode(decodedString);
-
-        if (decodedData['type'] == 'profile') {
-          if (context.mounted) {
-            Navigator.of(context).pop();
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-              ),
-              builder: (context) => ProfileDetailsDialog(profileData: decodedData),
-            );
-          }
-          return true;
-        }
-      } on FormatException {
-        log.i('QR code is not base64 encoded, treating as visitor code');
-      }
-      ApiResponse res = await repo.validateGatePass(verificationCode);
-      if (res.statusCode == 200 && res.data != null) {
-        prettyPrintJson(res.data, tag: 'validateGatePass: ');
-        final data = res.data['data'];
-        prettyPrintJson(data, tag: 'gatePass.data: ');
-        prettyPrintJson(data['visitor'] ?? {}, tag: 'visitor: ');
-        prettyPrintJson(data['resident'] ?? {}, tag: 'resident: ');
-
-        GatePassModel gatePass = GatePassModel.fromJson(res.data['data']);
-
-        if (context.mounted) {
-          Navigator.of(context).pop();
-          showModalBottomSheet<bool>(
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            builder: (context) => VisitorProfileDialog(gatePass: gatePass),
-          ).then((visitorResult) {
-            if (visitorResult == true) {
-              refreshData();
-            }
-          });
-        }
-        return true;
-      } else {
-        if (context.mounted) {
-          onFailure(res.data['message'] ?? "Unknown error");
-        }
-        return false;
-      }
-    } catch (e, stackTrace) {
-      log.e(e);
-      log.e(stackTrace);
-      if (context.mounted) {
-        onFailure('Invalid Code');
-        locator<SnackbarService>().showSnackbar(
-          message: 'Invalid Code',
-          duration: const Duration(seconds: 3),
-        );
-      }
-      return false;
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  // void onQRViewCreated(QRViewController controller) {
-  //   this.controller = controller;
-  //   controller.scannedDataStream.listen((scanData) async {
-  //     result = scanData;
-  //     if (result != null) {
-  //       controller.pauseCamera();
-  //       setBusy(true);
-  //       final BuildContext? currentContext =
-  //           locator<NavigationService>().navigatorKey?.currentContext;
-  //
-  //       if (currentContext == null || !currentContext.mounted) {
-  //         log.e('No valid context available');
-  //         setBusy(false);
-  //         return;
-  //       }
-  //
-  //       bool isVerified = await verifyGatePass(
-  //         result!.code!,
-  //         currentContext,
-  //         onFailure: (reason) {
-  //           if (currentContext.mounted) {
-  //             locator<SnackbarService>().showSnackbar(
-  //               message: reason,
-  //               duration: const Duration(seconds: 3),
-  //             );
-  //           }
-  //         },
-  //       );
-  //
-  //       if (isVerified) {
-  //         notifyListeners();
-  //       }
-  //       setBusy(false);
-  //     }
-  //   });
-  // }
 
   Future<bool> verifyPublicId(String publicId) async {
     setBusy(true);
@@ -323,11 +213,6 @@ class DashboardViewModel extends BaseViewModel {
     return false;
   }
 
-  void verifyCode(BuildContext context, String verificationCode,
-      {required Null Function(String reason) onFailure}) async {
-    await verifyGatePass(verificationCode, context, onFailure: onFailure);
-    notifyListeners();
-  }
 
   @override
   void dispose() {

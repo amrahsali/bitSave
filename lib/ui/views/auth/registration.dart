@@ -29,7 +29,7 @@ class _RegisterState extends State<RegisterScreen> {
       child: Scaffold(
         body: ViewModelBuilder<AuthViewModel>.reactive(
           onViewModelReady: (model) {
-            model.getEstates();
+            // model.();
           },
           viewModelBuilder: () => AuthViewModel(),
           builder: (context, model, child) => Padding(
