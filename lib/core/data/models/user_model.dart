@@ -1,4 +1,3 @@
-import 'estate_model.dart';
 import 'media_model.dart';
 
 enum UserStatus { ACTIVE, INACTIVE, PENDING, DELETED, SUSPENDED }
@@ -27,7 +26,6 @@ class User {
   Country? country;
   dynamic addressPOJO;
   dynamic createdBy;
-  List<Estate>? estates;
   List<dynamic>? organizations;
   List<UserRole>? roles;
   UserStatus? status;
@@ -55,7 +53,6 @@ class User {
     this.country,
     this.addressPOJO,
     this.createdBy,
-    this.estates,
     this.organizations,
     this.roles,
     this.status,
@@ -89,7 +86,6 @@ class User {
       country: json['country'] != null ? Country.fromJson(json['country']) : null,
       addressPOJO: json['addressPOJO'],
       createdBy: json['createdBy'],
-      estates: (json['estates'] as List?)?.map((e) => Estate.fromJson(e)).toList(),
       organizations: json['organizations'],
       roles: (json['roles'] as List?)?.map((r) => UserRole.fromJson(r)).toList(),
       status: json['status'] != null
@@ -126,7 +122,6 @@ class User {
       'country': country?.toJson(),
       'addressPOJO': addressPOJO,
       'createdBy': createdBy,
-      'estates': estates?.map((e) => e.toJson()).toList(),
       'organizations': organizations,
       'roles': roles?.map((r) => r.toJson()).toList(),
       'status': status?.name,

@@ -12,12 +12,6 @@ import 'auth_viewmodel.dart';
 import 'forgetPasswordView.dart';
 
 
-/// @author George David
-/// email: georgequin19@gmail.com
-/// Feb, 2024
-///
-
-
 
 class LoginScreen extends  StatefulWidget {
   final Function(AuthType, {String? email}) onSwitch;
@@ -36,127 +30,89 @@ class _LoginState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       child: Scaffold(
-        body: ViewModelBuilder<AuthViewModel>.reactive(
-          onViewModelReady: (model) {
-          },
-          viewModelBuilder: () => AuthViewModel(),
-          builder: (context, model, child) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 36),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                          color: kcPrimaryColor, width: 2),
-                      borderRadius:
-                      BorderRadius.circular(10),
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/header-image.png'),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFF432E9D), // purple
+                Colors.black,
+              ],
+            ),
+          ),
+          width: double.infinity,
+          height: double.infinity,
+          child: ViewModelBuilder<AuthViewModel>.reactive(
+            onViewModelReady: (model) {
+            },
+            viewModelBuilder: () => AuthViewModel(),
+            builder: (context, model, child) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 36),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 150),
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'BitSave Login',
+                        const Text(
+                          'Login Details',
                           style: TextStyle(
                               color: kcWhiteColor,
-                              fontSize: 20,
+                              fontSize: 26,
                               fontWeight: FontWeight.bold),
+                        ),
+                        // const SizedBox(height: 4),
+                        Text(
+                          'Enter your login details',
+                          style: TextStyle(
+                              color: kcWhiteColor.withOpacity(0.7),
+                              fontSize: 12,
+                              fontWeight: FontWeight.normal),
                         ),
                       ],
                     ),
                   ),
-                ),
-                verticalSpaceSmall,
-                TextFieldWidget(
+                  verticalSpaceLarge,
+                  TextFieldWidget(
 
-                  hint: "Email",
-                  controller: model.email,
-                ),
-                verticalSpaceMedium,
-                TextFieldWidget(
-                  hint: "Password",
-                  controller: model.password,
-                  obscureText: model.obscure,
-                  suffix: InkWell(
-                    onTap: () {
-                      model.toggleObscure();
-                    },
-                    child: Icon(
-                        model.obscure ? Icons.visibility_off : Icons.visibility),
+                    hint: "Email",
+                    controller: model.email,
                   ),
-                ),
-                verticalSpaceTiny,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      onTap: model.toggleRemember,
-                      child: Row(
-                        children: [
-                          Container(
-                              height: 20,
-                              width: 20,
-                              decoration: BoxDecoration(
-                                  color: model.remember
-                                      ? kcSecondaryColor
-                                      : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(5),
-                                  border: Border.all(
-                                      color: model.remember
-                                          ? Colors.transparent
-                                          : kcPrimaryColor)),
-                              child: model.remember
-                                  ? const Center(
-                                child: Icon(
-                                  Icons.check,
-                                  color: kcWhiteColor,
-                                  size: 14,
-                                ),
-                              )
-                                  : const SizedBox()),
-                          const Text(
-                            "Remember Me",
-                            style: TextStyle(
-                                fontSize: 14, decoration: TextDecoration.underline),
-                          )
-                        ],
-                      ),
+                  verticalSpaceMedium,
+                  TextFieldWidget(
+                    hint: "Password",
+                    controller: model.password,
+                    obscureText: model.obscure,
+                    suffix: InkWell(
+                      onTap: () {
+                        model.toggleObscure();
+                      },
+                      child: Icon(
+                          model.obscure ? Icons.visibility_off : Icons.visibility),
                     ),
-                    horizontalSpaceSmall,
-                    InkWell(
-                      // onTap: () => widget.onSwitch(AuthType.forgotPassword),
-                      child: const Text(
-                        "Forgot password?",
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: kcPrimaryColor,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                verticalSpaceLarge,
-                SubmitButton(
-                  isLoading: model.isBusy,
-                  boldText: true,
-                  textColor: kcWhiteColor,
-                  label: "Login",
-                  submit: () {
-                     model.login();
-                  },
-                  color: kcPrimaryColor,
-                ),
-                verticalSpaceMedium,
-              ],
+                  ),
+                  verticalSpaceTiny,
+                  verticalSpaceMedium,
+                  SubmitButton(
+                    isLoading: model.isBusy,
+                    boldText: true,
+                    textColor: kcWhiteColor,
+                    label: "Login",
+                    submit: () {
+                       model.login();
+                    },
+                    color: kcPrimaryColor,
+                  ),
+                  verticalSpaceMedium,
+                ],
+              ),
             ),
           ),
         ),

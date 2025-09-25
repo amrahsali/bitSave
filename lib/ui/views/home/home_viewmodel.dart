@@ -66,7 +66,6 @@ class HomeViewModel extends BaseViewModel {
             {
               "type": label,
               "description": notesController.text,
-              "estateId": profile.value.estates?.first.id,
             }
         ),
         onCancel: () {
