@@ -40,9 +40,9 @@ class TextFieldWidget extends StatelessWidget {
       controller: controller,
       onChanged: onChanged as void Function(String value)?,
       cursorColor:
-          uiMode.value == AppUiModes.light ? kcBlackColor : kcWhiteColor,
+          uiMode.value == AppUiModes.light ? kcWhiteColor : kcWhiteColor,
       style: TextStyle(
-          color: uiMode.value == AppUiModes.light ? kcBlackColor : kcWhiteColor,
+          color: uiMode.value == AppUiModes.light ? kcWhiteColor : kcWhiteColor,
           fontSize: 14),
       validator: validator as String? Function(String?)?,
       obscureText: obscureText,
@@ -50,23 +50,23 @@ class TextFieldWidget extends StatelessWidget {
       decoration: InputDecoration(
         filled: true,
         fillColor:
-            uiMode.value == AppUiModes.light ? kcWhiteColor : kcBlackColor,
+            uiMode.value == AppUiModes.light ? kcDarkGreyColor : kcBlackColor,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: kcBlackColor.withOpacity(0.22)),
+          borderSide: BorderSide(color: kcWhiteColor.withOpacity(0.22)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: kcBlackColor.withOpacity(0.22)),
+          borderSide: BorderSide(color: kcWhiteColor.withOpacity(0.22)),
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: kcBlackColor.withOpacity(0.22)),
+          borderSide: BorderSide(color: kcWhiteColor.withOpacity(0.22)),
         ),
         labelText: hint,
         labelStyle: TextStyle(
             color:
-                uiMode.value == AppUiModes.light ? kcBlackColor : kcWhiteColor,
+                uiMode.value == AppUiModes.light ? kcWhiteColor : kcWhiteColor,
             fontSize: 14),
         prefixIcon: leading == null
             ? null

@@ -10,7 +10,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.locator.dart';
-import '../../../core/data/models/estate_model.dart';
 import '../../../app/app.router.dart';
 import '../../../core/data/models/user_model.dart';
 import '../../../core/network/api_response.dart';
@@ -38,7 +37,6 @@ class AuthViewModel extends BaseViewModel {
   bool remember = false;
   late PhoneNumber phoneNumber;
   final otp = TextEditingController();
-  List<Estate> estates = [];
   String selectedEstateId = '';
 
   int countdown = 0;
@@ -56,7 +54,6 @@ class AuthViewModel extends BaseViewModel {
   }
 
   void init() {
-    getEstates();
   }
 
   void toggleRemember() {
@@ -211,26 +208,6 @@ Future<void> resendOtp(String email) async {
   }
 }
 
-
-  Future<void> getEstates() async {
-    setBusy(true);
-    try {
-      ApiResponse res = await repo.getEstates();
-      if (res.statusCode == 200) {
-        print('estates response: ${res.data}');
-        estates = List<Estate>.from((res.data["data"]["items"] as List)
-            .map((e) => Estate.fromJson(e as Map<String, dynamic>)));
-        notifyListeners();
-      } else {
-        locator<SnackbarService>().showSnackbar(message: res.data["message"]);
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-      locator<SnackbarService>()
-          .showSnackbar(message: "Internal server error, $e");
-    }
-    setBusy(false);
-  }
 
   Future<void> updateDeviceDetails() async {
     try {

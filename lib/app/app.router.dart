@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart' as _i1;
 import 'package:stacked_services/stacked_services.dart' as _i27;
 
-import '../core/data/models/invite_model.dart';
 import '../ui/views/Profile/profile_view.dart' as _i8;
 import '../ui/views/auth/auth_view.dart' as _i5;
 import '../ui/views/auth/auth_view.dart';
@@ -184,29 +183,29 @@ class StackedRouter extends _i1.RouterBase {
   Map<Type, _i1.StackedRouteFactory> get pagesMap => _pagesMap;
 }
 
-class CodeViewArguments {
-  const CodeViewArguments({
-    required this.invite,
-  });
+// class CodeViewArguments {
+//   const CodeViewArguments({
+//     required this.invite,
+//   });
 
-  final GuestInviteModel invite;
+//   final GuestInviteModel invite;
 
-  @override
-  String toString() {
-    return '{"invite": "$invite"}';
-  }
+//   @override
+//   String toString() {
+//     return '{"invite": "$invite"}';
+//   }
 
-  @override
-  bool operator ==(covariant CodeViewArguments other) {
-    if (identical(this, other)) return true;
-    return other.invite == invite;
-  }
+//   @override
+//   bool operator ==(covariant CodeViewArguments other) {
+//     if (identical(this, other)) return true;
+//     return other.invite == invite;
+//   }
 
-  @override
-  int get hashCode {
-    return invite.hashCode;
-  }
-}
+//   @override
+//   int get hashCode {
+//     return invite.hashCode;
+//   }
+// }
 
 class AuthViewArguments {
   const AuthViewArguments({

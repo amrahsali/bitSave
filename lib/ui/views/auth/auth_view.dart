@@ -82,7 +82,7 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 0),
                   child: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),
                     child: getAuthScreen(),
