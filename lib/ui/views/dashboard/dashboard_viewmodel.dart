@@ -9,8 +9,10 @@ import '../../../app/app.logger.dart';
 import '../../../core/data/models/dahsboard_model.dart';
 import '../../../core/data/models/notification_model.dart';
 import '../../../core/data/models/update.dart';
+import '../../../core/data/models/mavapay_models.dart';
 import '../../../core/network/api_response.dart';
 import '../../../core/network/interceptors.dart';
+import '../../../core/network/mavapay_service.dart';
 import 'package:flutter/material.dart';
 
 void prettyPrintJson(dynamic object, {String? tag}) {
@@ -55,13 +57,20 @@ class DashboardViewModel extends BaseViewModel {
  // QRViewController? controller;
   DashboardModel? dashboardData;
   Timer? _autoRefreshTimer;
+  final MavapayService _mavapayService = MavapayService();
 
   // Financial data
   double _totalBalance = 20999.99;
   double _cryptoBalance = 72.80;
+  double _cryptoBalanceInSats = 0.0;
   double _todayChange = 20.50;
   List<Transaction> _transactions = [];
   List<TodoItem> _todos = [];
+  
+  // Mavapay data
+  MavapayBalance? _mavapayBalance;
+  MavapayExchangeRate? _exchangeRate;
+  String _userId = "user_123"; // Replace with actual user ID
 
   // Notifications and updates
   List<NotificationModel> notifications = [];
@@ -72,13 +81,22 @@ class DashboardViewModel extends BaseViewModel {
   // Getters for financial data
   double get totalBalance => _totalBalance;
   double get cryptoBalance => _cryptoBalance;
+  double get cryptoBalanceInSats => _cryptoBalanceInSats;
   double get todayChange => _todayChange;
   List<Transaction> get transactions => _transactions;
   List<TodoItem> get todos => _todos;
   List<UpdateModel> get updates => _updates;
+  MavapayBalance? get mavapayBalance => _mavapayBalance;
+  MavapayExchangeRate? get exchangeRate => _exchangeRate;
 
   DashboardViewModel() {
     _initializeFinancialData();
+    _initializeCryptoBalance();
+  }
+
+  void _initializeCryptoBalance() {
+    // Initialize crypto balance in sats (convert from BTC)
+    _cryptoBalanceInSats = CurrencyConverter.bitcoinToSats(_cryptoBalance);
   }
 
   void _initializeFinancialData() {
@@ -128,7 +146,66 @@ class DashboardViewModel extends BaseViewModel {
   }
   void handleAddAction(int accountType) {
     // Handle add action based on account type
-    print('Add action for ${accountType == 0 ? 'Fiat' : 'Crypto'}');
+    if (accountType == 0) {
+      // Fiat account - show Mavapay dialog
+      // This will be called from the UI
+      log.i('Add Naira funds action triggered');
+    } else {
+      // Crypto account - show Bitcoin receive dialog
+      log.i('Add Bitcoin action triggered');
+    }
+  }
+
+  /// Add Naira funds and convert to Bitcoin
+  Future<void> addNairaFunds(double nairaAmount, double satsAmount) async {
+    try {
+      setBusy(true);
+      
+      // Update the balances
+      _totalBalance += nairaAmount;
+      _cryptoBalanceInSats += satsAmount;
+      _cryptoBalance = CurrencyConverter.satsToBitcoin(_cryptoBalanceInSats);
+      
+      // Add transaction record
+      _transactions.insert(0, Transaction(
+        recipient: "Mavapay Deposit",
+        amount: nairaAmount,
+        time: DateTime.now().toString().substring(11, 16),
+        date: "Today",
+      ));
+      
+      log.i('Added ₦${nairaAmount.toStringAsFixed(2)} and ${satsAmount.toStringAsFixed(0)} sats');
+      notifyListeners();
+      
+    } catch (e) {
+      log.e('Error adding Naira funds: $e');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  /// Initialize Mavapay balance data
+  Future<void> initializeMavapayData() async {
+    try {
+      // Fetch user balance
+      final balanceResponse = await _mavapayService.getUserBalance(_userId);
+      if (balanceResponse.statusCode == 200 && balanceResponse.data['success'] == true) {
+        _mavapayBalance = MavapayBalance.fromJson(balanceResponse.data['data']);
+        _cryptoBalanceInSats = _mavapayBalance!.bitcoinBalanceInSats;
+        _cryptoBalance = CurrencyConverter.satsToBitcoin(_cryptoBalanceInSats);
+        _totalBalance = _mavapayBalance!.nairaBalance;
+      }
+      
+      // Fetch exchange rate
+      final rateResponse = await _mavapayService.getBitcoinExchangeRate();
+      if (rateResponse.statusCode == 200 && rateResponse.data['success'] == true) {
+        _exchangeRate = MavapayExchangeRate.fromJson(rateResponse.data['data']);
+      }
+      
+      notifyListeners();
+    } catch (e) {
+      log.e('Error initializing Mavapay data: $e');
+    }
   }
 
   void handleWithdrawAction(int accountType) {
