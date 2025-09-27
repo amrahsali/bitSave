@@ -7,9 +7,10 @@ import '../../common/ui_helpers.dart';
 import 'info_alert_dialog_model.dart';
 
 
-/// @author George David
-/// email: georgequin19@gmail.com
-/// Feb, 2024
+/// @author Amrah sali
+/// email: saliamrah300@gmail.com
+/// sept, 2025
+///
 ///
 
 

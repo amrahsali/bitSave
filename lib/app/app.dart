@@ -12,9 +12,9 @@ import '../ui/views/home/home_view.dart';
 
 import '../ui/views/startup/startup_view.dart';
 // @stacked-import
-/// @author George David
-/// email: georgequin19@gmail.com
-/// Feb, 2024
+/// @author Amrah sali
+/// email: saliamrah300@gmail.com
+/// sept, 2025
 ///
 
 @StackedApp(
