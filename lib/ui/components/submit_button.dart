@@ -5,9 +5,10 @@ import 'package:flutter_svg/svg.dart';
 import '../common/ui_helpers.dart';
 
 
-/// @author George David
-/// email: georgequin19@gmail.com
-/// Feb, 2024
+/// @author Amrah sali
+/// email: saliamrah300@gmail.com
+/// sept, 2025
+///
 ///
 
 

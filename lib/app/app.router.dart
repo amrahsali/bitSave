@@ -23,9 +23,10 @@ import '../ui/views/reports/savings.dart' as _i9;
 import '../ui/views/startup/startup_view.dart' as _i3;
 
 
-/// @author George David
-/// email: georgequin19@gmail.com
-/// Feb, 2024
+/// @author Amrah sali
+/// email: saliamrah300@gmail.com
+/// sept, 2025
+///
 ///
 
 class Routes {
