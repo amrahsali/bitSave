@@ -1,32 +1,13 @@
 {
   "project_info": {
-    "project_number": "264595421239",
-    "project_id": "estate360-ac62d",
-    "storage_bucket": "estate360-ac62d.firebasestorage.app"
+    "project_number": "494897050275",
+    "project_id": "bitsave-c7b57",
+    "storage_bucket": "bitsave-c7b57.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:264595421239:android:b219ac3209517b3ab5a7b2",
-        "android_client_info": {
-          "package_name": "com.echobitstech.estate360"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBEdWqhUMwEkUdFgxdyTwzUN0wXaAwBxoE"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:264595421239:android:f8cda7b0ebfc4c1cb5a7b2",
+        "mobilesdk_app_id": "1:494897050275:android:f375a304129e0669258516",
         "android_client_info": {
           "package_name": "com.echobitstech.estate360Security"
         }
@@ -34,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBEdWqhUMwEkUdFgxdyTwzUN0wXaAwBxoE"
+          "current_key": "AIzaSyAw0y2EvFevcdF7eXUJ6y416Z9SOlhWhbg"
         }
       ],
       "services": {

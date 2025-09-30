@@ -17,10 +17,13 @@ import 'core/utils/config.dart';
 import 'core/utils/constant.dart';
 import 'core/utils/local_store_dir.dart';
 import 'core/utils/local_stotage.dart';
+import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await initialize();
   final NodelessSdk sdk = NodelessSdk();
   const secureStorage = FlutterSecureStorage();
@@ -30,11 +33,6 @@ Future<void> main() async {
     secureStorage.write(key: "mnemonic", value: mnemonic);
   }
    setupLocator();
-  // setupDialogUi();
-  // FirebaseMessaging.instance.requestPermission();
-  // FlutterError.onError = (errorDetails) {
-  //   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-  // };
 
   await reconnect(sdk: sdk, mnemonic: mnemonic);
 

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -27,24 +28,23 @@ class AuthViewModel extends BaseViewModel {
 
   final firstname = TextEditingController();
   final lastname = TextEditingController();
-  final email = TextEditingController();
   final phone = TextEditingController();
   final estateController = TextEditingController();
   final apartmentController = TextEditingController();
-  final password = TextEditingController();
   final cPassword = TextEditingController();
-  bool obscure = true;
   bool remember = false;
   late PhoneNumber phoneNumber;
   final otp = TextEditingController();
   String selectedEstateId = '';
-
+  final email = TextEditingController();
+  final password = TextEditingController();
   int countdown = 0;
   Timer? _timer;
   bool get isCountdownActive => countdown > 0;
-
+  bool obscure = true;
   String? errorMessage;
   bool codeSent = false;
+  final _auth = FirebaseAuth.instance;
 
   @override
   void dispose() {
@@ -81,93 +81,32 @@ class AuthViewModel extends BaseViewModel {
     });
   }
 
-  // void login() async {
-  //   setBusy(true);
-  //
-  //   try {
-  //     ApiResponse res = await repo.login({
-  //       "username": email.text,
-  //       "password": password.text,
-  //       "isWebLogin": false
-  //     });
-  //
-  //     if (res.statusCode == 200) {
-  //       print("User login successful. Navigating to homeView...");
-  //
-  //       userLoggedIn.value = true;
-  //
-  //       // ✅ Extract tokens correctly
-  //       final String accessToken = res.data['data']['accessToken'] ?? '';
-  //       final String refreshToken = res.data['data']['refreshToken'] ?? '';
-  //
-  //       final userData = res.data['data']['user'];
-  //       profile.value = User.fromJson(Map<String, dynamic>.from(userData));
-  //
-  //       if ((profile.value.roles ?? [])
-  //           .any((r) => r.name?.toUpperCase() != 'ESTATE_SECURITY')) {
-  //         locator<SnackbarService>().showSnackbar(
-  //           message:
-  //               "Your account is not authorized to login as a security guard.",
-  //           duration: const Duration(seconds: 2),
-  //         );
-  //         setBusy(false);
-  //         return;
-  //       }
-  //       if(profile.value.estates == null|| profile.value.estates!.isEmpty) {
-  //         locator<SnackbarService>().showSnackbar(
-  //           message: "You have not been assigned to any estate, please contact your estate manager.",
-  //           duration: const Duration(seconds: 2),
-  //         );
-  //         setBusy(false);
-  //         return;
-  //       }
-  //
-  //       locator<LocalStorage>().save(LocalStorageDir.authToken, accessToken);
-  //       locator<LocalStorage>()
-  //           .save(LocalStorageDir.authRefreshToken, refreshToken);
-  //       locator<LocalStorage>()
-  //           .save(LocalStorageDir.authUser, jsonEncode(userData));
-  //       locator<LocalStorage>().save(LocalStorageDir.remember, remember);
-  //
-  //       locator<SnackbarService>().showSnackbar(
-  //         message: 'Login successful',
-  //         duration: const Duration(seconds: 2),
-  //       );
-  //
-  //       await updateDeviceDetails();
-  //       // ✅ Navigate to HomeView
-  //       locator<NavigationService>().clearStackAndShow(Routes.homeView);
-  //       notifyListeners();
-  //     } else {
-  //       setBusy(false);
-  //       String errorMessage = "Internal server error, try again later";
-  //
-  //       if (res.data["message"] is String) {
-  //         errorMessage = res.data["message"];
-  //       } else if (res.data["message"] is List<String>) {
-  //         errorMessage = res.data["message"].join('\n');
-  //       }
-  //
-  //       locator<SnackbarService>().showSnackbar(
-  //         message: errorMessage,
-  //         duration: const Duration(seconds: 3),
-  //       );
-  //     }
-  //   } catch (e, stackTrace) {
-  //     locator<SnackbarService>().showSnackbar(
-  //       message: "Incorrect Username or Password",
-  //       duration: const Duration(seconds: 3),
-  //     );
-  //     print("Error: $stackTrace");
-  //     setBusy(false);
-  //   }
-  //
-  //   setBusy(false);
-  // }
-  void login() async {
+  Future<void> login() async {
+    setBusy(true);
+    try {
+      final credential = await _auth.signInWithEmailAndPassword(
+        email: email.text.trim(),
+        password: password.text.trim(),
+      );
 
-        locator<NavigationService>().clearStackAndShow(Routes.homeView);
-        notifyListeners();
+      // Login success → go to home
+      locator<NavigationService>().clearStackAndShow(Routes.homeView);
+    } on FirebaseAuthException catch (e) {
+      String message = '';
+      if (e.code == 'user-not-found') {
+        message = 'No user found for that email.';
+      } else if (e.code == 'wrong-password') {
+        message = 'Wrong password provided.';
+      } else {
+        message = e.message ?? 'Login failed';
+      }
+
+      locator<SnackbarService>().showSnackbar(message: message);
+    } catch (e) {
+      locator<SnackbarService>().showSnackbar(message: e.toString());
+    } finally {
+      setBusy(false);
+    }
   }
 
 

@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyCe5vzKTgeSROs8wOEMM1kDcFdz_HvI6Ho</string>
+	<string>AIzaSyC9slF4-pBWUg-0tNU2fym_gwz1XTN3hDA</string>
 	<key>GCM_SENDER_ID</key>
-	<string>264595421239</string>
+	<string>494897050275</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.echobitstech.estate360Security</string>
 	<key>PROJECT_ID</key>
-	<string>estate360-ac62d</string>
+	<string>bitsave-c7b57</string>
 	<key>STORAGE_BUCKET</key>
-	<string>estate360-ac62d.firebasestorage.app</string>
+	<string>bitsave-c7b57.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:264595421239:ios:ef35d5bc09968df5b5a7b2</string>
+	<string>1:494897050275:ios:1330199201ea8522258516</string>
 </dict>
 </plist>

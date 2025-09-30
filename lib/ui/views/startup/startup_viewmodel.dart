@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.locator.dart';
@@ -13,38 +14,37 @@ import '../auth/auth_view.dart';
 
 class StartupViewModel extends BaseViewModel {
   final _navigationService = locator<NavigationService>();
+  final _auth = FirebaseAuth.instance;
 
   // Place anything here that needs to happen before we get into the application
   Future runStartupLogic() async {
     await Future.delayed(const Duration(seconds: 3));
 
-    String? token = await locator<LocalStorage>().fetch(LocalStorageDir.authToken);
-    String? user = await locator<LocalStorage>().fetch(LocalStorageDir.authUser);
-    bool? onboarded = await locator<LocalStorage>().fetch(LocalStorageDir.onboarded);
-    print('value of token is: $token');
-    print('value of user is: $user');
-    if (token != null && user != null) {
+    // ✅ Check Firebase authentication state
+    final user = _auth.currentUser;
+
+    if (user != null) {
+      // User is logged in
       userLoggedIn.value = true;
-      profile.value = User.fromJson(Map<String, dynamic>.from(jsonDecode(user)));
-      // getProfile();
+
+      // Optional: If you want to still use your backend profile
+      // try loading saved profile from local storage
+      String? userJson =
+      await locator<LocalStorage>().fetch(LocalStorageDir.authUser);
+
+      if (userJson != null) {
+        profile.value =
+            User.fromJson(Map<String, dynamic>.from(jsonDecode(userJson)));
+      }
+
+      // Or fetch fresh profile from API
+      // await getProfile();
+
       _navigationService.clearStackAndShow(Routes.homeView);
-    }
-    else{
+    } else {
+      // User is not logged in → go to AuthView
       _navigationService.replaceWithAuthView(authType: AuthType.adminLogin);
     }
-
-    // if (onboarded == null || onboarded == false) {
-    //   _navigationService.replaceWithAuthView(authType: AuthType.selection);
-    //   // _navigationService.replaceWithOnboardingView();
-    // } else {
-    //   if (token != null && user != null) {
-    //     userLoggedIn.value = true;
-    //     profile.value = User.fromJson(Map<String, dynamic>.from(jsonDecode(user)));
-    //     getProfile();
-    //      _navigationService.replaceWithHomeView();
-    //   }
-    //   _navigationService.replaceWithAuthView(authType: AuthType.login);
-    // }
   }
 
   void getProfile() async {
@@ -53,13 +53,12 @@ class StartupViewModel extends BaseViewModel {
       if (res.statusCode == 200) {
         profile.value =
             User.fromJson(Map<String, dynamic>.from(res.data['data']));
-        await locator<LocalStorage>().save(LocalStorageDir.profileView, res.data["data"]);
+        await locator<LocalStorage>()
+            .save(LocalStorageDir.profileView, res.data["data"]);
         notifyListeners();
       }
     } catch (e) {
       throw Exception(e);
     }
   }
-
-
 }
