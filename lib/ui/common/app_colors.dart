@@ -13,6 +13,17 @@ const Color kcLightGrey = Color(0xFFFAFAFA);
 const Color kcOrange = Color(0xFFDD6700);
 const Color kcBackgroundColor = Color(0xFFFFF3DB);
 
+const BoxDecoration kcGradientDecoration = BoxDecoration(
+  gradient: LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      Color(0xFF432E9D),
+      Colors.black,
+    ],
+  ),
+);
+
 LinearGradient get kcAppBackgroundGradient => LinearGradient(
   begin: Alignment.topCenter,
   end: Alignment.bottomCenter,

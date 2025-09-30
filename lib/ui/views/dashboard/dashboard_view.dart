@@ -1,4 +1,5 @@
 import 'package:bitSave/core/network/noodless_sdk.dart';
+import 'package:bitSave/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -464,7 +465,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
               style: GoogleFonts.redHatDisplay(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: Colors.black87,
+                color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
                 letterSpacing: -0.2,
               ),
             ),
@@ -533,7 +534,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
       margin: const EdgeInsets.symmetric(vertical: 4),
       child: Material(
         borderRadius: BorderRadius.circular(18),
-        color: Colors.white,
+        color: uiMode.value == AppUiModes.dark ? kcDarkGreyColor : kcWhiteColor,
         elevation: 0,
         child: InkWell(
           onTap: () => _showTransactionDetails(transaction),
@@ -580,7 +581,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                             style: GoogleFonts.redHatDisplay(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
-                              color: Colors.black87,
+                              color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
                             ),
                           ),
                           Text(

@@ -1,8 +1,10 @@
+import 'package:bitSave/state.dart';
 import 'package:bitSave/ui/common/app_colors.dart';
 import 'package:bitSave/ui/views/Profile/profile_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked/stacked.dart';
+import 'package:bitSave/state.dart';
 import '../../common/ui_helpers.dart';
 
 class UserProfilePage extends StatelessWidget {
@@ -55,7 +57,7 @@ class UserProfilePage extends StatelessWidget {
             style: GoogleFonts.redHatDisplay(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: Theme.of(context).brightness == Brightness.dark ? kcWhiteColor : kcBlackColor,
             ),
           ),
         ],
@@ -116,7 +118,7 @@ class UserProfilePage extends StatelessWidget {
           style: GoogleFonts.redHatDisplay(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
           ),
         ),
         verticalSpaceSmall,
@@ -164,7 +166,7 @@ verticalSpaceSmall,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.grey[50],
+          color: uiMode.value == AppUiModes.dark ? kcDarkGreyColor : kcWhiteColor,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: Colors.grey[200]!),
         ),
@@ -188,7 +190,7 @@ verticalSpaceSmall,
                     style: GoogleFonts.redHatDisplay(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black87,
+                      color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
                     ),
                   ),
                   const SizedBox(height: 4),
