@@ -1,16 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:bitSave/ui/views/dashboard/profileDetailsDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
-import '../../../app/app.locator.dart';
 import '../../../app/app.logger.dart';
 import '../../../core/data/models/dahsboard_model.dart';
 import '../../../core/data/models/notification_model.dart';
 import '../../../core/data/models/update.dart';
 import '../../../core/data/models/mavapay_models.dart';
-import '../../../core/network/api_response.dart';
 import '../../../core/network/interceptors.dart';
 import '../../../core/network/mavapay_service.dart';
 import 'package:flutter/material.dart';
@@ -53,13 +49,10 @@ class TodoItem {
 class DashboardViewModel extends BaseViewModel {
   final log = getLogger("DashboardViewModel");
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
- // Barcode? result;
- // QRViewController? controller;
   DashboardModel? dashboardData;
   Timer? _autoRefreshTimer;
   final MavapayService _mavapayService = MavapayService();
 
-  // Financial data
   double _totalBalance = 20999.99;
   double _cryptoBalance = 72.80;
   double _cryptoBalanceInSats = 0.0;
@@ -70,7 +63,7 @@ class DashboardViewModel extends BaseViewModel {
   // Mavapay data
   MavapayBalance? _mavapayBalance;
   MavapayExchangeRate? _exchangeRate;
-  String _userId = "user_123"; // Replace with actual user ID
+  String _userId = "user_123";
 
   // Notifications and updates
   List<NotificationModel> notifications = [];
@@ -231,7 +224,7 @@ class DashboardViewModel extends BaseViewModel {
   }
 
   // Add this to your DashboardViewModel
-  int _selectedAccountType = 0; // 0 = Fiat, 1 = Crypto
+  int _selectedAccountType = 0;
 
   int get selectedAccountType => _selectedAccountType;
 
@@ -241,44 +234,8 @@ class DashboardViewModel extends BaseViewModel {
   }
 
 
-  // API methods
-  Future<void> getDashboardData() async {
-    setBusy(true);
-    try {
-      final response = await repo.getDashboardData();
-      if (response.statusCode == 200 && response.data['success'] == true) {
-        dashboardData = DashboardModel.fromJson(response.data['data']);
-      } else {
-        log.e("Failed to fetch dashboard data: ${response.data['message']}");
-      }
-    } catch (e) {
-      log.e("Error fetching dashboard data: $e");
-    }
-    setBusy(false);
-  }
-
-  // Future<void> getNotifications() async {
-  //   setBusy(true);
-  //   try {
-  //     final response = await repo.getNotifications();
-  //     if (response.statusCode == 200 && response.data['success'] == true) {
-  //       notifications = (response.data['data'] as List)
-  //           .map((json) => NotificationModel.fromJson(json))
-  //           .toList();
-  //       notifications.sort((a, b) => b.sentAt.compareTo(a.sentAt));
-  //     } else {
-  //       log.e("Failed to fetch notifications: ${response.data['message']}");
-  //     }
-  //   } catch (e) {
-  //     log.e("Error fetching notifications: $e");
-  //   }
-  //   setBusy(false);
-  // }
-
   Future<void> refreshData() async {
     setBusy(true);
-    //await getNotifications();
-    await getDashboardData();
     notifyListeners();
     setBusy(false);
   }

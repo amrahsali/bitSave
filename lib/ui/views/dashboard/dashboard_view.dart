@@ -19,7 +19,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
   @override
   Widget builder(BuildContext context, DashboardViewModel viewModel, Widget? child) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         child: _buildBody(context, viewModel),
