@@ -2,9 +2,9 @@ import 'package:bitSave/ui/common/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked/stacked.dart';
-
+import 'package:bitSave/state.dart';
 import '../../common/ui_helpers.dart';
-import '../dashboard/balance.dart';
+// import '../dashboard/balance.dart';
 import 'Reports_viewmodel.dart';
 
 class Savings extends StatelessWidget {
@@ -13,7 +13,7 @@ class Savings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       body: ViewModelBuilder<ReportsViewModel>.reactive(
         onViewModelReady: (model) => model.init(),
         viewModelBuilder: () => ReportsViewModel(),
@@ -63,7 +63,7 @@ class Savings extends StatelessWidget {
           style: GoogleFonts.redHatDisplay(
             fontSize: 20,
             fontWeight: FontWeight.w700,
-            color: Colors.black87,
+            color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
           ),
         ),
         const SizedBox(height: 10),
@@ -253,7 +253,7 @@ class Savings extends StatelessWidget {
                 style: GoogleFonts.redHatDisplay(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
                 ),
               ),
               GestureDetector(
@@ -346,7 +346,7 @@ class Savings extends StatelessWidget {
             style: GoogleFonts.redHatDisplay(
               fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
             ),
           ),
           Text(
@@ -393,7 +393,7 @@ class Savings extends StatelessWidget {
                 style: GoogleFonts.redHatDisplay(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
                 ),
               )
             ],
@@ -431,7 +431,7 @@ class Savings extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: uiMode.value == AppUiModes.dark ? kcDarkGreyColor : kcWhiteColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
@@ -464,7 +464,7 @@ class Savings extends StatelessWidget {
                     style: GoogleFonts.redHatDisplay(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
                     ),
                   ),
                 ],

@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked/stacked.dart';
 import '../../common/app_colors.dart';
 import '../../dialogs/bottom_sheets/emergency_bottom_sheet.dart';
 import 'home_viewmodel.dart';
+import '../../../state.dart';
+import '../../../app/app.locator.dart';
+import '../../../core/utils/local_stotage.dart';
+import '../../../core/utils/local_store_dir.dart';
+
 
 class HomeView extends StackedView<HomeViewModel> {
   const HomeView({Key? key}) : super(key: key);
@@ -12,7 +18,7 @@ class HomeView extends StackedView<HomeViewModel> {
   @override
   Widget builder(BuildContext context, HomeViewModel viewModel, Widget? child) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       appBar: _buildAppBar(context, viewModel),
       body: PageView(
         controller: viewModel.pageController,
@@ -26,40 +32,65 @@ class HomeView extends StackedView<HomeViewModel> {
   PreferredSizeWidget _buildAppBar(BuildContext context, HomeViewModel viewModel) {
     return AppBar(
       toolbarHeight: 50,
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       elevation: 0,
       automaticallyImplyLeading: false,
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // SvgPicture.asset(
-          //   'assets/icons/esures_logo.svg',
-          //   height: 40,
-          //   width: 40,
-          // ),
           Text(
             'BitSave',
             style: GoogleFonts.redHatDisplay(
-              color: kcPrimaryColor,
+              color: Theme.of(context).brightness == Brightness.dark ? kcBlackColor : kcPrimaryColor,
               fontWeight: FontWeight.bold,
             ),
           ),
-          InkWell(
-            onTap: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-                ),
-                builder: (context) => const CreateEmergencySheet(),
-              );
-            },
-            child: SvgPicture.asset(
-              'assets/svg_icons/ph_bell-simple.svg',
-              height: 35,
-              width: 35,
-            ),
+          
+          Row(
+            children: [
+              ValueListenableBuilder<AppUiModes>(
+                valueListenable: uiMode,
+                builder: (context, mode, _) {
+                  final isDark = mode == AppUiModes.dark;
+                  return IconButton(
+                    tooltip: isDark ? 'Switch to light mode' : 'Switch to dark mode',
+                    onPressed: () async {
+                      uiMode.value = isDark ? AppUiModes.light : AppUiModes.dark;
+
+                      // update system UI overlay (status bar icons) so they remain visible
+                      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                        statusBarColor: Colors.transparent,
+                        statusBarIconBrightness: uiMode.value == AppUiModes.dark
+                            ? Brightness.light
+                            : Brightness.dark,
+                        statusBarBrightness: uiMode.value == AppUiModes.dark
+                            ? Brightness.dark
+                            : Brightness.light,
+                      ));
+
+                      try {
+                        await locator<LocalStorage>().save(
+                          LocalStorageDir.uiMode,
+                          uiMode.value == AppUiModes.dark ? 'dark' : 'light',
+                        );
+                      } catch (e) {
+                        // if your LocalStorage method name differs, replace `.save(...)`
+                        // with the correct method (e.g. `set`, `write`, `store`, etc).
+                        // Ignoring errors here keeps toggling working even if persistence fails.
+                        // print('persist ui mode failed: $e');
+                      }
+                    },
+                    icon: Icon(
+                      isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+                      color: Theme.of(context).brightness == Brightness.dark ? kcBlackColor : kcPrimaryColor,
+                    ),
+                  );
+                },
+              ),
+
+              const SizedBox(width: 8),
+            
+            ],
           ),
         ],
       ),
