@@ -2,12 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
-import '../../../state.dart';
-import '../../../app/app.router.dart';
-import '../../../app/app.locator.dart';
 import '../../common/app_colors.dart';
-import '../../components/submit_button.dart';
 import '../../dialogs/bottom_sheets/emergency_bottom_sheet.dart';
 import 'home_viewmodel.dart';
 

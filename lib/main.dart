@@ -1,10 +1,12 @@
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:bitSave/state.dart';
+import 'package:bitSave/ui/common/app_colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_breez_liquid/flutter_breez_liquid.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'app/app.dialogs.dart';
@@ -86,7 +88,12 @@ class _MyAppState extends State<MyApp> {
       }
     }
   }
-
+  BoxDecoration _getBackgroundDecoration(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    return brightness == Brightness.dark
+        ? kcDarkBackgroundDecoration
+        : kcLightBackgroundDecoration;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,8 +102,8 @@ class _MyAppState extends State<MyApp> {
       builder: (context, value, child) => MaterialApp(
         title: 'bitSave',
         // theme: value == AppUiModes.dark ? darkTheme() : lightTheme(),
-        theme: ThemeData.light(useMaterial3: true),
-        darkTheme: ThemeData.dark(),
+        theme: _buildLightTheme(),
+        darkTheme: _buildDarkTheme(),
         themeMode: value == AppUiModes.dark ? ThemeMode.dark : ThemeMode.light,
         initialRoute: Routes.startupView,
         onGenerateRoute: StackedRouter().onGenerateRoute,
@@ -105,7 +112,55 @@ class _MyAppState extends State<MyApp> {
         navigatorObservers: [
           StackedService.routeObserver,
         ],
+        builder: (context, child) {
+          return Container(
+            decoration: _getBackgroundDecoration(context),
+            child: child!,
+          );
+        },
       ),
     );
   }
+
+ThemeData _buildLightTheme() {
+  return ThemeData.light(useMaterial3: true).copyWith(
+    scaffoldBackgroundColor: Colors.transparent, // Make scaffold transparent
+    appBarTheme: AppBarTheme(
+      backgroundColor: kcWhiteColor,
+      elevation: 0,
+      iconTheme: const IconThemeData(color: kcBlackColor),
+      titleTextStyle: GoogleFonts.redHatDisplay(
+        color: kcBlackColor,
+        fontWeight: FontWeight.bold,
+        fontSize: 18,
+      ),
+    ),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: kcWhiteColor,
+      selectedItemColor: kcPrimaryColor,
+      unselectedItemColor: Colors.grey,
+    ),
+  );
+}
+
+ThemeData _buildDarkTheme() {
+  return ThemeData.dark().copyWith(
+    scaffoldBackgroundColor: Colors.transparent,
+    appBarTheme: AppBarTheme(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      iconTheme: const IconThemeData(color: kcWhiteColor),
+      titleTextStyle: GoogleFonts.redHatDisplay(
+        color: kcWhiteColor,
+        fontWeight: FontWeight.bold,
+        fontSize: 18,
+      ),
+    ),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: Colors.transparent,
+      selectedItemColor: kcWhiteColor,
+      unselectedItemColor: kcWhiteColor.withOpacity(0.5),
+    ),
+  );
+}
 }
