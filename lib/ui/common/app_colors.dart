@@ -13,16 +13,58 @@ const Color kcLightGrey = Color(0xFFFAFAFA);
 const Color kcOrange = Color(0xFFDD6700);
 const Color kcBackgroundColor = Color(0xFFFFF3DB);
 
-
-   LinearGradient customOnboardingGradient = LinearGradient(
+const BoxDecoration kcGradientDecoration = BoxDecoration(
+  gradient: LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      const Color(0xFF110C1D).withOpacity(0.0),
-      const Color(0xFF110C1D),
+      Color(0xFF432E9D),
+      Colors.black,
     ],
-  );
-final List<Color> avatarColors = [
+  ),
+);
+
+LinearGradient get kcAppBackgroundGradient => LinearGradient(
+  begin: Alignment.topCenter,
+  end: Alignment.bottomCenter,
+  colors: [
+    kcPrimaryColor, // purple
+    kcBlackColor,    // black
+  ],
+);
+
+LinearGradient get kcCardGradient => LinearGradient(
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+  colors: [
+    kcPrimaryColor.withOpacity(0.8),
+    kcPrimaryColor,
+  ],
+);
+
+// Light theme background
+Color get kcLightBackground => kcWhiteColor;
+
+// Dark theme background (use gradient)
+BoxDecoration get kcDarkBackgroundDecoration => BoxDecoration(
+  gradient: kcAppBackgroundGradient,
+);
+
+BoxDecoration get kcLightBackgroundDecoration => BoxDecoration(
+  color: kcLightBackground,
+);
+
+LinearGradient kcCustomOnboardingGradient = LinearGradient(
+  begin: Alignment.topCenter,
+  end: Alignment.bottomCenter,
+  colors: [
+    const Color(0xFF110C1D).withOpacity(0.0),
+    const Color(0xFF110C1D),
+  ],
+);
+
+
+final List<Color> kcAvatarColors = [
   Color(0xFFF44336),
   Color(0xFFE91E63),
   Color(0xFF9C27B0),

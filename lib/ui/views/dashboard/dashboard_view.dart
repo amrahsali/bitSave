@@ -1,4 +1,5 @@
 import 'package:bitSave/core/network/noodless_sdk.dart';
+import 'package:bitSave/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,6 +8,7 @@ import '../../common/app_colors.dart';
 import '../../common/ui_helpers.dart';
 import '../../dialogs/recieve_dialog.dart';
 import '../../dialogs/send_dialog.dart';
+import '../../dialogs/add_naira_dialog.dart';
 import 'balance.dart';
 import 'dashboard_viewmodel.dart';
 
@@ -18,7 +20,6 @@ class DashboardView extends StackedView<DashboardViewModel> {
   @override
   Widget builder(BuildContext context, DashboardViewModel viewModel, Widget? child) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         child: _buildBody(context, viewModel),
@@ -261,7 +262,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
           Row(
             children: [
               Text(
-                '₿ ${viewModel.cryptoBalance.toStringAsFixed(4)}',
+                '${viewModel.cryptoBalanceInSats.toStringAsFixed(0)} sats',
                 style: GoogleFonts.redHatDisplay(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
@@ -276,11 +277,31 @@ class DashboardView extends StackedView<DashboardViewModel> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  '₦${(viewModel.cryptoBalance * 50000).toStringAsFixed(2)}',
+                  '₿ ${viewModel.cryptoBalance.toStringAsFixed(6)}',
                   style: GoogleFonts.redHatDisplay(
                     fontSize: 14,
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '₦${(viewModel.cryptoBalance * 50000).toStringAsFixed(2)}',
+                  style: GoogleFonts.redHatDisplay(
+                    fontSize: 12,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
@@ -325,6 +346,24 @@ class DashboardView extends StackedView<DashboardViewModel> {
     );
   }
 
+  void _handleAddAction(BuildContext context, DashboardViewModel viewModel) {
+    if (viewModel.selectedAccountType == 0) {
+      // Fiat account - show Add Naira dialog
+      showDialog(
+        context: context,
+        builder: (context) => AddNairaDialog(
+          userId: "user_123", // Replace with actual user ID
+          onFundsAdded: (nairaAmount, satsAmount) {
+            viewModel.addNairaFunds(nairaAmount, satsAmount);
+          },
+        ),
+      );
+    } else {
+      // Crypto account - show Bitcoin receive dialog
+      viewModel.handleAddAction(viewModel.selectedAccountType);
+    }
+  }
+
   Widget _buildActionButtons(BuildContext context, DashboardViewModel viewModel) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -333,7 +372,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
           'assets/icons/square-plus.svg',
           'Add',
           viewModel.selectedAccountType == 0 ? Colors.blue : Colors.purple,
-              () => viewModel.handleAddAction(viewModel.selectedAccountType),
+              () => _handleAddAction(context, viewModel),
         ),
         _buildActionButton(
           'assets/icons/square-arrow-up.svg',
@@ -426,7 +465,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
               style: GoogleFonts.redHatDisplay(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: Colors.black87,
+                color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
                 letterSpacing: -0.2,
               ),
             ),
@@ -495,7 +534,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
       margin: const EdgeInsets.symmetric(vertical: 4),
       child: Material(
         borderRadius: BorderRadius.circular(18),
-        color: Colors.white,
+        color: uiMode.value == AppUiModes.dark ? kcDarkGreyColor : kcWhiteColor,
         elevation: 0,
         child: InkWell(
           onTap: () => _showTransactionDetails(transaction),
@@ -542,7 +581,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
                             style: GoogleFonts.redHatDisplay(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
-                              color: Colors.black87,
+                              color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
                             ),
                           ),
                           Text(
