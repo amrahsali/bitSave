@@ -7,9 +7,14 @@ import '../../../core/network/interceptors.dart';
 
 class ReportsViewModel extends BaseViewModel {
   final TextEditingController searchController = TextEditingController();
+  double _todayChange = 20.50;
+  double _cryptoBalance = 72.80;
+
 
   List<NotificationModel> allNotifications = [];
   List<NotificationModel> filteredNotifications = [];
+  double get todayChange => _todayChange;
+  double get cryptoBalance => _cryptoBalance;
 
   /// ✅ **Initialize & Fetch Notifications**
   Future<void> init() async {
@@ -83,5 +88,58 @@ class ReportsViewModel extends BaseViewModel {
     }
     setBusy(false);
   }
+  void quickSave() {
+    // Implement quick save functionality
+    // This could open a dialog or navigate to quick save screen
+  }
+
+  void selectRecommendation(String amount, String purpose) {
+    // Handle recommendation selection
+    // This could navigate to a savings setup screen
+  }
+
+  void unlockSavings(String savingsTitle) {
+    // Handle unlock savings functionality
+    // This could show a confirmation dialog
+  }
+
+  void completeSavings(String savingsTitle) {
+    // Handle complete savings functionality
+    // This could show a confirmation dialog and process completion
+  }
+
+  void showMoreOptions() {
+    // Handle complete savings functionality
+    // This could show a confirmation dialog and process completion
+  }
+  // Insights Page Methods
+  void setSavingsGoal() {
+    // Implement set savings goal functionality
+    // This could navigate to a savings goal setup screen
+  }
+
+  void viewFinancialDetails() {
+    // Implement view financial details functionality
+  }
+
+  void manageSavings() {
+    // Implement manage savings functionality
+  }
+
+  // Chart data methods
+  List<double> getChartData() {
+    // Return chart data for the financial overview
+    return [8000, 12000, 16000, 14000, 10000, 6000];
+  }
+
+  // Financial data methods
+  double getTotalIncome() => 15000.0;
+  double getTotalExpenses() => 10000.0;
+  String getBTCBalance() => "14,530.12";
+  String getSavingsBalance() => "13,540.40";
+
+  // Progress data
+  double getBusinessProgress() => 0.85;
+  String getBusinessAmount() => "\$12,400.00";
 
 }

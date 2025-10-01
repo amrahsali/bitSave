@@ -122,7 +122,7 @@ class _ChangePasswordSheetState extends State<ChangePasswordSheet> {
                     boldText: true,
                     label: "Change Password",
                     submit: () async {
-                       await viewModel.changePassword(context);
+
                     },
                     color: kcPrimaryColor,
                   ),

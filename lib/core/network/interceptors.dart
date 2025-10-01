@@ -7,9 +7,10 @@ import '../data/repositories/repository.dart';
 import '../utils/dialog_utils.dart';
 import 'api_service.dart';
 
-/// @author George David
-/// email: georgequin19@gmail.com
-/// Feb, 2024
+/// @author Amrah sali
+/// email: saliamrah300@gmail.com
+/// sept, 2025
+///
 ///
 
 final nav = locator<NavigationService>();

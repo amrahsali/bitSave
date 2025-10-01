@@ -46,3 +46,30 @@ extension ConfigCopyWith on Config {
     );
   }
 }
+
+/// Utility class for currency conversions between Naira, Bitcoin, and Satoshis
+class CurrencyConverter {
+  /// Convert Naira to Satoshis
+  static double nairaToSats(double nairaAmount, double nairaPerBtcRate) {
+    // 1 BTC = 100,000,000 sats
+    const satsPerBtc = 100000000.0;
+    final btcAmount = nairaAmount / nairaPerBtcRate;
+    return btcAmount * satsPerBtc;
+  }
+
+  /// Convert Bitcoin to Satoshis
+  static double bitcoinToSats(double btcAmount) {
+    return btcAmount * 100000000.0;
+  }
+
+  /// Convert Satoshis to Bitcoin
+  static double satsToBitcoin(double satsAmount) {
+    return satsAmount / 100000000.0;
+  }
+
+  /// Convert Satoshis to Naira
+  static double satsToNaira(double satsAmount, double nairaPerBtcRate) {
+    final btcAmount = satsToBitcoin(satsAmount);
+    return btcAmount * nairaPerBtcRate;
+  }
+}

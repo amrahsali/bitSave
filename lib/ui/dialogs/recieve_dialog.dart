@@ -109,14 +109,33 @@ class _ReceivePaymentDialogState extends State<ReceivePaymentDialog> {
       ];
     }
 
-    Future<void> onOkPressed() async {
-      try {
-        setState(() => creatingInvoice = true);
-        int amountSat = int.parse(payerAmountController.text);
-        final prepareReceiveReq = PrepareReceiveRequest(
-          paymentMethod: PaymentMethod.lightning,
-          amount: ReceiveAmount.bitcoin(payerAmountSat: BigInt.from(amountSat)),
-        );
+  Future<void> onOkPressed() async {
+    try {
+      setState(() => creatingInvoice = true);
+      
+      // Validate input
+      if (payerAmountController.text.isEmpty) {
+        throw Exception('Please enter an amount');
+      }
+      
+      int amountSat = int.parse(payerAmountController.text);
+      
+      // Lightning Network amount limits
+      const int minAmountSat = 1; // Minimum 1 satoshi
+      const int maxAmountSat = 4200000; // Maximum ~0.042 BTC (4.2M sats)
+      
+      if (amountSat < minAmountSat) {
+        throw Exception('Amount too small. Minimum is $minAmountSat satoshi');
+      }
+      
+      if (amountSat > maxAmountSat) {
+        throw Exception('Amount too large. Maximum is $maxAmountSat satoshi (~0.042 BTC)');
+      }
+      
+      final prepareReceiveReq = PrepareReceiveRequest(
+        paymentMethod: PaymentMethod.lightning,
+        amount: ReceiveAmount.bitcoin(payerAmountSat: BigInt.from(amountSat)),
+      );
         PrepareReceiveResponse prepareResponse =
         await widget.sdk.prepareReceivePayment(req: prepareReceiveReq);
         setState(() {
@@ -140,12 +159,23 @@ class _ReceivePaymentDialogState extends State<ReceivePaymentDialog> {
           feesSat = null;
           invoiceDestination = null;
         });
-        final errMsg = "Error receiving payment: $e";
+        
+        String errMsg;
+        if (e.toString().contains('amountOutOfRange')) {
+          errMsg = "Amount is out of range. Please enter an amount between 1 and 4,200,000 satoshi.";
+        } else if (e.toString().contains('Amount too small') || e.toString().contains('Amount too large')) {
+          errMsg = e.toString();
+        } else {
+          errMsg = "Error receiving payment: $e";
+        }
+        
         debugPrint(errMsg);
         if (context.mounted) {
           final snackBar = SnackBar(
             behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.red,
             content: Text(errMsg),
+            duration: const Duration(seconds: 5),
           );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
@@ -174,7 +204,9 @@ class _ReceivePaymentDialogState extends State<ReceivePaymentDialog> {
           : TextField(
         controller: payerAmountController,
         decoration: const InputDecoration(
-            label: Text("Enter payer amount in sats")),
+            label: Text("Enter payer amount in sats"),
+            hintText: "1 - 4,200,000 satoshi",
+            helperText: "Lightning Network limits: 1 to 4.2M sats"),
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         keyboardType: TextInputType.number,
       ),

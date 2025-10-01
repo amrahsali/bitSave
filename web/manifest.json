@@ -1,6 +1,6 @@
 {
-    "name": "estate360Security",
-    "short_name": "estate360Security",
+    "name": "bitsave",
+    "short_name": "bitsave",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#hexcode",
