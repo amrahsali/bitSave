@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked/stacked.dart';
+import 'package:bitSave/state.dart';
 import '../../common/app_colors.dart';
 import 'Reports_viewmodel.dart';
 
@@ -10,7 +11,7 @@ class Reports extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       body: ViewModelBuilder<ReportsViewModel>.reactive(
         onViewModelReady: (model) => model.init(),
         viewModelBuilder: () => ReportsViewModel(),
@@ -67,7 +68,7 @@ class Reports extends StatelessWidget {
           style: GoogleFonts.redHatDisplay(
             fontSize: 20,
             fontWeight: FontWeight.w700,
-            color: Colors.black87,
+            color: Theme.of(context).brightness == Brightness.dark ? kcWhiteColor : kcBlackColor,
           ),
         ),
         const SizedBox(height: 10),
@@ -84,7 +85,7 @@ class Reports extends StatelessWidget {
           style: GoogleFonts.redHatDisplay(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
           ),
         ),
         const SizedBox(height: 16),
@@ -121,7 +122,7 @@ class Reports extends StatelessWidget {
       height: 60,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: uiMode.value == AppUiModes.dark ? Colors.white24 : kcWhiteColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
@@ -148,7 +149,7 @@ class Reports extends StatelessWidget {
             title,
             style: GoogleFonts.redHatDisplay(
               fontSize: 14,
-              color: Colors.grey[600],
+              color: uiMode.value == AppUiModes.dark ? Colors.white38 : Colors.grey[600],
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -169,7 +170,7 @@ class Reports extends StatelessWidget {
               style: GoogleFonts.redHatDisplay(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
               ),
             ),
             Container(
@@ -198,7 +199,7 @@ class Reports extends StatelessWidget {
           height: 265,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: uiMode.value == AppUiModes.dark ? Colors.white24 : kcWhiteColor,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: Colors.grey[200]!),
           ),
@@ -302,7 +303,7 @@ class Reports extends StatelessWidget {
                 style: GoogleFonts.redHatDisplay(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
                 ),
               ),
               Icon(Icons.flag_outlined, color: primaryColor),
@@ -353,7 +354,7 @@ class Reports extends StatelessWidget {
           style: GoogleFonts.redHatDisplay(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
           ),
         ),
         const SizedBox(height: 16),
@@ -389,7 +390,7 @@ class Reports extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: uiMode.value == AppUiModes.dark ? kcDarkGreyColor : kcWhiteColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey[200]!),
       ),
@@ -413,7 +414,7 @@ class Reports extends StatelessWidget {
                   style: GoogleFonts.redHatDisplay(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -437,7 +438,7 @@ class Reports extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: uiMode.value == AppUiModes.dark ? kcDarkGreyColor : kcWhiteColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
@@ -459,7 +460,7 @@ class Reports extends StatelessWidget {
                 style: GoogleFonts.redHatDisplay(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                  color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
                 ),
               ),
               Text(

@@ -89,7 +89,7 @@ class _MyAppState extends State<MyApp> {
   BoxDecoration _getBackgroundDecoration(BuildContext context) {
     final brightness = Theme.of(context).brightness;
     return brightness == Brightness.dark
-        ? kcDarkBackgroundDecoration
+        ? kcGradientDecoration
         : kcLightBackgroundDecoration;
   }
 
