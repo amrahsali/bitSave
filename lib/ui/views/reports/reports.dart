@@ -22,7 +22,7 @@ class Reports extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header with time and user info
-                _buildHeader(context, model),
+                _buildWelcomeHeader(),
                 const SizedBox(height: 20),
 
                 // Make the main content scrollable
@@ -59,22 +59,25 @@ class Reports extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, ReportsViewModel model) {
+  Widget _buildWelcomeHeader() {
+    final currentUser = profile.value;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Hi, Kariamtu MH",
+          currentUser.firstName?.isNotEmpty == true
+              ? "Hi, ${currentUser.firstName}"
+              : "Hi, Guest",
           style: GoogleFonts.redHatDisplay(
             fontSize: 20,
-            fontWeight: FontWeight.w700,
-            color: Theme.of(context).brightness == Brightness.dark ? kcWhiteColor : kcBlackColor,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 10),
       ],
     );
   }
+
 
   Widget _buildIncomeExpensesSection(ReportsViewModel model, Color primaryColor) {
     return Column(

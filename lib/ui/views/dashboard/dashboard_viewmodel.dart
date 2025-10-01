@@ -7,9 +7,11 @@ import '../../../core/data/models/dahsboard_model.dart';
 import '../../../core/data/models/notification_model.dart';
 import '../../../core/data/models/update.dart';
 import '../../../core/data/models/mavapay_models.dart';
-import '../../../core/network/interceptors.dart';
+import '../../../core/data/models/user_model.dart';
 import '../../../core/network/mavapay_service.dart';
 import 'package:flutter/material.dart';
+
+import '../../../state.dart';
 
 void prettyPrintJson(dynamic object, {String? tag}) {
   final encoder = const JsonEncoder.withIndent('  ');
@@ -59,7 +61,20 @@ class DashboardViewModel extends BaseViewModel {
   double _todayChange = 20.50;
   List<Transaction> _transactions = [];
   List<TodoItem> _todos = [];
-  
+
+
+
+  void loadProfile(User userFromApi) {
+    profile.value = userFromApi;   // Save to global state
+    notifyListeners();
+  }
+
+  void updateProfile(User newProfile) {
+    profile.value = newProfile; // also update global
+    notifyListeners();
+  }
+
+
   // Mavapay data
   MavapayBalance? _mavapayBalance;
   MavapayExchangeRate? _exchangeRate;

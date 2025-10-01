@@ -53,49 +53,4 @@ class HomeViewModel extends BaseViewModel {
     super.dispose();
   }
 
-
-  Future<bool> createEmergency(String? label, BuildContext context) async {
-    setBusy(true);
-    isCreateEmergencyLoading = true;
-    notifyListeners();
-    _emergencyOperation?.cancel();
-
-    try {
-      _emergencyOperation = CancelableOperation.fromFuture(
-        repo.createEmergency(
-            {
-              "type": label,
-              "description": notesController.text,
-            }
-        ),
-        onCancel: () {
-          log.i('Emergency creation was cancelled.');
-          isCreateEmergencyLoading = false;
-        },
-      );
-
-      ApiResponse res = await _emergencyOperation!.value;
-
-      print('value of reg response is : ${res.data}');
-
-      if (res.statusCode == 200) {
-        locator<SnackbarService>().showSnackbar(
-          message: "Emergency successfully, all residents will receive a notification",
-          duration: const Duration(seconds: 3),
-        );
-        Navigator.pop(context);
-        return true;
-      } else {
-        log.e('API request failed with status: ${res.statusCode}');
-        return false;
-      }
-    } catch (e) {
-      log.e('Failed to create visitor. Please try again: $e');
-      return false;
-    } finally {
-      setBusy(false);
-      isCreateEmergencyLoading = false;
-      notifyListeners();
-    }
-  }
 }

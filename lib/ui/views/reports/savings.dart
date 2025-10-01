@@ -24,7 +24,7 @@ class Savings extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header with time and user info
-                _buildHeader(context, model),
+                _buildWelcomeHeader(),
                 const SizedBox(height: 20),
 
                 // Make the main content scrollable
@@ -36,7 +36,7 @@ class Savings extends StatelessWidget {
                       children: [
                         _buildAccountContent(model),
                         const SizedBox(height: 20),
-                        _buildQuickSaveButton(model, kcPrimaryColor),
+                        _buildQuickSaveButton(context, model, kcPrimaryColor),
                         const SizedBox(height: 30),
                         _buildRecommendationsSection(model, kcPrimaryColor),
                         const SizedBox(height: 30),
@@ -54,26 +54,32 @@ class Savings extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, ReportsViewModel model) {
+  Widget _buildWelcomeHeader() {
+    final currentUser = profile.value;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Hi, Kariamtu MH",
+          currentUser.firstName?.isNotEmpty == true
+              ? "Hi, ${currentUser.firstName}"
+              : "Hi, Guest",
           style: GoogleFonts.redHatDisplay(
             fontSize: 20,
-            fontWeight: FontWeight.w700,
-            color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 10),
       ],
     );
   }
 
   Widget _buildAccountContent(ReportsViewModel viewModel) {
+    if (viewModel.selectedAccountType == 0) {
       return _buildFiatBalanceSection(viewModel);
+    } else {
+      return _buildCryptoBalanceSection(viewModel);
     }
+  }
 
   Widget _buildFiatBalanceSection(ReportsViewModel viewModel) {
     return Container(
@@ -82,7 +88,7 @@ class Savings extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+          colors: [Color(0xFFf093fb), Color(0xFFf5576c)],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
@@ -120,7 +126,7 @@ class Savings extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  'Fiat',
+                  'Bitcoin',
                   style: GoogleFonts.redHatDisplay(
                     color: Colors.white,
                     fontSize: 12,
@@ -150,21 +156,21 @@ class Savings extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  '₿ ${viewModel.cryptoBalance.toStringAsFixed(2)}',
-                  style: GoogleFonts.redHatDisplay(
-                    fontSize: 14,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
+              // Container(
+              //   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              //   decoration: BoxDecoration(
+              //     color: Colors.white.withOpacity(0.2),
+              //     borderRadius: BorderRadius.circular(8),
+              //   ),
+              //   child: Text(
+              //     '₿ ${viewModel.cryptoBalance.toStringAsFixed(2)}',
+              //     style: GoogleFonts.redHatDisplay(
+              //       fontSize: 14,
+              //       color: Colors.white,
+              //       fontWeight: FontWeight.w600,
+              //     ),
+              //   ),
+              // ),
             ],
           ),
           verticalSpaceMedium,
@@ -206,11 +212,399 @@ class Savings extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickSaveButton(ReportsViewModel model, Color primaryColor) {
+  Widget _buildCryptoBalanceSection(ReportsViewModel viewModel) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFf093fb), Color(0xFFf5576c)],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.purple.withOpacity(0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Bitcoin account',
+                style: GoogleFonts.redHatDisplay(
+                  color: Colors.white.withOpacity(0.9),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  'Bitcoin',
+                  style: GoogleFonts.redHatDisplay(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Total Value',
+            style: GoogleFonts.redHatDisplay(
+              color: Colors.white.withOpacity(0.8),
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Text(
+                '${viewModel.cryptoBalanceInSats.toStringAsFixed(0)} sats',
+                style: GoogleFonts.redHatDisplay(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              //
+              // Container(
+              //   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              //   decoration: BoxDecoration(
+              //     color: Colors.white.withOpacity(0.2),
+              //     borderRadius: BorderRadius.circular(8),
+              //   ),
+              //   child: Text(
+              //     '₿ ${viewModel.cryptoBalance.toStringAsFixed(6)}',
+              //     style: GoogleFonts.redHatDisplay(
+              //       fontSize: 14,
+              //       color: Colors.white,
+              //       fontWeight: FontWeight.w600,
+              //     ),
+              //   ),
+              // ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          // Row(
+          //   children: [
+          //     Container(
+          //       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          //       decoration: BoxDecoration(
+          //         color: Colors.white.withOpacity(0.15),
+          //         borderRadius: BorderRadius.circular(8),
+          //       ),
+          //       child: Text(
+          //         '₦${(viewModel.cryptoBalance * 50000).toStringAsFixed(2)}',
+          //         style: GoogleFonts.redHatDisplay(
+          //           fontSize: 12,
+          //           color: Colors.white,
+          //           fontWeight: FontWeight.w500,
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: const BoxDecoration(
+                    color: Colors.orange,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.trending_up,
+                    color: Colors.white,
+                    size: 14,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '24h +5.2%',
+                  style: GoogleFonts.redHatDisplay(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  void _showQuickSaveDialog(BuildContext context, ReportsViewModel model) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(20),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+              ),
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.blue.withOpacity(0.3),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Quick Save",
+                        style: GoogleFonts.redHatDisplay(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.close, color: Colors.white, size: 20),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Amount Input
+                  Text(
+                    "Enter Amount to Save",
+                    style: GoogleFonts.redHatDisplay(
+                      color: Colors.white.withOpacity(0.8),
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.white.withOpacity(0.2)),
+                    ),
+                    child: TextField(
+                      keyboardType: TextInputType.number,
+                      style: GoogleFonts.redHatDisplay(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 18,
+                        ),
+                        prefixIcon: Padding(
+                          padding: const EdgeInsets.only(left: 16, right: 8),
+                          child: Text(
+                            "₿",
+                            style: TextStyle(
+                              fontFamily: 'Roboto',
+                              fontSize: 18,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Quick Amount Buttons
+                  Text(
+                    "Quick Amounts",
+                    style: GoogleFonts.redHatDisplay(
+                      color: Colors.white.withOpacity(0.8),
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildAmountChip("₿1000", context, model),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: _buildAmountChip("₿2500", context, model),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: _buildAmountChip("₿5000", context, model),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  // Action Buttons
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            side: const BorderSide(color: Colors.white),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: Text(
+                            "Cancel",
+                            style: GoogleFonts.redHatDisplay(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            // Handle save logic here
+                            model.quickSave();
+                            Navigator.of(context).pop();
+                            _showSuccessSnackbar(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: const Color(0xFF667eea),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            elevation: 2,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.savings_outlined, size: 18),
+                              const SizedBox(width: 6),
+                              Text(
+                                "Save Now",
+                                style: GoogleFonts.redHatDisplay(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildAmountChip(String amount, BuildContext context, ReportsViewModel model) {
+    return GestureDetector(
+      onTap: () {
+        // Set the amount in the text field when chip is tapped
+        // You'll need to add a TextEditingController to your model for this
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.white.withOpacity(0.3)),
+        ),
+        child: Text(
+          amount,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: 'Roboto',
+            color: Colors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showSuccessSnackbar(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: const Color(0xFF667eea),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle, color: Colors.white, size: 20),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                "Money added successfully! Converting to Bitcoin...",
+                style: GoogleFonts.redHatDisplay(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
+  Widget _buildQuickSaveButton(BuildContext context, ReportsViewModel model, Color primaryColor) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: model.quickSave,
+        onPressed: () => _showQuickSaveDialog(context, model),
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
           foregroundColor: Colors.white,
@@ -224,7 +618,7 @@ class Savings extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.add_circle_outline, size: 20),
+            const Icon(Icons.add_circle_outline, size: 20),
             const SizedBox(width: 8),
             Text(
               "Quick Save",
@@ -556,6 +950,69 @@ class Savings extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _AnimatedAccountTabBar extends StatefulWidget {
+  final int currentIndex;
+  final Function(int) onTabChanged;
+  final double borderRadius;
+
+  const _AnimatedAccountTabBar({
+    required this.currentIndex,
+    required this.onTabChanged,
+    this.borderRadius = 30,
+  });
+
+  @override
+  State<_AnimatedAccountTabBar> createState() => __AnimatedAccountTabBarState();
+}
+
+class __AnimatedAccountTabBarState extends State<_AnimatedAccountTabBar> {
+  late List<bool> isHoverList = [false, false];
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(
+        2,
+            (index) {
+          return InkWell(
+            onTap: () {
+              widget.onTabChanged(index);
+            },
+            onHover: (value) {
+              setState(() {
+                isHoverList[index] = value;
+              });
+            },
+            child: AnimatedContainer(
+              height: 40,
+              margin: const EdgeInsets.symmetric(horizontal: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              alignment: Alignment.center,
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeIn,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(widget.borderRadius),
+                color: widget.currentIndex == index || isHoverList[index]
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.grey[300],
+              ),
+              child: Text(
+                ['Fiat Accounts', 'Bitcoin Accounts'][index],
+                style: GoogleFonts.redHatDisplay(
+                  color: widget.currentIndex == index ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

@@ -9,12 +9,18 @@ class ReportsViewModel extends BaseViewModel {
   final TextEditingController searchController = TextEditingController();
   double _todayChange = 20.50;
   double _cryptoBalance = 72.80;
+  double _cryptoBalanceInSats = 0.0;
 
+  int _selectedAccountType = 0;
+
+  int get selectedAccountType => _selectedAccountType;
 
   List<NotificationModel> allNotifications = [];
   List<NotificationModel> filteredNotifications = [];
   double get todayChange => _todayChange;
   double get cryptoBalance => _cryptoBalance;
+
+  double get cryptoBalanceInSats => _cryptoBalanceInSats;
 
   /// ✅ **Initialize & Fetch Notifications**
   Future<void> init() async {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked/stacked.dart';
+import '../../../state.dart';
 import '../../common/app_colors.dart';
 import '../../common/ui_helpers.dart';
 import '../../dialogs/recieve_dialog.dart';
@@ -51,11 +52,15 @@ class DashboardView extends StackedView<DashboardViewModel> {
   }
 
   Widget _buildWelcomeHeader() {
+    final currentUser = profile.value;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Hi, Karimatu MH',
+          currentUser.firstName?.isNotEmpty == true
+              ? "Hi, ${currentUser.firstName}"
+              : "Hi, Guest",
           style: GoogleFonts.redHatDisplay(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -64,6 +69,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
       ],
     );
   }
+
 
   Widget _buildAccountTabs(DashboardViewModel viewModel) {
     return Container(
@@ -143,23 +149,32 @@ class DashboardView extends StackedView<DashboardViewModel> {
           const SizedBox(height: 4),
           Row(
             children: [
-              Balance(getInfoStream: sdk.getInfoStream),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  '₿ ${viewModel.cryptoBalance.toStringAsFixed(2)}',
-                  style: GoogleFonts.redHatDisplay(
-                    fontSize: 14,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+              // Balance(getInfoStream: sdk.getInfoStream),
+              Text(
+                '₦0.00',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                fontFamily: 'Roboto',
               ),
+              ),
+              const SizedBox(width: 8),
+              // Container(
+              //   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              //   decoration: BoxDecoration(
+              //     color: Colors.white.withOpacity(0.2),
+              //     borderRadius: BorderRadius.circular(8),
+              //   ),
+                // child: Text(
+                //   '₿ ${viewModel.cryptoBalance.toStringAsFixed(2)}',
+                //   style: GoogleFonts.redHatDisplay(
+                //     fontSize: 14,
+                //     color: Colors.white,
+                //     fontWeight: FontWeight.w600,
+                //   ),
+                // ),
+             // ),
             ],
           ),
           verticalSpaceMedium,
@@ -172,27 +187,27 @@ class DashboardView extends StackedView<DashboardViewModel> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: const BoxDecoration(
-                    color: Colors.green,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.arrow_upward,
-                    color: Colors.white,
-                    size: 14,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Today +${viewModel.todayChange}%',
-                  style: GoogleFonts.redHatDisplay(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                // Container(
+                //   padding: const EdgeInsets.all(4),
+                //   decoration: const BoxDecoration(
+                //     color: Colors.green,
+                //     shape: BoxShape.circle,
+                //   ),
+                //   child: const Icon(
+                //     Icons.arrow_upward,
+                //     color: Colors.white,
+                //     size: 14,
+                //   ),
+                // ),
+                // const SizedBox(width: 8),
+                // Text(
+                //   'Today +${viewModel.todayChange}%',
+                //   style: GoogleFonts.redHatDisplay(
+                //     color: Colors.white,
+                //     fontSize: 14,
+                //     fontWeight: FontWeight.w600,
+                //   ),
+                // ),
               ],
             ),
           ),
@@ -226,7 +241,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Crypto Portfolio',
+                'Bitcoin account',
                 style: GoogleFonts.redHatDisplay(
                   color: Colors.white.withOpacity(0.9),
                   fontSize: 14,
@@ -252,7 +267,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
           ),
           const SizedBox(height: 16),
           Text(
-            'Total Portfolio Value',
+            'Total Value',
             style: GoogleFonts.redHatDisplay(
               color: Colors.white.withOpacity(0.8),
               fontSize: 14,
@@ -269,44 +284,44 @@ class DashboardView extends StackedView<DashboardViewModel> {
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  '₿ ${viewModel.cryptoBalance.toStringAsFixed(6)}',
-                  style: GoogleFonts.redHatDisplay(
-                    fontSize: 14,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
+              //
+              // Container(
+              //   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              //   decoration: BoxDecoration(
+              //     color: Colors.white.withOpacity(0.2),
+              //     borderRadius: BorderRadius.circular(8),
+              //   ),
+              //   child: Text(
+              //     '₿ ${viewModel.cryptoBalance.toStringAsFixed(6)}',
+              //     style: GoogleFonts.redHatDisplay(
+              //       fontSize: 14,
+              //       color: Colors.white,
+              //       fontWeight: FontWeight.w600,
+              //     ),
+              //   ),
+              // ),
             ],
           ),
           const SizedBox(height: 8),
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  '₦${(viewModel.cryptoBalance * 50000).toStringAsFixed(2)}',
-                  style: GoogleFonts.redHatDisplay(
-                    fontSize: 12,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
+          // Row(
+          //   children: [
+          //     Container(
+          //       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          //       decoration: BoxDecoration(
+          //         color: Colors.white.withOpacity(0.15),
+          //         borderRadius: BorderRadius.circular(8),
+          //       ),
+          //       child: Text(
+          //         '₦${(viewModel.cryptoBalance * 50000).toStringAsFixed(2)}',
+          //         style: GoogleFonts.redHatDisplay(
+          //           fontSize: 12,
+          //           color: Colors.white,
+          //           fontWeight: FontWeight.w500,
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -399,8 +414,18 @@ class DashboardView extends StackedView<DashboardViewModel> {
           'assets/icons/Swap.svg',
           'Swap',
           viewModel.selectedAccountType == 0 ? Colors.orange : Colors.green,
-              () => viewModel.handleSwapAction(viewModel.selectedAccountType),
+              () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Coming Soon"),
+                duration: Duration(seconds: 2),
+                backgroundColor: Colors.grey,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          },
         ),
+
       ],
     );
   }

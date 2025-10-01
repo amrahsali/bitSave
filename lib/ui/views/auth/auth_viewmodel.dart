@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +66,6 @@ class AuthViewModel extends BaseViewModel {
     rebuildUi();
   }
 
-  /// **Start the countdown timer for OTP **
   void startCountdown() {
     countdown = 30;
     notifyListeners();
@@ -84,26 +83,54 @@ class AuthViewModel extends BaseViewModel {
   Future<void> login() async {
     setBusy(true);
     try {
+      // ✅ Check for empty fields first
+      if (email.text.trim().isEmpty || password.text.trim().isEmpty) {
+        locator<SnackbarService>().showSnackbar(
+          message: "Please enter both your email and password to continue.",
+        );
+        return;
+      }
+
       final credential = await _auth.signInWithEmailAndPassword(
         email: email.text.trim(),
         password: password.text.trim(),
       );
 
-      // Login success → go to home
+// Convert Firebase user → App User
+      final loggedInUser = User.fromFirebase(credential.user!);
+
+// Save globally
+      profile.value = loggedInUser;
+      userLoggedIn.value = true;
+
       locator<NavigationService>().clearStackAndShow(Routes.homeView);
+
+
     } on FirebaseAuthException catch (e) {
-      String message = '';
-      if (e.code == 'user-not-found') {
-        message = 'No user found for that email.';
-      } else if (e.code == 'wrong-password') {
-        message = 'Wrong password provided.';
-      } else {
-        message = e.message ?? 'Login failed';
+      String message;
+
+      switch (e.code) {
+        case 'user-not-found':
+          message = "We couldn't find an account with that email.";
+          break;
+        case 'wrong-password':
+          message = "The password you entered is incorrect.";
+          break;
+        case 'invalid-email':
+          message = "That email address looks invalid. Please try again.";
+          break;
+        case 'user-disabled':
+          message = "This account has been disabled. Contact support for help.";
+          break;
+        default:
+          message = "Login failed. Please check your details and try again.";
       }
 
       locator<SnackbarService>().showSnackbar(message: message);
     } catch (e) {
-      locator<SnackbarService>().showSnackbar(message: e.toString());
+      locator<SnackbarService>().showSnackbar(
+        message: "Something went wrong. Please try again later.",
+      );
     } finally {
       setBusy(false);
     }

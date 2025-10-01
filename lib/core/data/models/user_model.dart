@@ -1,9 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart' as fb;
+import 'package:intl_phone_field/countries.dart';
 import 'media_model.dart';
 
 enum UserStatus { ACTIVE, INACTIVE, PENDING, DELETED, SUSPENDED }
 enum Gender { MALE, FEMALE, OTHER }
-enum ApprovalStatus { APPROVED, PENDING,  REJECTED }
-enum UserRoleName { ESTATE_RESIDENT, MASTER, GENERAL_MANAGER, FACILITY_MANAGER, SECURITY, REGULAR }
+enum ApprovalStatus { APPROVED, PENDING, REJECTED }
+enum UserRoleName {
+  ESTATE_RESIDENT,
+  MASTER,
+  GENERAL_MANAGER,
+  FACILITY_MANAGER,
+  SECURITY,
+  REGULAR
+}
 enum CodeTypeConstant { CHANGE_PASSWORD, SIGNUP }
 
 class User {
@@ -22,12 +31,10 @@ class User {
   String? device;
   Picture? picture;
   Picture? proofOfAddress;
- // String? code;
   Country? country;
   dynamic addressPOJO;
   dynamic createdBy;
   List<dynamic>? organizations;
-  List<UserRole>? roles;
   UserStatus? status;
   ApprovalStatus? approvalStatus;
   List<dynamic>? userDevicePojos;
@@ -49,12 +56,10 @@ class User {
     this.device,
     this.picture,
     this.proofOfAddress,
-    //this.code,
     this.country,
     this.addressPOJO,
     this.createdBy,
     this.organizations,
-    this.roles,
     this.status,
     this.approvalStatus,
     this.userDevicePojos,
@@ -71,36 +76,23 @@ class User {
       otherName: json['otherName'],
       houseNumber: json['houseNumber'],
       houseDescription: json['houseDescription'],
-      gender: json['gender'] != null
-          ? Gender.values.firstWhere(
-              (e) => e.name == json['gender'], orElse: () => Gender.OTHER)
-          : null,
+      gender: _parseGender(json['gender']),
       phone: json['phone'],
       emailVerified: json['emailVerified'],
       phoneVerified: json['phoneVerified'],
       device: json['device'],
       picture: json['picture'] != null ? Picture.fromJson(json['picture']) : null,
-      proofOfAddress:
-      json['proofOfAddress'] != null ? Picture.fromJson(json['proofOfAddress']) : null,
-     // code: json['code'],
-      country: json['country'] != null ? Country.fromJson(json['country']) : null,
+      proofOfAddress: json['proofOfAddress'] != null ? Picture.fromJson(json['proofOfAddress']) : null,
       addressPOJO: json['addressPOJO'],
       createdBy: json['createdBy'],
       organizations: json['organizations'],
-      roles: (json['roles'] as List?)?.map((r) => UserRole.fromJson(r)).toList(),
-      status: json['status'] != null
-          ? UserStatus.values.firstWhere(
-              (e) => e.name == json['status'], orElse: () => UserStatus.PENDING)
-          : UserStatus.PENDING,
-      approvalStatus: json['approvalStatus'] != null
-          ? ApprovalStatus.values.firstWhere(
-              (e) => e.name == json['approvalStatus'], orElse: () => ApprovalStatus.PENDING)
-          : ApprovalStatus.PENDING,
+      status: _parseUserStatus(json['status']),
+      approvalStatus: _parseApprovalStatus(json['approvalStatus']),
       userDevicePojos: json['userDevicePojos'],
-      createdAt:
-      json['createdAt'] != null ? DateTime.tryParse(json['createdAt']) : null,
+      createdAt: json['createdAt'] != null ? DateTime.tryParse(json['createdAt']) : null,
     );
   }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -118,12 +110,9 @@ class User {
       'device': device,
       'picture': picture?.toJson(),
       'proofOfAddress': proofOfAddress?.toJson(),
-     // 'code': code,
-      'country': country?.toJson(),
       'addressPOJO': addressPOJO,
       'createdBy': createdBy,
       'organizations': organizations,
-      'roles': roles?.map((r) => r.toJson()).toList(),
       'status': status?.name,
       'approvalStatus': approvalStatus?.name,
       'userDevicePojos': userDevicePojos,
@@ -131,116 +120,59 @@ class User {
     };
   }
 
-}
+  /// ✅ New factory for FirebaseAuth.User
+  factory User.fromFirebase(fb.User firebaseUser) {
+    String? displayName = firebaseUser.displayName;
+    String? first;
+    String? last;
 
-class UserRole {
-  String? name;
-  int? id;
-  List<dynamic>? permissions;
+    if (displayName != null && displayName.trim().isNotEmpty) {
+      final parts = displayName.trim().split(" ");
+      first = parts.isNotEmpty ? parts.first : null;
+      last = parts.length > 1 ? parts.sublist(1).join(" ") : null;
+    } else {
+      // fallback → use email prefix as first name
+      first = firebaseUser.email?.split("@").first ?? "Guest";
+    }
 
-  UserRole({this.name, this.id, this.permissions});
-
-  factory UserRole.fromJson(Map<String, dynamic> json) {
-    return UserRole(
-      name: json['name'],
-      id: json['id'],
-      permissions: json['permissions'],
+    return User(
+      id: null, // backend id not available here
+      username: firebaseUser.email,
+      email: firebaseUser.email,
+      firstName: first,
+      lastName: last,
+      phone: firebaseUser.phoneNumber,
+      emailVerified: firebaseUser.emailVerified,
+      status: UserStatus.ACTIVE,
+      approvalStatus: ApprovalStatus.APPROVED,
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'id': id,
-      'permissions': permissions,
-    };
-  }
+  /// Convenient getter for full name
+  String get fullName => "${firstName ?? ''} ${lastName ?? ''}".trim();
 
-}
-
-class Country {
-  int? id;
-  String name;
-  String? currency;
-  String? phone;
-  String capital;
-  String? continent;
-  String? code;
-  String? code3;
-
-  Country({
-    this.id,
-    required this.name,
-    this.currency,
-    this.phone,
-    required this.capital,
-    this.continent,
-    this.code,
-    this.code3,
-  });
-
-  factory Country.fromJson(Map<String, dynamic> json) {
-    return Country(
-      id: json['id'],
-      name: json['name'] ?? '',
-      currency: json['currency'],
-      phone: json['phone'],
-      capital: json['capital'] ?? '',
-      continent: json['continent'],
-      code: json['code'],
-      code3: json['code3'],
+  // Helpers
+  static Gender? _parseGender(String? value) {
+    if (value == null) return null;
+    return Gender.values.firstWhere(
+          (e) => e.name.toLowerCase() == value.toLowerCase(),
+      orElse: () => Gender.OTHER,
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'currency': currency,
-      'phone': phone,
-      'capital': capital,
-      'continent': continent,
-      'code': code,
-      'code3': code3,
-    };
-  }
-}
-
-class Code {
-  int? id;
-  String code;
-  DateTime? expiresIn;
-  CodeTypeConstant? type;
-
-  Code({
-    this.id,
-    required this.code,
-    this.expiresIn,
-    this.type,
-  });
-
-  factory Code.fromJson(Map<String, dynamic> json) {
-    return Code(
-      id: json['id'],
-      code: json['code'] ?? '',
-      expiresIn: json['expiresin'] != null
-          ? DateTime.tryParse(json['expiresin'])
-          : null,
-      type: json['type'] != null
-          ? CodeTypeConstant.values.firstWhere(
-            (e) => e.toString().split('.').last == json['type'],
-        orElse: () => CodeTypeConstant.SIGNUP,
-      )
-          : null,
+  static UserStatus _parseUserStatus(String? value) {
+    if (value == null) return UserStatus.PENDING;
+    return UserStatus.values.firstWhere(
+          (e) => e.name.toLowerCase() == value.toLowerCase(),
+      orElse: () => UserStatus.PENDING,
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'code': code,
-      'expiresin': expiresIn?.toIso8601String(),
-      'type': type?.toString().split('.').last,
-    };
+  static ApprovalStatus _parseApprovalStatus(String? value) {
+    if (value == null) return ApprovalStatus.PENDING;
+    return ApprovalStatus.values.firstWhere(
+          (e) => e.name.toLowerCase() == value.toLowerCase(),
+      orElse: () => ApprovalStatus.PENDING,
+    );
   }
 }

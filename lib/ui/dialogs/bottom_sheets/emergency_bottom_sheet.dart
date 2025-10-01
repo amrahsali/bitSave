@@ -107,7 +107,7 @@ class _CreateEmergencySheetState extends State<CreateEmergencySheet> {
                     boldText: true,
                     label: "Create Emergency",
                     submit: () async {
-                      await viewModel.createEmergency(viewModel.selectedEmergencyLabel, context);
+                      // await viewModel.createEmergency(viewModel.selectedEmergencyLabel, context);
                     },
 
                     color: kcPrimaryColor,

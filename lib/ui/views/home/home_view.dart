@@ -1,3 +1,4 @@
+import 'package:bitSave/ui/common/ui_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -18,12 +19,11 @@ class HomeView extends StackedView<HomeViewModel> {
   @override
   Widget builder(BuildContext context, HomeViewModel viewModel, Widget? child) {
     return Scaffold(
-      // backgroundColor: Colors.white,
       appBar: _buildAppBar(context, viewModel),
       body: PageView(
         controller: viewModel.pageController,
-        physics: const NeverScrollableScrollPhysics(), // Prevent swipe navigation
-        children: viewModel.pages, // Pages controlled by BottomNav
+        physics: const NeverScrollableScrollPhysics(),
+        children: viewModel.pages,
       ),
       bottomNavigationBar: _buildBottomNavigationBar(viewModel),
     );
@@ -43,11 +43,13 @@ class HomeView extends StackedView<HomeViewModel> {
             style: GoogleFonts.redHatDisplay(
               color: Theme.of(context).brightness == Brightness.dark ? kcBlackColor : kcPrimaryColor,
               fontWeight: FontWeight.bold,
+              fontSize: 30,
             ),
           ),
-          
+
           Row(
             children: [
+              // 🌙 Theme Toggle
               ValueListenableBuilder<AppUiModes>(
                 valueListenable: uiMode,
                 builder: (context, mode, _) {
@@ -57,7 +59,7 @@ class HomeView extends StackedView<HomeViewModel> {
                     onPressed: () async {
                       uiMode.value = isDark ? AppUiModes.light : AppUiModes.dark;
 
-                      // update system UI overlay (status bar icons) so they remain visible
+                      // update system UI overlay
                       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
                         statusBarColor: Colors.transparent,
                         statusBarIconBrightness: uiMode.value == AppUiModes.dark
@@ -74,24 +76,34 @@ class HomeView extends StackedView<HomeViewModel> {
                           uiMode.value == AppUiModes.dark ? 'dark' : 'light',
                         );
                       } catch (e) {
-                        // if your LocalStorage method name differs, replace `.save(...)`
-                        // with the correct method (e.g. `set`, `write`, `store`, etc).
-                        // Ignoring errors here keeps toggling working even if persistence fails.
-                        // print('persist ui mode failed: $e');
+                        // ignore if saving fails
                       }
                     },
                     icon: Icon(
                       isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
-                      color: Theme.of(context).brightness == Brightness.dark ? kcBlackColor : kcPrimaryColor,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? kcBlackColor
+                          : kcPrimaryColor,
                     ),
                   );
                 },
               ),
-
-              const SizedBox(width: 8),
-            
+              // 🤖 AI Icon
+              IconButton(
+                tooltip: 'Ask AI',
+                onPressed: () {
+                  // TODO: open your AI assistant page or dialog
+                },
+                icon: Icon(
+                  Icons.smart_toy_rounded, // You can also use Icons.auto_awesome
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? kcBlackColor
+                      : kcPrimaryColor,
+                ),
+              ),
             ],
           ),
+
         ],
       ),
     );
