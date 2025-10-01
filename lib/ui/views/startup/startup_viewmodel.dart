@@ -20,15 +20,12 @@ class StartupViewModel extends BaseViewModel {
   Future runStartupLogic() async {
     await Future.delayed(const Duration(seconds: 3));
 
-    // ✅ Check Firebase authentication state
     final user = _auth.currentUser;
 
     if (user != null) {
       // User is logged in
       userLoggedIn.value = true;
 
-      // Optional: If you want to still use your backend profile
-      // try loading saved profile from local storage
       String? userJson =
       await locator<LocalStorage>().fetch(LocalStorageDir.authUser);
 
@@ -37,12 +34,9 @@ class StartupViewModel extends BaseViewModel {
             User.fromJson(Map<String, dynamic>.from(jsonDecode(userJson)));
       }
 
-      // Or fetch fresh profile from API
-      // await getProfile();
 
       _navigationService.clearStackAndShow(Routes.homeView);
     } else {
-      // User is not logged in → go to AuthView
       _navigationService.replaceWithAuthView(authType: AuthType.adminLogin);
     }
   }
