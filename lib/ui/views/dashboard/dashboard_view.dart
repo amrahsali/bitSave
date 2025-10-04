@@ -363,18 +363,16 @@ class DashboardView extends StackedView<DashboardViewModel> {
 
   void _handleAddAction(BuildContext context, DashboardViewModel viewModel) {
     if (viewModel.selectedAccountType == 0) {
-      // Fiat account - show Add Naira dialog
       showDialog(
         context: context,
         builder: (context) => AddNairaDialog(
-          userId: "user_123", // Replace with actual user ID
+          userId: "user_123",
           onFundsAdded: (nairaAmount, satsAmount) {
             viewModel.addNairaFunds(nairaAmount, satsAmount);
           },
         ),
       );
     } else {
-      // Crypto account - show Bitcoin receive dialog
       viewModel.handleAddAction(viewModel.selectedAccountType);
     }
   }

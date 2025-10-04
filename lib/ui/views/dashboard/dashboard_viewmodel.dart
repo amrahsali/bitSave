@@ -110,8 +110,8 @@ class DashboardViewModel extends BaseViewModel {
   void _initializeFinancialData() {
     _transactions = [
       Transaction(
-        recipient: "Karimatu UIUX",
-        amount: -5000.00,
+        recipient: "Karimatu ",
+        amount: 5000.00,
         time: "3:30 PM",
         date: "Today",
       ),

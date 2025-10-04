@@ -25,7 +25,7 @@ class ReportsViewModel extends BaseViewModel {
   /// ✅ **Initialize & Fetch Notifications**
   Future<void> init() async {
     setBusy(true);
-    await fetchNotifications();
+    // await fetchNotifications();
     setBusy(false);
   }
 
@@ -54,46 +54,47 @@ class ReportsViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  Future<void> fetchNotifications() async {
-    setBusy(true);
-    try {
-      final response = await repo.getNotifications();
-      if (response.statusCode == 200 && response.data['success'] == true) {
-        allNotifications = (response.data['data'] as List)
-            .map((json) => NotificationModel.fromJson(json))
-            .toList();
-        allNotifications.sort((a, b) => b.sentAt.compareTo(a.sentAt));
-        filteredNotifications = List.from(allNotifications);
-        notifyListeners();
-      } else {
-        print("Failed to fetch notifications: ${response.data['message']}");
-      }
-    } catch (e) {
-      print("Error fetching notifications: $e");
-    }
-    setBusy(false);
-  }
+  // Future<void> fetchNotifications() async {
+  //   setBusy(true);
+  //   try {
+  //     final response = await repo.getNotifications();
+  //     if (response.statusCode == 200 && response.data['success'] == true) {
+  //       allNotifications = (response.data['data'] as List)
+  //           .map((json) => NotificationModel.fromJson(json))
+  //           .toList();
+  //       allNotifications.sort((a, b) => b.sentAt.compareTo(a.sentAt));
+  //       filteredNotifications = List.from(allNotifications);
+  //       notifyListeners();
+  //     } else {
+  //       print("Failed to fetch notifications: ${response.data['message']}");
+  //     }
+  //   } catch (e) {
+  //     print("Error fetching notifications: $e");
+  //   }
+  //   setBusy(false);
+  // }
 
-  Future<void> refreshNotifications() async {
-    await fetchNotifications();
-  }
+  // Future<void> refreshNotifications() async {
+  //   await fetchNotifications();
+  // }
 
-  Future<void> escalateNotifications(int notificationId) async {
-    setBusy(true);
-    try {
-      final response = await repo.escalateNotifications(notificationId);
-      if (response.statusCode == 200) {
-        locator<SnackbarService>().showSnackbar(message: "Notification sent", duration: const Duration(seconds: 3));
-        await fetchNotifications();
-      } else {
-        locator<SnackbarService>().showSnackbar(message: "Failed to escalate notification", duration: const Duration(seconds: 3));
-        print("Failed to fetch notifications: ${response.data['message']}");
-      }
-    } catch (e) {
-      print("Error fetching notifications: $e");
-    }
-    setBusy(false);
-  }
+  // Future<void> escalateNotifications(int notificationId) async {
+  //   setBusy(true);
+  //   try {
+  //     final response = await repo.escalateNotifications(notificationId);
+  //     if (response.statusCode == 200) {
+  //       locator<SnackbarService>().showSnackbar(message: "Notification sent", duration: const Duration(seconds: 3));
+  //       // await fetchNotifications();
+  //     } else {
+  //       locator<SnackbarService>().showSnackbar(message: "Failed to escalate notification", duration: const Duration(seconds: 3));
+  //       print("Failed to fetch notifications: ${response.data['message']}");
+  //     }
+  //   } catch (e) {
+  //     print("Error fetching notifications: $e");
+  //   }
+  //   setBusy(false);
+  // }
+
   void quickSave() {
     // Implement quick save functionality
     // This could open a dialog or navigate to quick save screen
