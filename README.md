@@ -1,7 +1,7 @@
 
 ---
 
-## 🧩 Tech Stack
+## 🧩 bitSave
 
 - **Frontend:** Flutter
 - **Backend:** Firebase / Dart APIs
