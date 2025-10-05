@@ -7,7 +7,7 @@ class NodelessSdk {
   factory NodelessSdk() => _singleton;
 
   NodelessSdk._internal() {
-    initializeLogStream();
+    // initializeLogStream();
   }
 
   liquid_sdk.BindingLiquidSdk? _instance;

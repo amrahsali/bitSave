@@ -3,13 +3,13 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyC9slF4-pBWUg-0tNU2fym_gwz1XTN3hDA</string>
+	<string>AIzaSyArbEhRhe9QnI46Fh_ntB8hohL2uoyCXJE</string>
 	<key>GCM_SENDER_ID</key>
 	<string>494897050275</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.echobitstech.estate360Security</string>
+	<string>com.AmrahSali.bitSave</string>
 	<key>PROJECT_ID</key>
 	<string>bitsave-c7b57</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:494897050275:ios:1330199201ea8522258516</string>
+	<string>1:494897050275:ios:94b62e9c98ca88ab258516</string>
 </dict>
 </plist>

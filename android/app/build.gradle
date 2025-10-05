@@ -33,7 +33,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace "com.echobitstech.estate360Security"
+    namespace "com.AmrahSali.bitSave"
     compileSdk flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
@@ -56,7 +56,7 @@ android {
         multiDexEnabled true
 
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.echobitstech.estate360Security"
+        applicationId "com.AmrahSali.bitSave"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion flutter.minSdkVersion
@@ -65,20 +65,12 @@ android {
         versionName flutterVersionName
     }
 
-    signingConfigs {
-        release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-            storePassword keystoreProperties['storePassword']
-        }
-    }
 
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.release
+           // signingConfig signingConfigs.release
         }
     }
 }

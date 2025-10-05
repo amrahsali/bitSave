@@ -7,15 +7,15 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:494897050275:android:f375a304129e0669258516",
+        "mobilesdk_app_id": "1:494897050275:android:bc3970526fb91e6d258516",
         "android_client_info": {
-          "package_name": "com.echobitstech.estate360Security"
+          "package_name": "com.AmrahSali.bitSave"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAw0y2EvFevcdF7eXUJ6y416Z9SOlhWhbg"
+          "current_key": "AIzaSyAh-IHuNeXSfJBjRWUOr67XCSGIsyQkHhI"
         }
       ],
       "services": {
