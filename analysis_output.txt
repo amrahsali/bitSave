@@ -1,0 +1,282 @@
+Analyzing bitSave...                                            
+
+   info • Dangling library doc comment • lib/app/app.logger.dart:9:1 • dangling_library_doc_comments
+   info • Statements in an if should be enclosed in a block • lib/app/app.logger.dart:44:64 • curly_braces_in_flow_control_structures
+   info • Use 'const' with the constructor to improve performance • lib/app/app.router.dart:137:31 • prefer_const_constructors
+   info • Dangling library doc comment • lib/core/data/models/mavapay_models.dart:1:1 • dangling_library_doc_comments
+   info • The constant name 'ACTIVE' isn't a lowerCamelCase identifier • lib/core/data/models/user_model.dart:5:19 • constant_identifier_names
+   info • The constant name 'INACTIVE' isn't a lowerCamelCase identifier • lib/core/data/models/user_model.dart:5:27 • constant_identifier_names
+   info • The constant name 'PENDING' isn't a lowerCamelCase identifier • lib/core/data/models/user_model.dart:5:37 • constant_identifier_names
+   info • The constant name 'DELETED' isn't a lowerCamelCase identifier • lib/core/data/models/user_model.dart:5:46 • constant_identifier_names
+   info • The constant name 'SUSPENDED' isn't a lowerCamelCase identifier • lib/core/data/models/user_model.dart:5:55 • constant_identifier_names
+   info • The constant name 'MALE' isn't a lowerCamelCase identifier • lib/core/data/models/user_model.dart:6:15 • constant_identifier_names
+   info • The constant name 'FEMALE' isn't a lowerCamelCase identifier • lib/core/data/models/user_model.dart:6:21 • constant_identifier_names
+   info • The constant name 'OTHER' isn't a lowerCamelCase identifier • lib/core/data/models/user_model.dart:6:29 • constant_identifier_names
+   info • The constant name 'APPROVED' isn't a lowerCamelCase identifier • lib/core/data/models/user_model.dart:7:23 • constant_identifier_names
+   info • The constant name 'PENDING' isn't a lowerCamelCase identifier • lib/core/data/models/user_model.dart:7:33 • constant_identifier_names
+   info • The constant name 'REJECTED' isn't a lowerCamelCase identifier • lib/core/data/models/user_model.dart:7:42 • constant_identifier_names
+   info • The constant name 'ESTATE_RESIDENT' isn't a lowerCamelCase identifier • lib/core/data/models/user_model.dart:9:3 • constant_identifier_names
+   info • The constant name 'MASTER' isn't a lowerCamelCase identifier • lib/core/data/models/user_model.dart:10:3 • constant_identifier_names
+   info • The constant name 'GENERAL_MANAGER' isn't a lowerCamelCase identifier • lib/core/data/models/user_model.dart:11:3 • constant_identifier_names
+   info • The constant name 'FACILITY_MANAGER' isn't a lowerCamelCase identifier • lib/core/data/models/user_model.dart:12:3 • constant_identifier_names
+   info • The constant name 'SECURITY' isn't a lowerCamelCase identifier • lib/core/data/models/user_model.dart:13:3 • constant_identifier_names
+   info • The constant name 'REGULAR' isn't a lowerCamelCase identifier • lib/core/data/models/user_model.dart:14:3 • constant_identifier_names
+   info • The constant name 'CHANGE_PASSWORD' isn't a lowerCamelCase identifier • lib/core/data/models/user_model.dart:16:25 • constant_identifier_names
+   info • The constant name 'SIGNUP' isn't a lowerCamelCase identifier • lib/core/data/models/user_model.dart:16:42 • constant_identifier_names
+warning • Unused import: 'dart:ffi' • lib/core/data/repositories/repository.dart:1:8 • unused_import
+warning • Unused import: '../models/user_model.dart' • lib/core/data/repositories/repository.dart:10:8 • unused_import
+warning • Unused import: 'dart:io' • lib/core/data/repositories/repository.dart:11:8 • unused_import
+   info • Use 'const' for final variables initialized to a constant value • lib/core/data/repositories/repository.dart:24:5 • prefer_const_declarations
+   info • Don't invoke 'print' in production code • lib/core/data/repositories/repository.dart:50:7 • avoid_print
+   info • The member 'forgotPassword' overrides an inherited member but isn't annotated with '@override' • lib/core/data/repositories/repository.dart:277:23 • annotate_overrides
+warning • The method doesn't override an inherited method • lib/core/data/repositories/repository.dart:333:23 • override_on_non_overriding_member
+warning • Unused import: 'dart:io' • lib/core/network/api_service.dart:10:8 • unused_import
+   info • Don't invoke 'print' in production code • lib/core/network/interceptors.dart:53:7 • avoid_print
+   info • Use interpolation to compose strings and values • lib/core/network/mavapay_service.dart:48:34 • prefer_interpolation_to_compose_strings
+   info • Use 'const' for final variables initialized to a constant value • lib/core/network/mavapay_service_mock.dart:69:5 • prefer_const_declarations
+warning • The value of the field '_paymentResultStream' isn't used • lib/core/network/noodless_sdk.dart:105:46 • unused_field
+   info • The imported package 'path_provider' isn't a dependency of the importing package • lib/core/utils/config.dart:3:8 • depend_on_referenced_packages
+   info • Dangling library doc comment • lib/core/utils/local_store_dir.dart:1:1 • dangling_library_doc_comments
+   info • The import of 'package:sembast/sembast.dart' is unnecessary because all of the used elements are also provided by the import of 'package:sembast/sembast_io.dart' • lib/core/utils/local_stotage.dart:4:8 • unnecessary_import
+   info • The imported package 'path_provider' isn't a dependency of the importing package • lib/core/utils/local_stotage.dart:5:8 • depend_on_referenced_packages
+   info • Parameter 'key' could be a super parameter • lib/main.dart:25:9 • use_super_parameters
+   info • Use 'const' with the constructor to improve performance • lib/main.dart:96:33 • prefer_const_constructors
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/main.dart:120:43 • deprecated_member_use
+   info • Use 'const' with the constructor to improve performance • lib/ui/common/app_colors.dart:27:47 • prefer_const_constructors
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes • lib/ui/common/app_colors.dart:30:11 • prefer_const_literals_to_create_immutables
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/common/app_colors.dart:40:20 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/common/app_colors.dart:61:29 • deprecated_member_use
+   info • Use 'const' with the constructor to improve performance • lib/ui/common/app_colors.dart:68:3 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/common/app_colors.dart:69:3 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/common/app_colors.dart:70:3 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/common/app_colors.dart:71:3 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/common/app_colors.dart:72:3 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/common/app_colors.dart:73:3 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/common/app_colors.dart:74:3 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/common/app_colors.dart:75:3 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/common/app_colors.dart:76:3 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/common/app_colors.dart:77:3 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/common/app_colors.dart:78:3 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/common/app_colors.dart:79:3 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/common/app_colors.dart:80:3 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/common/app_colors.dart:81:3 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/common/app_colors.dart:82:3 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/common/ui_helpers.dart:22:24 • prefer_const_constructors
+   info • The file name 'animatedStrip.dart' isn't a lower_case_with_underscores identifier • lib/ui/components/animatedStrip.dart:1:1 • file_names
+warning • Unused import: '../common/app_colors.dart' • lib/ui/components/animatedStrip.dart:3:8 • unused_import
+   info • Constructors for public widgets should have a named 'key' parameter • lib/ui/components/animatedStrip.dart:5:7 • use_key_in_widget_constructors
+   info • Invalid use of a private type in a public API • lib/ui/components/animatedStrip.dart:7:3 • library_private_types_in_public_api
+   info • Parameter 'key' could be a super parameter • lib/ui/components/background.dart:9:9 • use_super_parameters
+   info • Constructors for public widgets should have a named 'key' parameter • lib/ui/components/code_input.dart:8:3 • use_key_in_widget_constructors
+   info • Constructors in '@immutable' classes should be declared as 'const' • lib/ui/components/code_input.dart:8:3 • prefer_const_constructors_in_immutables
+   info • Use 'const' with the constructor to improve performance • lib/ui/components/code_input.dart:29:26 • prefer_const_constructors
+warning • Unused import: 'package:flutter/services.dart' • lib/ui/components/custom_time_picker.dart:2:8 • unused_import
+warning • Unused import: 'dart:math' • lib/ui/components/custom_time_picker.dart:3:8 • unused_import
+   info • Parameter 'key' could be a super parameter • lib/ui/components/custom_time_picker.dart:14:9 • use_super_parameters
+   info • Invalid use of a private type in a public API • lib/ui/components/custom_time_picker.dart:26:3 • library_private_types_in_public_api
+   info • Parameter 'key' could be a super parameter • lib/ui/components/empty_state.dart:18:9 • use_super_parameters
+   info • Parameter 'key' could be a super parameter • lib/ui/components/profile_picture.dart:7:9 • use_super_parameters
+   info • Parameter 'key' could be a super parameter • lib/ui/components/submit_button.dart:32:9 • use_super_parameters
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/components/submit_button.dart:64:23 • deprecated_member_use
+   info • Parameter 'key' could be a super parameter • lib/ui/components/text_field_autocomplete_widget.dart:9:9 • use_super_parameters
+warning • The receiver can't be null, so the null-aware operator '?.' is unnecessary • lib/ui/components/text_field_autocomplete_widget.dart:36:28 • invalid_null_aware_operator
+   info • Parameter 'key' could be a super parameter • lib/ui/components/text_field_widget.dart:20:9 • use_super_parameters
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/components/text_field_widget.dart:56:54 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/components/text_field_widget.dart:60:54 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/components/text_field_widget.dart:64:54 • deprecated_member_use
+warning • Unused import: 'package:time_picker_spinner/time_picker_spinner.dart' • lib/ui/components/time_picker_field.dart:3:8 • unused_import
+   info • Parameter 'key' could be a super parameter • lib/ui/components/time_picker_field.dart:15:9 • use_super_parameters
+   info • Invalid use of a private type in a public API • lib/ui/components/time_picker_field.dart:25:3 • library_private_types_in_public_api
+warning • Duplicate import • lib/ui/dialogs/add_naira_dialog.dart:6:8 • duplicate_import
+   info • Use 'const' with the constructor to improve performance • lib/ui/dialogs/add_naira_dialog.dart:180:25 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/dialogs/add_naira_dialog.dart:187:27 • prefer_const_constructors
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/dialogs/add_naira_dialog.dart:197:36 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/dialogs/add_naira_dialog.dart:199:55 • deprecated_member_use
+   info • The file name 'changePassword_bottom_sheet.dart' isn't a lower_case_with_underscores identifier • lib/ui/dialogs/bottom_sheets/changePassword_bottom_sheet.dart:1:1 • file_names
+   info • The file name 'editProfile_bottom_sheet.dart' isn't a lower_case_with_underscores identifier • lib/ui/dialogs/bottom_sheets/editProfile_bottom_sheet.dart:1:1 • file_names
+warning • Unused import: '../../../state.dart' • lib/ui/dialogs/bottom_sheets/editProfile_bottom_sheet.dart:3:8 • unused_import
+warning • Unused import: '../../views/dashboard/dashboard_viewmodel.dart' • lib/ui/dialogs/bottom_sheets/emergency_bottom_sheet.dart:5:8 • unused_import
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/dialogs/bottom_sheets/emergency_bottom_sheet.dart:59:64 • deprecated_member_use
+   info • Parameter 'key' could be a super parameter • lib/ui/dialogs/info_alert/info_alert_dialog.dart:23:9 • use_super_parameters
+   info • Use 'const' for final variables initialized to a constant value • lib/ui/dialogs/send_dialog.dart:80:13 • prefer_const_declarations
+warning • Duplicate import • lib/ui/views/Profile/profile_view.dart:7:8 • duplicate_import
+   info • Parameter 'key' could be a super parameter • lib/ui/views/Profile/profile_view.dart:11:9 • use_super_parameters
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/Profile/profile_view.dart:76:47 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/Profile/profile_view.dart:81:33 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/Profile/profile_view.dart:102:35 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/Profile/profile_view.dart:178:37 • deprecated_member_use
+   info • Use 'const' for final variables initialized to a constant value • lib/ui/views/Profile/profile_viewmodel.dart:32:5 • prefer_const_declarations
+   info • Use 'const' for final variables initialized to a constant value • lib/ui/views/Profile/profile_viewmodel.dart:48:5 • prefer_const_declarations
+   info • Use 'const' for final variables initialized to a constant value • lib/ui/views/Profile/profile_viewmodel.dart:64:5 • prefer_const_declarations
+   info • Use 'const' for final variables initialized to a constant value • lib/ui/views/Profile/profile_viewmodel.dart:65:5 • prefer_const_declarations
+   info • Use 'const' for final variables initialized to a constant value • lib/ui/views/Profile/profile_viewmodel.dart:94:5 • prefer_const_declarations
+   info • Use 'const' for final variables initialized to a constant value • lib/ui/views/Profile/profile_viewmodel.dart:99:5 • prefer_const_declarations
+   info • Use 'const' for final variables initialized to a constant value • lib/ui/views/Profile/profile_viewmodel.dart:105:5 • prefer_const_declarations
+warning • Unused import: 'package:flutter_svg/flutter_svg.dart' • lib/ui/views/auth/auth_view.dart:6:8 • unused_import
+warning • Unused import: '../../../state.dart' • lib/ui/views/auth/auth_view.dart:8:8 • unused_import
+   info • Parameter 'key' could be a super parameter • lib/ui/views/auth/auth_view.dart:17:9 • use_super_parameters
+warning • Unused import: 'dart:convert' • lib/ui/views/auth/auth_viewmodel.dart:2:8 • unused_import
+warning • Unused import: '../../../core/network/api_response.dart' • lib/ui/views/auth/auth_viewmodel.dart:16:8 • unused_import
+warning • Unused import: '../../../core/utils/local_store_dir.dart' • lib/ui/views/auth/auth_viewmodel.dart:18:8 • unused_import
+warning • Unused import: '../../../core/utils/local_stotage.dart' • lib/ui/views/auth/auth_viewmodel.dart:19:8 • unused_import
+warning • Unused import: 'auth_view.dart' • lib/ui/views/auth/auth_viewmodel.dart:21:8 • unused_import
+   info • Don't invoke 'print' in production code • lib/ui/views/auth/auth_viewmodel.dart:186:7 • avoid_print
+warning • The left operand can't be null, so the right operand is never executed • lib/ui/views/auth/auth_viewmodel.dart:198:49 • dead_null_aware_expression
+   info • Don't invoke 'print' in production code • lib/ui/views/auth/auth_viewmodel.dart:218:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/ui/views/auth/auth_viewmodel.dart:220:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/ui/views/auth/auth_viewmodel.dart:223:7 • avoid_print
+   info • Don't invoke 'print' in production code • lib/ui/views/auth/auth_viewmodel.dart:224:7 • avoid_print
+   info • The file name 'forgetPasswordView.dart' isn't a lower_case_with_underscores identifier • lib/ui/views/auth/forgetPasswordView.dart:1:1 • file_names
+warning • Unused import: '../../common/app_colors.dart' • lib/ui/views/auth/forgetPasswordView.dart:3:8 • unused_import
+warning • Unused import: '../../components/text_field_widget.dart' • lib/ui/views/auth/forgetPasswordView.dart:4:8 • unused_import
+   info • Parameter 'key' could be a super parameter • lib/ui/views/auth/forgetPasswordView.dart:10:9 • use_super_parameters
+   info • Use 'const' with the constructor to improve performance • lib/ui/views/auth/forgetPasswordView.dart:15:12 • prefer_const_constructors
+   info • The import of 'package:flutter/cupertino.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' • lib/ui/views/auth/login.dart:1:8 • unnecessary_import
+warning • Unused import: '../../../app/app.locator.dart' • lib/ui/views/auth/login.dart:4:8 • unused_import
+warning • Unused import: '../../../app/app.router.dart' • lib/ui/views/auth/login.dart:5:8 • unused_import
+warning • Unused import: 'forgetPasswordView.dart' • lib/ui/views/auth/login.dart:12:8 • unused_import
+   info • Constructors for public widgets should have a named 'key' parameter • lib/ui/views/auth/login.dart:20:9 • use_key_in_widget_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/views/auth/login.dart:37:23 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/views/auth/login.dart:38:23 • prefer_const_constructors
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes • lib/ui/views/auth/login.dart:41:23 • prefer_const_literals_to_create_immutables
+   info • Use 'const' with the constructor to improve performance • lib/ui/views/auth/login.dart:42:17 • prefer_const_constructors
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/auth/login.dart:75:51 • deprecated_member_use
+   info • Constructors for public widgets should have a named 'key' parameter • lib/ui/views/auth/registration.dart:15:9 • use_key_in_widget_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/views/auth/registration.dart:51:32 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/views/auth/registration.dart:52:34 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/views/auth/registration.dart:57:30 • prefer_const_constructors
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes • lib/ui/views/auth/registration.dart:59:35 • prefer_const_literals_to_create_immutables
+   info • Use 'const' with the constructor to improve performance • lib/ui/views/auth/registration.dart:60:27 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/views/auth/registration.dart:62:36 • prefer_const_constructors
+   info • Invalid use of a private type in a public API • lib/ui/views/auth/user_selection.dart:16:3 • library_private_types_in_public_api
+   info • Constructors for public widgets should have a named 'key' parameter • lib/ui/views/auth/user_selection.dart:156:9 • use_key_in_widget_constructors
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/auth/user_selection.dart:232:38 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/auth/user_selection.dart:233:35 • deprecated_member_use
+   info • The file name 'verifyEmail.dart' isn't a lower_case_with_underscores identifier • lib/ui/views/auth/verifyEmail.dart:1:1 • file_names
+   info • Parameter 'key' could be a super parameter • lib/ui/views/auth/verifyEmail.dart:16:9 • use_super_parameters
+warning • Duplicate import • lib/ui/views/dashboard/dashboard_view.dart:7:8 • duplicate_import
+warning • Unused import: 'balance.dart' • lib/ui/views/dashboard/dashboard_view.dart:13:8 • unused_import
+   info • Parameter 'key' could be a super parameter • lib/ui/views/dashboard/dashboard_view.dart:19:3 • use_super_parameters
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/dashboard/dashboard_view.dart:104:32 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/dashboard/dashboard_view.dart:119:39 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/dashboard/dashboard_view.dart:127:39 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/dashboard/dashboard_view.dart:145:35 • deprecated_member_use
+   info • Use 'const' with the constructor to improve performance • lib/ui/views/dashboard/dashboard_view.dart:150:11 • prefer_const_constructors
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes • lib/ui/views/dashboard/dashboard_view.dart:151:23 • prefer_const_literals_to_create_immutables
+   info • Use 'const' with the constructor to improve performance • lib/ui/views/dashboard/dashboard_view.dart:153:15 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/views/dashboard/dashboard_view.dart:155:24 • prefer_const_constructors
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/dashboard/dashboard_view.dart:184:35 • deprecated_member_use
+   info • Use 'const' with the constructor to improve performance • lib/ui/views/dashboard/dashboard_view.dart:187:20 • prefer_const_constructors
+   info • Use 'const' literals as arguments to constructors of '@immutable' classes • lib/ui/views/dashboard/dashboard_view.dart:189:25 • prefer_const_literals_to_create_immutables
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/dashboard/dashboard_view.dart:231:34 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/dashboard/dashboard_view.dart:246:39 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/dashboard/dashboard_view.dart:254:39 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/dashboard/dashboard_view.dart:272:35 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/dashboard/dashboard_view.dart:329:35 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/dashboard/dashboard_view.dart:447:34 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/dashboard/dashboard_view.dart:448:34 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/dashboard/dashboard_view.dart:453:39 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/dashboard/dashboard_view.dart:465:42 • deprecated_member_use
+   info • 'color' is deprecated and shouldn't be used. Use colorFilter instead • lib/ui/views/dashboard/dashboard_view.dart:478:25 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/dashboard/dashboard_view.dart:544:40 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/dashboard/dashboard_view.dart:570:36 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/dashboard/dashboard_view.dart:580:40 • deprecated_member_use
+warning • A value for optional parameter 'borderRadius' isn't ever given • lib/ui/views/dashboard/dashboard_view.dart:692:10 • unused_element_parameter
+   info • Use 'const' for final variables initialized to a constant value • lib/ui/views/dashboard/dashboard_viewmodel.dart:17:3 • prefer_const_declarations
+   info • The private field _todayChange could be 'final' • lib/ui/views/dashboard/dashboard_viewmodel.dart:61:10 • prefer_final_fields
+   info • The private field _userId could be 'final' • lib/ui/views/dashboard/dashboard_viewmodel.dart:81:10 • prefer_final_fields
+   info • The private field _updates could be 'final' • lib/ui/views/dashboard/dashboard_viewmodel.dart:85:21 • prefer_final_fields
+   info • The private field _isDataLoaded could be 'final' • lib/ui/views/dashboard/dashboard_viewmodel.dart:87:8 • prefer_final_fields
+warning • The value of the field '_isDataLoaded' isn't used • lib/ui/views/dashboard/dashboard_viewmodel.dart:87:8 • unused_field
+   info • Don't invoke 'print' in production code • lib/ui/views/dashboard/dashboard_viewmodel.dart:221:5 • avoid_print
+   info • Don't invoke 'print' in production code • lib/ui/views/dashboard/dashboard_viewmodel.dart:226:5 • avoid_print
+   info • Don't invoke 'print' in production code • lib/ui/views/dashboard/dashboard_viewmodel.dart:233:5 • avoid_print
+   info • The file name 'profileDetailsDialog.dart' isn't a lower_case_with_underscores identifier • lib/ui/views/dashboard/profileDetailsDialog.dart:1:1 • file_names
+   info • The import of 'package:flutter/cupertino.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' • lib/ui/views/dashboard/profileDetailsDialog.dart:2:8 • unnecessary_import
+   info • Parameter 'key' could be a super parameter • lib/ui/views/dashboard/profileDetailsDialog.dart:10:9 • use_super_parameters
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/dashboard/profileDetailsDialog.dart:23:33 • deprecated_member_use
+warning • Unused import: 'package:bitSave/ui/common/ui_helpers.dart' • lib/ui/views/home/home_view.dart:1:8 • unused_import
+warning • Unused import: 'package:flutter_svg/flutter_svg.dart' • lib/ui/views/home/home_view.dart:4:8 • unused_import
+warning • Unused import: '../../dialogs/bottom_sheets/emergency_bottom_sheet.dart' • lib/ui/views/home/home_view.dart:8:8 • unused_import
+   info • Parameter 'key' could be a super parameter • lib/ui/views/home/home_view.dart:17:9 • use_super_parameters
+warning • Unused import: 'package:stacked_services/stacked_services.dart' • lib/ui/views/home/home_viewmodel.dart:5:8 • unused_import
+warning • Unused import: '../../../app/app.locator.dart' • lib/ui/views/home/home_viewmodel.dart:6:8 • unused_import
+warning • Unused import: '../../../core/network/api_response.dart' • lib/ui/views/home/home_viewmodel.dart:8:8 • unused_import
+warning • Unused import: '../../../core/network/interceptors.dart' • lib/ui/views/home/home_viewmodel.dart:9:8 • unused_import
+warning • Unused import: '../../../state.dart' • lib/ui/views/home/home_viewmodel.dart:10:8 • unused_import
+warning • The value of the field '_emergencyOperation' isn't used • lib/ui/views/home/home_viewmodel.dart:21:24 • unused_field
+   info • Use 'const' with the constructor to improve performance • lib/ui/views/home/home_viewmodel.dart:39:5 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/views/home/home_viewmodel.dart:41:5 • prefer_const_constructors
+   info • Parameter 'key' could be a super parameter • lib/ui/views/onboarding/onboarding_view.dart:9:9 • use_super_parameters
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/onboarding/onboarding_view.dart:67:74 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/onboarding/onboarding_view.dart:109:47 • deprecated_member_use
+   info • Parameter 'key' could be a super parameter • lib/ui/views/onboarding/onboarding_view.dart:138:9 • use_super_parameters
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/onboarding/onboarding_view.dart:155:35 • deprecated_member_use
+   info • Parameter 'key' could be a super parameter • lib/ui/views/onboarding/onboarding_view.dart:179:9 • use_super_parameters
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/onboarding/onboarding_view.dart:191:35 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/onboarding/onboarding_view.dart:196:48 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/onboarding/onboarding_view.dart:250:41 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/onboarding/onboarding_view.dart:334:48 • deprecated_member_use
+   info • The file name 'Reports_viewmodel.dart' isn't a lower_case_with_underscores identifier • lib/ui/views/reports/Reports_viewmodel.dart:1:1 • file_names
+warning • Unused import: 'package:stacked_services/stacked_services.dart' • lib/ui/views/reports/Reports_viewmodel.dart:3:8 • unused_import
+warning • Unused import: '../../../app/app.locator.dart' • lib/ui/views/reports/Reports_viewmodel.dart:4:8 • unused_import
+warning • Unused import: '../../../core/network/interceptors.dart' • lib/ui/views/reports/Reports_viewmodel.dart:6:8 • unused_import
+   info • The private field _todayChange could be 'final' • lib/ui/views/reports/Reports_viewmodel.dart:10:10 • prefer_final_fields
+   info • The private field _cryptoBalance could be 'final' • lib/ui/views/reports/Reports_viewmodel.dart:11:10 • prefer_final_fields
+   info • The private field _cryptoBalanceInSats could be 'final' • lib/ui/views/reports/Reports_viewmodel.dart:12:10 • prefer_final_fields
+   info • The private field _selectedAccountType could be 'final' • lib/ui/views/reports/Reports_viewmodel.dart:14:7 • prefer_final_fields
+   info • Parameter 'key' could be a super parameter • lib/ui/views/reports/reports.dart:9:9 • use_super_parameters
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/reports.dart:133:32 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/reports.dart:145:28 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/reports.dart:182:37 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/reports.dart:265:30 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/reports.dart:291:26 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/reports.dart:292:26 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/reports.dart:296:48 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/reports.dart:405:35 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/reports.dart:449:32 • deprecated_member_use
+   info • Parameter 'key' could be a super parameter • lib/ui/views/reports/savings.dart:11:9 • use_super_parameters
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:96:32 • deprecated_member_use
+   info • Use 'const' with the constructor to improve performance • lib/ui/views/reports/savings.dart:110:19 • prefer_const_constructors
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:125:39 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:143:35 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:180:35 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:227:34 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:242:39 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:250:39 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:268:35 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:325:35 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:376:38 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:413:43 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:421:43 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:423:62 • deprecated_member_use
+   info • Use 'const' with the constructor to improve performance • lib/ui/views/reports/savings.dart:432:35 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/views/reports/savings.dart:438:37 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/views/reports/savings.dart:440:34 • prefer_const_constructors
+   info • Use 'const' with the constructor to improve performance • lib/ui/views/reports/savings.dart:442:36 • prefer_const_constructors
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:460:43 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:559:31 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:561:50 • deprecated_member_use
+   info • Use 'const' with the constructor to improve performance • lib/ui/views/reports/savings.dart:566:18 • prefer_const_constructors
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:616:37 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:658:41 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:712:26 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:713:26 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:720:32 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:732:35 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:759:35 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:833:32 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:850:43 • deprecated_member_use
+   info • 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss • lib/ui/views/reports/savings.dart:886:44 • deprecated_member_use
+warning • A value for optional parameter 'borderRadius' isn't ever given • lib/ui/views/reports/savings.dart:966:10 • unused_element_parameter
+   info • Parameter 'key' could be a super parameter • lib/ui/views/startup/startup_view.dart:8:9 • use_super_parameters
+   info • The imported package 'breez_liquid' isn't a dependency of the importing package • lib/ui/views/startup/startup_viewmodel.dart:21:8 • depend_on_referenced_packages
+warning • The value of the field '_secureStorage' isn't used • lib/ui/views/startup/startup_viewmodel.dart:27:9 • unused_field
+   info • Don't invoke 'print' in production code • lib/ui/views/startup/startup_viewmodel.dart:39:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/ui/views/startup/startup_viewmodel.dart:41:9 • avoid_print
+   info • Use 'const' for final variables initialized to a constant value • lib/ui/views/startup/startup_viewmodel.dart:46:7 • prefer_const_declarations
+   info • The local variable '_secureStorage' starts with an underscore • lib/ui/views/startup/startup_viewmodel.dart:46:13 • no_leading_underscores_for_local_identifiers
+   info • Don't invoke 'print' in production code • lib/ui/views/startup/startup_viewmodel.dart:89:7 • avoid_print
+   info • The package name 'bitSave' isn't a lower_case_with_underscores identifier • pubspec.yaml:1:7 • package_names
+
+278 issues found. (ran in 5.2s)

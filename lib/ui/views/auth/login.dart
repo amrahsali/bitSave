@@ -111,6 +111,40 @@ class _LoginState extends State<LoginScreen> {
                     color: kcPrimaryColor,
                   ),
                   verticalSpaceMedium,
+                  // ── Sign-up prompt ─────────────────────────────────────
+                  Center(
+                    child: RichText(
+                      text: TextSpan(
+                        style: TextStyle(
+                          color: kcWhiteColor.withValues(alpha: 0.65),
+                          fontSize: 13,
+                        ),
+                        children: [
+                          const TextSpan(
+                              text: "Don't have an account? "),
+                          WidgetSpan(
+                            alignment: PlaceholderAlignment.baseline,
+                            baseline: TextBaseline.alphabetic,
+                            child: GestureDetector(
+                              onTap: () =>
+                                  widget.onSwitch(AuthType.register),
+                              child: const Text(
+                                'Sign up',
+                                style: TextStyle(
+                                  color: kcPrimaryColor,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: kcPrimaryColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  verticalSpaceMedium,
                 ],
               ),
             ),

@@ -10,6 +10,7 @@ import '../ui/views/auth/auth_view.dart';
 import '../ui/views/dashboard/dashboard_view.dart';
 import '../ui/views/home/home_view.dart';
 
+import '../ui/views/onboarding/onboarding_view.dart';
 import '../ui/views/startup/startup_view.dart';
 // @stacked-import
 /// @author Amrah sali
@@ -24,6 +25,7 @@ import '../ui/views/startup/startup_view.dart';
     MaterialRoute(page: StartupView),
     MaterialRoute(page: AuthView),
     MaterialRoute(page: DashboardView),
+    MaterialRoute(page: OnboardingView),
 
     // MaterialRoute(page: NotificationView),
     // MaterialRoute(page: ProfileView),
@@ -40,10 +42,10 @@ import '../ui/views/startup/startup_view.dart';
 
     // @stacked-service
   ],
-  bottomsheets: [
-    // StackedBottomsheet(classType: NoticeSheet),
-    // @stacked-bottom-sheet
-  ],
+  // bottomsheets: [
+  //   // StackedBottomsheet(classType: NoticeSheet),
+  //   // @stacked-bottom-sheet
+  // ],
   dialogs: [
     StackedDialog(classType: InfoAlertDialog),
     // @stacked-dialog

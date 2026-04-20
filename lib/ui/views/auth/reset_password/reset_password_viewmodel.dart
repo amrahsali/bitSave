@@ -41,7 +41,6 @@ Future<bool> resetPassword(String email, String code, String newPassword) async 
 
        _nav.replaceWithAuthView(
         authType: AuthType.login,
-        initialIndex: 0,
       );
 
       return true;

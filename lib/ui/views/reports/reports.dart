@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked/stacked.dart';
@@ -11,7 +12,7 @@ class Reports extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
       body: ViewModelBuilder<ReportsViewModel>.reactive(
         onViewModelReady: (model) => model.init(),
         viewModelBuilder: () => ReportsViewModel(),
@@ -23,6 +24,8 @@ class Reports extends StatelessWidget {
               children: [
                 // Header with time and user info
                 _buildWelcomeHeader(),
+                const SizedBox(height: 16),
+                _buildBitcoinPill(),
                 const SizedBox(height: 20),
 
                 // Make the main content scrollable
@@ -34,15 +37,15 @@ class Reports extends StatelessWidget {
                       children: [
                         // Income & Expenses Section
                         _buildIncomeExpensesSection(model, kcPrimaryColor),
-                        const SizedBox(height: 30),
+                        const SizedBox(height: 16),
 
                         // Chart Section
                         _buildChartSection(model, kcPrimaryColor),
-                        const SizedBox(height: 30),
+                        const SizedBox(height: 16),
 
                         // Savings Goals Section
                         _buildSavingsGoalsSection(model, kcPrimaryColor),
-                        const SizedBox(height: 30),
+                        const SizedBox(height: 16),
 
                         // Total Balance Section
                         _buildTotalBalanceSection(model, kcPrimaryColor),
@@ -61,20 +64,73 @@ class Reports extends StatelessWidget {
 
   Widget _buildWelcomeHeader() {
     final currentUser = profile.value;
+    String name = currentUser.firstName?.isNotEmpty == true ? currentUser.firstName! : "Guest";
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          currentUser.firstName?.isNotEmpty == true
-              ? "Hi, ${currentUser.firstName}"
-              : "Hi, Guest",
+          "Hi, $name",
           style: GoogleFonts.redHatDisplay(
             fontSize: 20,
             fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
         ),
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.search, color: Colors.white, size: 20),
+            ),
+            const SizedBox(width: 12),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.notifications_none_outlined, color: Colors.white, size: 20),
+            ),
+          ],
+        ),
       ],
+    );
+  }
+
+  Widget _buildBitcoinPill() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.currency_bitcoin, color: Colors.white, size: 14),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            "Bitcoin Account",
+            style: GoogleFonts.redHatDisplay(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -86,162 +142,51 @@ class Reports extends StatelessWidget {
         Text(
           "Insights",
           style: GoogleFonts.redHatDisplay(
-            fontSize: 20,
+            fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
+            color: Colors.white,
           ),
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: _buildFinancialCard(
-                "Income",
-                "\$15,000",
-                Icons.arrow_upward_rounded,
-                Colors.green,
-                primaryColor,
-              ),
-            ),
-            const SizedBox(width: 12),
-            // Expenses Card
-            Expanded(
-              child: _buildFinancialCard(
-                "Expenses",
-                "\$10,000",
-                Icons.arrow_downward_rounded,
-                Colors.red,
-                primaryColor,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFinancialCard(String title, String amount, IconData icon, Color color, Color primaryColor) {
-    return Container(
-      height: 60,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: uiMode.value == AppUiModes.dark ? Colors.white24 : kcWhiteColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[200]!),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, size: 20, color: color),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            title,
-            style: GoogleFonts.redHatDisplay(
-              fontSize: 14,
-              color: uiMode.value == AppUiModes.dark ? Colors.white38 : Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildChartSection(ReportsViewModel model, Color primaryColor) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "Savings Overview",
-              style: GoogleFonts.redHatDisplay(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: primaryColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                children: [
-                  Text(
-                    "BTC 12,455",
-                    style: GoogleFonts.redHatDisplay(
-                      fontSize: 12,
-                      color: primaryColor,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
         ),
         const SizedBox(height: 16),
         Container(
-          height: 265,
-          padding: const EdgeInsets.all(20),
+          height: 48,
           decoration: BoxDecoration(
-            color: uiMode.value == AppUiModes.dark ? Colors.white24 : kcWhiteColor,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.grey[200]!),
+            color: const Color(0xFF1C1A22),
+            borderRadius: BorderRadius.circular(24),
           ),
-          child: Column(
+          child: Row(
             children: [
               Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildChartBar(80, "Jul", primaryColor),
-                    _buildChartBar(120, "Aug", primaryColor),
-                    _buildChartBar(160, "Sep", primaryColor),
-                    _buildChartBar(140, "Oct", primaryColor),
-                    _buildChartBar(100, "Nov", primaryColor),
-                    _buildChartBar(60, "Dec", primaryColor),
-                  ],
+                child: Container(
+                  height: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    "Income",
+                    style: GoogleFonts.redHatDisplay(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(height: 20),
-              // Amount indicators
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "\$8,000",
+              Expanded(
+                child: Container(
+                  height: double.infinity,
+                  alignment: Alignment.center,
+                  child: Text(
+                    "Expenses",
                     style: GoogleFonts.redHatDisplay(
-                      fontSize: 12,
-                      color: Colors.grey[600],
+                      color: Colors.white38,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text(
-                    "\$0",
-                    style: GoogleFonts.redHatDisplay(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
+                ),
               ),
             ],
           ),
@@ -250,257 +195,324 @@ class Reports extends StatelessWidget {
     );
   }
 
-  Widget _buildChartBar(double height, String month, Color primaryColor) {
-    return Column(
-      children: [
-        Container(
-          width: 20,
-          height: height,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
-              colors: [
-                primaryColor,
-                primaryColor.withOpacity(0.6),
+  Widget _buildChartSection(ReportsViewModel model, Color primaryColor) {
+    return Container(
+      height: 250,
+      padding: const EdgeInsets.only(top: 20, right: 20, bottom: 20, left: 10),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1C1A22),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Stack(
+        children: [
+          LineChart(
+            LineChartData(
+              gridData: FlGridData(
+                show: true,
+                drawVerticalLine: true,
+                drawHorizontalLine: true,
+                getDrawingHorizontalLine: (value) => FlLine(
+                  color: Colors.white.withValues(alpha: 0.05),
+                  strokeWidth: 1,
+                ),
+                getDrawingVerticalLine: (value) => FlLine(
+                  color: Colors.white.withValues(alpha: 0.05),
+                  strokeWidth: 1,
+                ),
+              ),
+              titlesData: FlTitlesData(
+                show: true,
+                rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 30,
+                    interval: 1,
+                    getTitlesWidget: (value, meta) {
+                      const style = TextStyle(color: Colors.white70, fontSize: 10);
+                      Widget text;
+                      switch (value.toInt()) {
+                        case 0: text = const Text('Jul', style: style); break;
+                        case 1: text = const Text('Aug', style: style); break;
+                        case 2: text = const Text('Sep', style: style); break;
+                        case 3: text = const Text('Oct', style: style); break;
+                        case 4: text = const Text('Nov', style: style); break;
+                        case 5: text = const Text('Dec', style: style); break;
+                        default: text = const Text(''); break;
+                      }
+                      return Padding(padding: const EdgeInsets.only(top: 8.0), child: text);
+                    },
+                  ),
+                ),
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    interval: 5000,
+                    getTitlesWidget: (value, meta) {
+                      const style = TextStyle(color: Colors.white70, fontSize: 10);
+                      return Text('\$${value.toInt()}', style: style);
+                    },
+                    reservedSize: 42,
+                  ),
+                ),
+              ),
+              borderData: FlBorderData(show: false),
+              minX: 0,
+              maxX: 5,
+              minY: 0,
+              maxY: 15000,
+              lineBarsData: [
+                LineChartBarData(
+                  spots: const [
+                    FlSpot(0, 4000),
+                    FlSpot(1, 10000),
+                    FlSpot(2, 12000),
+                    FlSpot(3, 13000),
+                    FlSpot(4, 10000),
+                    FlSpot(5, 11500),
+                  ],
+                  isCurved: true,
+                  color: const Color(0xFF6B4EE6),
+                  barWidth: 3,
+                  isStrokeCapRound: true,
+                  dotData: FlDotData(
+                    show: true,
+                    checkToShowDot: (spot, barData) => spot.x == 3,
+                    getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
+                      radius: 5,
+                      color: Colors.white,
+                      strokeWidth: 3,
+                      strokeColor: const Color(0xFF6B4EE6),
+                    ),
+                  ),
+                  belowBarData: BarAreaData(
+                    show: true,
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xFF6B4EE6).withValues(alpha: 0.3),
+                        const Color(0xFF6B4EE6).withValues(alpha: 0.0),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                  ),
+                ),
               ],
             ),
-            borderRadius: BorderRadius.circular(4),
           ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          month,
-          style: GoogleFonts.redHatDisplay(
-            fontSize: 10,
-            color: Colors.grey[600],
+          // Tooltip Overlay for BTC 12,455 at Oct
+          Positioned(
+            left: 175, 
+            top: 40, 
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color(0xFF6B4EE6),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                "BTC 12,455",
+                style: GoogleFonts.redHatDisplay(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           ),
-        ),
-      ],
+          // Top right calendar icon
+          Positioned(
+            right: 0,
+            top: 0,
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF252136).withValues(alpha: 0.8),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(Icons.calendar_month, color: Colors.white70, size: 16),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildSavingsGoalsSection(ReportsViewModel model, Color primaryColor) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            primaryColor.withOpacity(0.1),
-            primaryColor.withOpacity(0.05),
-          ],
-        ),
+        color: const Color(0xFF252136),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: primaryColor.withOpacity(0.2)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Savings Goals",
-                style: GoogleFonts.redHatDisplay(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
-                ),
-              ),
-              Icon(Icons.flag_outlined, color: primaryColor),
-            ],
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(Icons.pie_chart, color: Color(0xFF6B4EE6), size: 28),
           ),
-          const SizedBox(height: 12),
-          Text(
-            "Set your savings goal and track them here",
-            style: GoogleFonts.redHatDisplay(
-              fontSize: 14,
-              color: Colors.grey[600],
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Savings goals",
+                  style: GoogleFonts.redHatDisplay(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF6B4EE6),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "Set your savings goal and\ntrack them here",
+                  style: GoogleFonts.redHatDisplay(
+                    fontSize: 14,
+                    color: Colors.white60,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: model.setSavingsGoal,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primaryColor,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 2,
-              ),
-              child: Text(
-                "Set Savings Goal",
-                style: GoogleFonts.redHatDisplay(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
+          const Icon(Icons.add, color: Color(0xFF6B4EE6), size: 30),
         ],
       ),
     );
   }
 
   Widget _buildTotalBalanceSection(ReportsViewModel model, Color primaryColor) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Total Balance",
-          style: GoogleFonts.redHatDisplay(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
-          ),
-        ),
-        const SizedBox(height: 16),
-        // BTC Balance Card
-        _buildBalanceCard(
-          "BTC 14,530.12",
-          "Total Balance",
-          Icons.account_balance_wallet_outlined,
-          primaryColor,
-        ),
-        const SizedBox(height: 12),
-        // Savings Balance Card
-        _buildBalanceCard(
-          "BTC 13,540.40",
-          "Total amount in savings",
-          Icons.savings_outlined,
-          primaryColor,
-        ),
-        const SizedBox(height: 12),
-        // Personal Business Progress Card
-        _buildProgressCard(
-          "Personal business",
-          "\$12,400.00",
-          "85%",
-          0.85,
-          primaryColor,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBalanceCard(String amount, String title, IconData icon, Color primaryColor) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: uiMode.value == AppUiModes.dark ? kcDarkGreyColor : kcWhiteColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: primaryColor.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, size: 20, color: primaryColor),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  amount,
-                  style: GoogleFonts.redHatDisplay(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  title,
-                  style: GoogleFonts.redHatDisplay(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Icon(Icons.chevron_right_rounded, color: Colors.grey[400]),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProgressCard(String title, String amount, String percentage, double progress, Color primaryColor) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: uiMode.value == AppUiModes.dark ? kcDarkGreyColor : kcWhiteColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: const Color(0xFF252136),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                title,
-                style: GoogleFonts.redHatDisplay(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "BTC 14530,12",
+                      style: GoogleFonts.redHatDisplay(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: const Color(0xFF6B4EE6),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "Total Balance",
+                      style: GoogleFonts.redHatDisplay(
+                        fontSize: 12,
+                        color: Colors.white38,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Text(
-                amount,
-                style: GoogleFonts.redHatDisplay(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: primaryColor,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "BTC 13540,40",
+                      style: GoogleFonts.redHatDisplay(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: const Color(0xFF6B4EE6),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "Total amount in savings",
+                      style: GoogleFonts.redHatDisplay(
+                        fontSize: 12,
+                        color: Colors.white38,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          LinearProgressIndicator(
-            value: progress,
-            backgroundColor: Colors.grey[200],
-            color: primaryColor,
-            borderRadius: BorderRadius.circular(10),
-            minHeight: 8,
-          ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 24),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                "Progress",
-                style: GoogleFonts.redHatDisplay(
-                  fontSize: 12,
-                  color: Colors.grey[600],
+               Container(
+                padding: const EdgeInsets.all(12),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF6B4EE6),
+                  shape: BoxShape.circle,
                 ),
+                child: const Icon(Icons.shopping_bag_outlined, color: Colors.white, size: 20),
               ),
-              Text(
-                percentage,
-                style: GoogleFonts.redHatDisplay(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: primaryColor,
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Personal business",
+                          style: GoogleFonts.redHatDisplay(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          "\$12400.00",
+                          style: GoogleFonts.redHatDisplay(
+                            fontSize: 14,
+                            color: const Color(0xFF6B4EE6),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF6B4EE6).withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: FractionallySizedBox(
+                        alignment: Alignment.centerLeft,
+                        widthFactor: 0.85,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF6B4EE6),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        "85%",
+                        style: GoogleFonts.redHatDisplay(
+                          fontSize: 12,
+                          color: Colors.white38,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

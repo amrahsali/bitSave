@@ -33,17 +33,18 @@ class DashboardView extends StackedView<DashboardViewModel> {
       onRefresh: () => viewModel.refreshData(),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
+        // Add extra padding at the bottom so the floating pill bottom nav doesn't cover content
+        padding: const EdgeInsets.only(bottom: 100),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 16),
             _buildWelcomeHeader(),
-            const SizedBox(height: 20),
-            _buildAccountTabs(viewModel),
-            const SizedBox(height: 16),
-            _buildAccountContent(viewModel),
-            const SizedBox(height: 16),
-            _buildActionButtons(context, viewModel),
             const SizedBox(height: 24),
+            _buildUnifiedBitcoinBalanceCard(context, viewModel),
+            const SizedBox(height: 20),
+            _buildPromoBanner(),
+            const SizedBox(height: 32),
             _buildTransactionsSection(viewModel),
           ],
         ),
@@ -53,447 +54,273 @@ class DashboardView extends StackedView<DashboardViewModel> {
 
   Widget _buildWelcomeHeader() {
     final currentUser = profile.value;
+    final name = currentUser.firstName?.isNotEmpty == true
+        ? currentUser.firstName
+        : "Guest";
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          currentUser.firstName?.isNotEmpty == true
-              ? "Hi, ${currentUser.firstName}"
-              : "Hi, Guest",
+          "Hi, $name",
           style: GoogleFonts.redHatDisplay(
+            color: Colors.white,
             fontSize: 20,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w700,
           ),
         ),
-      ],
-    );
-  }
-
-
-  Widget _buildAccountTabs(DashboardViewModel viewModel) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: _AnimatedAccountTabBar(
-        currentIndex: viewModel.selectedAccountType,
-        onTabChanged: (index) => viewModel.setAccountType(index),
-      ),
-    );
-  }
-
-  Widget _buildAccountContent(DashboardViewModel viewModel) {
-    if (viewModel.selectedAccountType == 0) {
-      return _buildFiatBalanceSection(viewModel);
-    } else {
-      return _buildCryptoBalanceSection(viewModel);
-    }
-  }
-
-  Widget _buildFiatBalanceSection(DashboardViewModel viewModel) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.blue.withOpacity(0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Naira Account',
-                style: GoogleFonts.redHatDisplay(
-                  color: Colors.white.withOpacity(0.9),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  'Fiat',
-                  style: GoogleFonts.redHatDisplay(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Total Balance',
-            style: GoogleFonts.redHatDisplay(
-              color: Colors.white.withOpacity(0.8),
-              fontSize: 14,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              // Balance(getInfoStream: sdk.getInfoStream),
-              Text(
-                '₦0.00',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                fontFamily: 'Roboto',
-              ),
-              ),
-              const SizedBox(width: 8),
-              // Container(
-              //   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              //   decoration: BoxDecoration(
-              //     color: Colors.white.withOpacity(0.2),
-              //     borderRadius: BorderRadius.circular(8),
-              //   ),
-                // child: Text(
-                //   '₿ ${viewModel.cryptoBalance.toStringAsFixed(2)}',
-                //   style: GoogleFonts.redHatDisplay(
-                //     fontSize: 14,
-                //     color: Colors.white,
-                //     fontWeight: FontWeight.w600,
-                //   ),
-                // ),
-             // ),
-            ],
-          ),
-          verticalSpaceMedium,
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Container(
-                //   padding: const EdgeInsets.all(4),
-                //   decoration: const BoxDecoration(
-                //     color: Colors.green,
-                //     shape: BoxShape.circle,
-                //   ),
-                //   child: const Icon(
-                //     Icons.arrow_upward,
-                //     color: Colors.white,
-                //     size: 14,
-                //   ),
-                // ),
-                // const SizedBox(width: 8),
-                // Text(
-                //   'Today +${viewModel.todayChange}%',
-                //   style: GoogleFonts.redHatDisplay(
-                //     color: Colors.white,
-                //     fontSize: 14,
-                //     fontWeight: FontWeight.w600,
-                //   ),
-                // ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCryptoBalanceSection(DashboardViewModel viewModel) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFf093fb), Color(0xFFf5576c)],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.purple.withOpacity(0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Bitcoin account',
-                style: GoogleFonts.redHatDisplay(
-                  color: Colors.white.withOpacity(0.9),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  'Bitcoin',
-                  style: GoogleFonts.redHatDisplay(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Total Value',
-            style: GoogleFonts.redHatDisplay(
-              color: Colors.white.withOpacity(0.8),
-              fontSize: 14,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              Text(
-                '${viewModel.cryptoBalanceInSats.toStringAsFixed(0)} sats',
-                style: GoogleFonts.redHatDisplay(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              //
-              // Container(
-              //   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              //   decoration: BoxDecoration(
-              //     color: Colors.white.withOpacity(0.2),
-              //     borderRadius: BorderRadius.circular(8),
-              //   ),
-              //   child: Text(
-              //     '₿ ${viewModel.cryptoBalance.toStringAsFixed(6)}',
-              //     style: GoogleFonts.redHatDisplay(
-              //       fontSize: 14,
-              //       color: Colors.white,
-              //       fontWeight: FontWeight.w600,
-              //     ),
-              //   ),
-              // ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          // Row(
-          //   children: [
-          //     Container(
-          //       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          //       decoration: BoxDecoration(
-          //         color: Colors.white.withOpacity(0.15),
-          //         borderRadius: BorderRadius.circular(8),
-          //       ),
-          //       child: Text(
-          //         '₦${(viewModel.cryptoBalance * 50000).toStringAsFixed(2)}',
-          //         style: GoogleFonts.redHatDisplay(
-          //           fontSize: 12,
-          //           color: Colors.white,
-          //           fontWeight: FontWeight.w500,
-          //         ),
-          //       ),
-          //     ),
-          //   ],
-          // ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: const BoxDecoration(
-                    color: Colors.orange,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.trending_up,
-                    color: Colors.white,
-                    size: 14,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '24h +5.2%',
-                  style: GoogleFonts.redHatDisplay(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _handleAddAction(BuildContext context, DashboardViewModel viewModel) {
-    if (viewModel.selectedAccountType == 0) {
-      showDialog(
-        context: context,
-        builder: (context) => AddNairaDialog(
-          userId: "user_123",
-          onFundsAdded: (nairaAmount, satsAmount) {
-            viewModel.addNairaFunds(nairaAmount, satsAmount);
-          },
-        ),
-      );
-    } else {
-      viewModel.handleAddAction(viewModel.selectedAccountType);
-    }
-  }
-
-  Widget _buildActionButtons(BuildContext context, DashboardViewModel viewModel) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        _buildActionButton(
-          'assets/icons/square-plus.svg',
-          'Add',
-          viewModel.selectedAccountType == 0 ? Colors.blue : Colors.purple,
-              () => _handleAddAction(context, viewModel),
-        ),
-        _buildActionButton(
-          'assets/icons/square-arrow-up.svg',
-          'Transfer',
-          viewModel.selectedAccountType == 0 ? Colors.green : Colors.orange,
-              () => showDialog(
-            context: context,
-            builder: (context) => SendPaymentDialog(sdk: sdk.instance!),
-          ),
-        ),
-        _buildActionButton(
-          'assets/icons/square-arrow-down.svg',
-          'Receive',
-          viewModel.selectedAccountType == 0 ? Colors.purple : Colors.blue,
-              () => showDialog(
-            context: context,
-            builder: (context) => ReceivePaymentDialog(
-              sdk: sdk.instance!,
-              paymentEventStream: sdk.paymentEventStream,
-            ),
-          ),
-        ),
-        _buildActionButton(
-          'assets/icons/Swap.svg',
-          'Swap',
-          viewModel.selectedAccountType == 0 ? Colors.orange : Colors.green,
-              () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Coming Soon"),
-                duration: Duration(seconds: 2),
-                backgroundColor: Colors.grey,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
-          },
-        ),
-
-      ],
-    );
-  }
-
-  Widget _buildActionButton(String iconPath, String label, Color primaryColor, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-        child: Column(
+        Row(
           children: [
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    primaryColor.withOpacity(0.1),
-                    primaryColor.withOpacity(0.05),
+            _buildCircularIconButton(Icons.search_rounded),
+            const SizedBox(width: 12),
+            _buildCircularIconButton(Icons.notifications_rounded),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCircularIconButton(IconData icon) {
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.08),
+        shape: BoxShape.circle,
+      ),
+      child: Icon(
+        icon,
+        color: Colors.white,
+        size: 20,
+      ),
+    );
+  }
+
+  Widget _buildUnifiedBitcoinBalanceCard(BuildContext context, DashboardViewModel viewModel) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      // Dark rounded glassy rectangle
+      decoration: BoxDecoration(
+        color: const Color(0xFF1C1A22), 
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Stack(
+        children: [
+          // Background Icon watermark
+          Positioned(
+            right: -10,
+            bottom: 20,
+            child: Opacity(
+              opacity: 0.03,
+              child: Icon(Icons.shopping_bag, size: 140, color: Colors.white),
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Flag and Bitcoin pill
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 16,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(child: Container(color: Colors.green)),
+                          Expanded(child: Container(color: Colors.white)),
+                          Expanded(child: Container(color: Colors.green)),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Bitcoin',
+                      style: GoogleFonts.redHatDisplay(
+                        color: Colors.white70,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ],
                 ),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: primaryColor.withOpacity(0.2),
-                  width: 1.5,
-                ),
               ),
-              child: Stack(
+              const SizedBox(height: 20),
+              
+              // Account balance text + eye
+              Row(
                 children: [
-                  Positioned.fill(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: RadialGradient(
-                          colors: [
-                            primaryColor.withOpacity(0.05),
-                            Colors.transparent,
-                          ],
+                  Text(
+                    'Account balance',
+                    style: GoogleFonts.redHatDisplay(
+                      color: Colors.white.withValues(alpha: 0.9),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Icon(Icons.remove_red_eye, color: Colors.white.withValues(alpha: 0.6), size: 18),
+                ],
+              ),
+              const SizedBox(height: 8),
+              
+              // Balance amount
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    '₿ 20,999.99',
+                    style: GoogleFonts.redHatDisplay(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1B4D2E), // Dark green bg
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.arrow_outward_rounded, color: Color(0xFF4CAF50), size: 10),
+                        const SizedBox(width: 4),
+                        Text(
+                          '+2.50',
+                          style: GoogleFonts.redHatDisplay(
+                            color: const Color(0xFF4CAF50),
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 32),
+              
+              // Action Buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                         showDialog(
+                          context: context,
+                          builder: (context) => AddNairaDialog(
+                            userId: "user_123",
+                            onFundsAdded: (nairaAmount, satsAmount) {
+                              viewModel.addNairaFunds(nairaAmount, satsAmount);
+                            },
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.add, size: 18),
+                      label: Text(
+                        'Quick Save',
+                        style: GoogleFonts.redHatDisplay(fontWeight: FontWeight.w700),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF6B4EE6),
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                     ),
                   ),
-                  Center(
-                    child: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: SvgPicture.asset(
-                        iconPath,
-                        color: primaryColor,
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                       ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Withdraw coming soon")),
+                        );
+                      },
+                      icon: const Icon(Icons.send_outlined, size: 16),
+                      label: Text(
+                        'Withdraw',
+                        style: GoogleFonts.redHatDisplay(fontWeight: FontWeight.w600),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        side: const BorderSide(color: Colors.white, width: 1),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                     ),
                   ),
                 ],
               ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPromoBanner() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E1E1E),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(width: 10, height: 16, color: Colors.white),
+              const SizedBox(width: 4),
+              Container(width: 10, height: 26, color: Colors.blueAccent),
+              const SizedBox(width: 4),
+              Container(width: 10, height: 36, color: Colors.white),
+            ],
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Invite friends and earn \$\$\$!',
+                  style: GoogleFonts.redHatDisplay(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Refer bitSave to your friends\nand earn rewards',
+                  style: GoogleFonts.redHatDisplay(
+                    color: Colors.white60,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: GoogleFonts.redHatDisplay(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
-                letterSpacing: -0.2,
-              ),
-            ),
-          ],
-        ),
+          ),
+          const Icon(Icons.arrow_forward_ios_rounded, color: Color(0xFF6B4EE6), size: 16),
+        ],
       ),
     );
   }
@@ -509,6 +336,7 @@ class DashboardView extends StackedView<DashboardViewModel> {
               'Transactions',
               style: GoogleFonts.redHatDisplay(
                 fontSize: 20,
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -517,8 +345,9 @@ class DashboardView extends StackedView<DashboardViewModel> {
               child: Text(
                 'See all',
                 style: GoogleFonts.redHatDisplay(
-                  color: kcPrimaryColor,
+                  color: const Color(0xFF6B4EE6),
                   fontSize: 14,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -540,128 +369,104 @@ class DashboardView extends StackedView<DashboardViewModel> {
 
   Widget _buildTransactionItem(Transaction transaction) {
     final bool isNegative = transaction.amount < 0;
-    final Color primaryColor = isNegative ? const Color(0xFFF44336) : const Color(0xFF4CAF50);
-    final Color bgColor = primaryColor.withOpacity(0.05);
+    final Color amountColor = isNegative ? const Color(0xFFFF3B30) : const Color(0xFF34C759);
 
-    final List<Color> avatarColors = [
-      Colors.red,
-      Colors.blue,
-      Colors.green,
-      Colors.orange,
-      Colors.purple,
-    ];
-    final int colorIndex = transaction.recipient.hashCode % avatarColors.length;
-    final Color avatarColor = avatarColors[colorIndex];
+    final String initial = transaction.recipient.isNotEmpty 
+        ? transaction.recipient.substring(0, 1).toUpperCase() 
+        : "U";
 
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      child: Material(
-        borderRadius: BorderRadius.circular(18),
-        color: uiMode.value == AppUiModes.dark ? kcDarkGreyColor : kcWhiteColor,
-        elevation: 0,
-        child: InkWell(
-          onTap: () => _showTransactionDetails(transaction),
-          borderRadius: BorderRadius.circular(18),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(
-                color: Colors.grey.withOpacity(0.1),
-                width: 1.2,
-              ),
+    return InkWell(
+      onTap: () => _showTransactionDetails(transaction),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: Colors.white.withValues(alpha: 0.05),
+              width: 1,
             ),
-            child: Row(
+          ),
+        ),
+        child: Row(
+          children: [
+            // Circular Avatar with small badge
+            Stack(
               children: [
                 Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: avatarColor.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(12),
+                  width: 46,
+                  height: 46,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF6B4EE6), 
+                    shape: BoxShape.circle,
                   ),
                   child: Center(
                     child: Text(
-                      transaction.recipient.substring(0, 1).toUpperCase(),
+                      initial,
                       style: GoogleFonts.redHatDisplay(
-                        fontSize: 16,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: avatarColor,
+                        color: Colors.white,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            transaction.recipient,
-                            style: GoogleFonts.redHatDisplay(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
-                            ),
-                          ),
-                          Text(
-                            '${isNegative ? '-' : '+'}₦${transaction.amount.abs().toStringAsFixed(2)}',
-                            style: GoogleFonts.redHatDisplay(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                              color: primaryColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.access_time,
-                                size: 12,
-                                color: Colors.grey[500],
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${transaction.date}, ${transaction.time}',
-                                style: GoogleFonts.redHatDisplay(
-                                  fontSize: 11,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            ],
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: bgColor,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              isNegative ? 'SENT' : 'RECEIVED',
-                              style: GoogleFonts.redHatDisplay(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w700,
-                                color: primaryColor,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                Positioned(
+                  bottom: -2,
+                  right: -2,
+                  child: Container(
+                    width: 18,
+                    height: 18,
+                    decoration: BoxDecoration(
+                      color: isNegative ? const Color(0xFFFF3B30) : const Color(0xFF34C759),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: const Color(0xFF0F0A1E), width: 2),
+                    ),
+                    child: Icon(
+                      isNegative ? Icons.arrow_outward_rounded : Icons.arrow_downward_rounded,
+                      size: 10,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],
             ),
-          ),
+            const SizedBox(width: 16),
+            // Details
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    isNegative ? 'Sent to ${transaction.recipient}' : 'Received from ${transaction.recipient}',
+                    style: GoogleFonts.redHatDisplay(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${transaction.date}, ${transaction.time}',
+                    style: GoogleFonts.redHatDisplay(
+                      fontSize: 12,
+                      color: Colors.white60,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Amount
+            Text(
+              '${isNegative ? '-' : '+'}₦${transaction.amount.abs().toStringAsFixed(2)}',
+              style: GoogleFonts.redHatDisplay(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: amountColor,
+              ),
+            ),
+          ],
         ),
       ),
     );

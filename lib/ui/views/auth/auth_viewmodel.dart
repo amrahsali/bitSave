@@ -80,6 +80,59 @@ class AuthViewModel extends BaseViewModel {
     });
   }
 
+  /// Registers a new user with Firebase Auth and sends an email verification.
+  /// On success, calls [onSuccess] with the registered email so the caller
+  /// can switch to the OTP/verify-email screen.
+  Future<void> register({
+    required String fullName,
+    required VoidCallback onSuccess,
+  }) async {
+    setBusy(true);
+    try {
+      if (email.text.trim().isEmpty || password.text.trim().isEmpty) {
+        locator<SnackbarService>().showSnackbar(
+          message: 'Please fill in all required fields.',
+        );
+        return;
+      }
+
+      final credential = await _auth.createUserWithEmailAndPassword(
+        email: email.text.trim(),
+        password: password.text.trim(),
+      );
+
+      // Save display name
+      await credential.user?.updateDisplayName(fullName);
+
+      // Send verification email
+      await credential.user?.sendEmailVerification();
+
+      onSuccess();
+    } on FirebaseAuthException catch (e) {
+      String message;
+      switch (e.code) {
+        case 'email-already-in-use':
+          message = 'An account with this email already exists.';
+          break;
+        case 'invalid-email':
+          message = 'That email address looks invalid.';
+          break;
+        case 'weak-password':
+          message = 'Your password is too weak. Use at least 8 characters.';
+          break;
+        default:
+          message = 'Registration failed. Please try again.';
+      }
+      locator<SnackbarService>().showSnackbar(message: message);
+    } catch (e) {
+      locator<SnackbarService>().showSnackbar(
+        message: 'Something went wrong. Please try again later.',
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+
   Future<void> login() async {
     setBusy(true);
     try {
@@ -174,6 +227,18 @@ Future<void> resendOtp(String email) async {
   }
 }
 
+  Future<void> createPin(String pin, VoidCallback onSuccess) async {
+    setBusy(true);
+    try {
+      // TODO: Actually secure hash and store local PIN or persist it remotely
+      await Future.delayed(const Duration(seconds: 1));
+      onSuccess();
+    } catch (e) {
+      locator<SnackbarService>().showSnackbar(message: "Failed to create PIN.");
+    } finally {
+      setBusy(false);
+    }
+  }
 
   Future<void> updateDeviceDetails() async {
     try {

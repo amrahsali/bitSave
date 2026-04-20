@@ -1,372 +1,392 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked/stacked.dart';
 import '../../common/app_colors.dart';
-import '../../common/ui_helpers.dart';
-import '../../components/submit_button.dart';
-import '../../components/text_field_widget.dart';
 import 'auth_view.dart';
 import 'auth_viewmodel.dart';
 
-
-
-class RegisterScreen extends  StatefulWidget {
+class RegisterScreen extends StatefulWidget {
   final Function(AuthType, {String? email}) onSwitch;
 
-  const RegisterScreen({required this.onSwitch});
+  const RegisterScreen({super.key, required this.onSwitch});
 
   @override
   State<RegisterScreen> createState() => _RegisterState();
-
 }
 
 class _RegisterState extends State<RegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _dobController = TextEditingController();
+
+  // Dark field colour used across all inputs
+  static const Color _fieldBg = Color(0xFF1A1226);
+  static const Color _fieldBorder = Color(0xFF2D2542);
+  static const Color _hintColor = Color(0xFF7B7A8E);
+  static const Color _labelColor = Color(0xFF9E9DB5);
+
+  @override
+  void dispose() {
+    _dobController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height,
-      child: Scaffold(
-        body: ViewModelBuilder<AuthViewModel>.reactive(
-          onViewModelReady: (model) {
-            // model.();
-          },
-          viewModelBuilder: () => AuthViewModel(),
-          builder: (context, model, child) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24),
-            child: Form(
-              key: _formKey,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                            color: kcPrimaryColor, width: 2), // Add border
-                        borderRadius:
-                        BorderRadius.circular(10), // Optional rounded corners
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/header-image.png'),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Registration',
-                            style: TextStyle(
-                                color: kcWhiteColor,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          // Container(
-                          //   width: 60,
-                          //   height: 40,
-                          //   decoration: BoxDecoration(
-                          //     color: Colors.blue, // Background color
-                          //     borderRadius: BorderRadius.circular(
-                          //         8), // Optional: Rounded corners
-                          //   ),
-                          //   child: Center(
-                          //     child: const Text(
-                          //       "back",
-                          //       style: TextStyle(
-                          //         color: kcWhiteColor,
-                          //         fontSize: 16,
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const Text(
-                    "Create an account so you can esplore our hight quality services",
-                    style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  verticalSpaceMedium,
-                  TextFieldWidget(
-                    hint: "Email Address",
-                    controller: model.email,
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'required';
-                      }
-                      if (!RegExp(r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$').hasMatch(value)) {
-                        return 'Invalid email address';
-                      }
-                      return null; // Return null to indicate no validation error
-                    },
-                  ),
-                  verticalSpaceSmall,
-                  // Row(
-                  //   children: [
-                  //     Expanded(
-                  //       child: TextFieldWidget(
-                  //         hint: "Firstname",
-                  //         controller: model.firstname,
-                  //         inputType: TextInputType.name,
-                  //         validator: (value) {
-                  //           if (value.isEmpty) {
-                  //             return 'required';
-                  //           }
-                  //           return null; // Return null to indicate no validation error
-                  //         },
-                  //       ),
-                  //     ),
-                  //     const SizedBox(
-                  //       width: 5,
-                  //     ),
-                  //     Expanded(
-                  //       child: TextFieldWidget(
-                  //         hint: "Lastname",
-                  //         controller: model.lastname,
-                  //         validator: (value) {
-                  //           if (value.isEmpty) {
-                  //             return 'required';
-                  //           }
-                  //           return null; // Return null to indicate no validation error
-                  //         },
-                  //       ),
-                  //     ),
-                  //     verticalSpaceSmall,
-                  //   ],
-                  // ),
-                  // verticalSpaceSmall,
-                  // IntlPhoneField(
-                  //   decoration: InputDecoration(
-                  //     labelText: 'Phone Number',
-                  //     labelStyle: const TextStyle(color: Colors.black, fontSize: 13),
-                  //     floatingLabelStyle: const TextStyle(color: kcLightGrey),
-                  //     filled: true, // Ensure the background is filled
-                  //     fillColor: Colors.white, // Set background color to white
-                  //     border: OutlineInputBorder(
-                  //       borderRadius: BorderRadius.circular(10.0), // Add border curve
-                  //       borderSide: const BorderSide(color: kcLightGrey), // Default grey border
-                  //     ),
-                  //     enabledBorder: OutlineInputBorder(
-                  //       borderRadius: BorderRadius.circular(10.0), // Add border curve
-                  //       borderSide: const BorderSide(color: Colors.grey), // Default grey border when not focused
-                  //     ),
-                  //     focusedBorder: OutlineInputBorder(
-                  //       borderRadius: BorderRadius.circular(10.0), // Add border curve
-                  //       borderSide: const BorderSide(color: Color(0xFFCC9933)), // Border color on focus
-                  //     ),
-                  //   ),
-                  //   validator: (value) {
-                  //     if (value == null || value.completeNumber.isEmpty) {
-                  //       return 'Required';
-                  //     }
-                  //     return null; // Return null to indicate no validation error
-                  //   },
-                  //   initialCountryCode: 'NG',
-                  //   controller: model.phone,
-                  //   onChanged: (phone) {
-                  //     model.phoneNumber = phone;
-                  //     print('Phone code is: ${phone.countryISOCode}');
-                  //   },
-                  // ),
-                  // Autocomplete<String>(
-                  //   optionsBuilder: (TextEditingValue textEditingValue) {
-                  //     if (textEditingValue.text.isEmpty) {
-                  //       return const Iterable<String>.empty();
-                  //     }
-                  //     return model.estates
-                  //         .where((estate) => (estate.estateName ?? "")
-                  //         .toLowerCase()
-                  //         .contains(textEditingValue.text.toLowerCase()))
-                  //         .map((estate) => estate.estateName ?? "");
-                  //   },
-                  //   onSelected: (String selectedEstate) {
-                  //     model.estateController.text = selectedEstate;
-                  //     final selectedEstateObj = model.estates.firstWhere(
-                  //           (estate) => estate.estateName == selectedEstate,
-                  //       orElse: () => Estate(estateName: "Estate not found"), // Returns null if no match is found
-                  //     );
-                  //
-                  //     model.selectedEstateId = selectedEstateObj.id ?? "";
-                  //     model.getApartments(model.selectedEstateId);
-                  //   },
-                  //   fieldViewBuilder:
-                  //       (context, textEditingController, focusNode, onFieldSubmitted) {
-                  //     return TextFieldWidget(
-                  //       hint: "Select Estate",
-                  //       controller: textEditingController,  // Use textEditingController
-                  //       focusNode: focusNode,               // Use focusNode to manage dropdown
-                  //       validator: (value) =>
-                  //       value.isEmpty ? 'Estate selection is required' : null,
-                  //       onChanged: (text) {
-                  //         // if (!model.estates
-                  //         //     .map((estate) => estate.estateName)
-                  //         //     .contains(text)) {
-                  //         //   focusNode.unfocus(); // Close dropdown if no match
-                  //         // }
-                  //       },
-                  //     );
-                  //   },
-                  //   optionsViewBuilder: (context, onSelected, options) {
-                  //     return Align(
-                  //       alignment: Alignment.topLeft,
-                  //       child: Material(
-                  //         elevation: 4.0,
-                  //         borderRadius: BorderRadius.circular(10),
-                  //         child: SizedBox(
-                  //           width: MediaQuery.of(context).size.width - 50,
-                  //           child: ListView.builder(
-                  //             padding: EdgeInsets.zero,
-                  //             itemCount: options.length,
-                  //             itemBuilder: (context, index) {
-                  //               final String option = options.elementAt(index);
-                  //               return ListTile(
-                  //                 title: Text(option),
-                  //                 onTap: () => onSelected(option),
-                  //               );
-                  //             },
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
-                  // verticalSpaceSmall,
-                  // DropdownButtonFormField<Apartment>(
-                  //   decoration: InputDecoration(
-                  //     labelText: "Select Apartment",
-                  //     border: OutlineInputBorder(
-                  //       borderRadius: BorderRadius.circular(10),
-                  //     ),
-                  //   ),
-                  //   value: model.selectedApartment,
-                  //   onChanged: (Apartment? newValue) {
-                  //     if (newValue != null) {
-                  //       setState(() {
-                  //         model.selectedApartment = newValue;
-                  //       });
-                  //     }
-                  //   },
-                  //   items: model.apartments.map<DropdownMenuItem<Apartment>>((Apartment value) {
-                  //     return DropdownMenuItem<Apartment>(
-                  //       value: value,
-                  //       child: Text("${value.apartmentNumber} - ${value.apartmentAddress}"),
-                  //     );
-                  //   }).toList(),
-                  //   validator: (value) => value == null ? 'Apartment selection is required' : null,
-                  // ),
-                  verticalSpaceSmall,
-                  TextFieldWidget(
-                    inputType: TextInputType.visiblePassword,
-                    hint: "Password",
-                    controller: model.password,
-                    obscureText: model.obscure,
-                    suffix: InkWell(
-                      onTap: () {
-                        model.toggleObscure();
-                      },
-                      child:
-                      Icon(model.obscure ? Icons.visibility_off : Icons.visibility),
-                    ),
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Password is required';
-                      }
-                      if (value.length < 8) {
-                        return 'Password must be at least 8 characters long';
-                      }
-                      if (!RegExp(r'[A-Z]').hasMatch(value)) {
-                        return 'Password must contain at least one uppercase letter';
-                      }
-                      if (!RegExp(r'[a-z]').hasMatch(value)) {
-                        return 'Password must contain at least one lowercase letter';
-                      }
-                      if (!RegExp(r'[0-9]').hasMatch(value)) {
-                        return 'Password must contain at least one digit';
-                      }
-                      if (!RegExp(r'[!@#$%^&*]').hasMatch(value)) {
-                        return 'Password must contain at least one special character';
-                      }
-                      return null; // Return null to indicate no validation error
-                    },
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text( style: TextStyle(
-                      fontSize: 11,
-                    ),
-                        "At least 8 characters, including letters and numbers"),
-                  ),
-                  verticalSpaceSmall,
-                  TextFieldWidget(
-                    hint: "Confirm password",
-                    controller: model.cPassword,
-                    obscureText: model.obscure,
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Password confirmation is required';
-                      }
-                      if (value != model.password.text) {
-                        return 'Passwords do not match';
-                      }
-                      return null; // Return null to indicate no validation error
-                    },
-                    suffix: InkWell(
-                      onTap: () {
-                        model.toggleObscure();
-                      },
-                      child:
-                      Icon(model.obscure ? Icons.visibility_off : Icons.visibility),
-                    ),
-                  ),
-                  verticalSpaceSmall,
-                  SubmitButton(
-                    isLoading: model.isBusy,
-                    label: "Next",
-                    submit: ()  {
-                      //
-                      // if (_formKey.currentState!.validate()) {
-                      //   await model.register(widget.onSwitch);
-                      //
-                      // }
-
-                    },
-                    color: kcPrimaryColor,
-                    boldText: true,
-                  ),
-                  verticalSpaceSmall,
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children:  [
-                        const Text(
-                          "Have an account? ",
-                          style: TextStyle(
-                            fontSize: 12,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => widget.onSwitch(AuthType.login),
-                          child: const Text(
-                            "login here",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: kcPrimaryColor,
-                            ),
-                          ),
-                        )
-                      ]
-                  ),
+    return ViewModelBuilder<AuthViewModel>.reactive(
+      viewModelBuilder: () => AuthViewModel(),
+      builder: (context, model, child) {
+        return Scaffold(
+          backgroundColor: const Color(0xFF0F0A1E),
+          body: Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF3B2490), // deep purple top
+                  Color(0xFF0F0A1E), // near-black bottom
                 ],
+                stops: [0.0, 0.6],
               ),
             ),
+            child: SafeArea(
+              child: GestureDetector(
+                onTap: () => FocusScope.of(context).unfocus(),
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: MediaQuery.of(context).size.height -
+                          MediaQuery.of(context).padding.top -
+                          MediaQuery.of(context).padding.bottom,
+                    ),
+                    child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 16),
+
+                        // ── Header row: back arrow + progress bar ──────────
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () => widget.onSwitch(AuthType.login),
+                              child: const Icon(
+                                Icons.arrow_back,
+                                color: Colors.white,
+                                size: 22,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: LinearProgressIndicator(
+                                  value: 0.5,
+                                  minHeight: 5,
+                                  backgroundColor:
+                                      Colors.white.withValues(alpha: 0.2),
+                                  valueColor:
+                                      const AlwaysStoppedAnimation<Color>(
+                                          Colors.white),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 40),
+
+                        // ── Title ──────────────────────────────────────────
+                        Text(
+                          'Tell us about yourself',
+                          style: GoogleFonts.redHatDisplay(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            height: 1.2,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'we need this information to verify your identity',
+                          style: GoogleFonts.redHatDisplay(
+                            color: Colors.white.withValues(alpha: 0.55),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+
+                        const SizedBox(height: 36),
+
+                        // ── Full Name field ────────────────────────────────
+                        _buildInputField(
+                          label: 'Full name',
+                          hint: 'Enter name here',
+                          controller: model.firstname,
+                          keyboardType: TextInputType.name,
+                          validator: (v) =>
+                              (v?.isEmpty ?? true) ? 'Full name is required' : null,
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        // ── Email field ────────────────────────────────────
+                        _buildInputField(
+                          label: 'Email',
+                          hint: 'Enter email here',
+                          controller: model.email,
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (v) {
+                            if (v == null || v.isEmpty) return 'Email is required';
+                            if (!RegExp(
+                                    r'^[\w-]+(\.[\\w-]+)*@[\w-]+(\.[\w-]+)+$')
+                                .hasMatch(v)) {
+                              return 'Invalid email address';
+                            }
+                            return null;
+                          },
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        // ── Date of Birth field ────────────────────────────
+                        GestureDetector(
+                          onTap: () async {
+                            final picked = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime(1991, 1, 1),
+                              firstDate: DateTime(1920),
+                              lastDate: DateTime.now(),
+                              builder: (ctx, child) => Theme(
+                                data: ThemeData.dark().copyWith(
+                                  colorScheme: const ColorScheme.dark(
+                                    primary: kcPrimaryColor,
+                                    surface: Color(0xFF1A1226),
+                                  ),
+                                ),
+                                child: child!,
+                              ),
+                            );
+                            if (picked != null) {
+                              setState(() {
+                                _dobController.text =
+                                    '${picked.day.toString().padLeft(2, '0')}/'
+                                    '${picked.month.toString().padLeft(2, '0')}/'
+                                    '${picked.year}';
+                              });
+                            }
+                          },
+                          child: AbsorbPointer(
+                            child: _buildInputField(
+                              label: 'Date of Birth',
+                              hint: '01/01/1991',
+                              controller: _dobController,
+                              suffixIcon: Padding(
+                                padding: const EdgeInsets.only(right: 14),
+                                child: Icon(
+                                  Icons.calendar_today_outlined,
+                                  color: _hintColor,
+                                  size: 18,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        // ── Password field ─────────────────────────────────
+                        _buildInputField(
+                          label: 'Password',
+                          hint: '••••••••',
+                          controller: model.password,
+                          obscure: model.obscure,
+                          suffixIcon: GestureDetector(
+                            onTap: model.toggleObscure,
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 14),
+                              child: Icon(
+                                model.obscure
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                                color: _hintColor,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                          validator: (v) {
+                            if (v == null || v.isEmpty) {
+                              return 'Password is required';
+                            }
+                            if (v.length < 8) {
+                              return 'At least 8 characters';
+                            }
+                            return null;
+                          },
+                        ),
+
+                        const SizedBox(height: 36),
+
+                        // ── Continue button ────────────────────────────────
+                        SizedBox(
+                          width: double.infinity,
+                          height: 54,
+                          child: ElevatedButton(
+                            onPressed: model.isBusy
+                                ? null
+                                : () {
+                                    if (_formKey.currentState!.validate()) {
+                                      model.register(
+                                        fullName: model.firstname.text.trim(),
+                                        onSuccess: () {
+                                          widget.onSwitch(
+                                            AuthType.otpVerify,
+                                            email: model.email.text.trim(),
+                                          );
+                                        },
+                                      );
+                                    }
+                                  },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: kcPrimaryColor,
+                              foregroundColor: Colors.white,
+                              disabledBackgroundColor:
+                                  kcPrimaryColor.withValues(alpha: 0.6),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            child: model.isBusy
+                                ? const SizedBox(
+                                    width: 22,
+                                    height: 22,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : Text(
+                                    'Continue',
+                                    style: GoogleFonts.redHatDisplay(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        // ── Already have account ───────────────────────────
+                        Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Have an account? ',
+                                style: GoogleFonts.redHatDisplay(
+                                  color: Colors.white.withValues(alpha: 0.55),
+                                  fontSize: 13,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () =>
+                                    widget.onSwitch(AuthType.adminLogin),
+                                child: Text(
+                                  'Login here',
+                                  style: GoogleFonts.redHatDisplay(
+                                    color: kcPrimaryColor,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 40),
+                      ],
+                    ), // Column
+                    ), // Form
+                  ), // ConstrainedBox
+                ), // SingleChildScrollView
+              ), // GestureDetector
+            ), // SafeArea
+          ), // gradient Container
+        ); // Scaffold
+      },
+    );
+  }
+
+  // ── Reusable styled input field ──────────────────────────────────────────
+  Widget _buildInputField({
+    required String label,
+    required String hint,
+    required TextEditingController controller,
+    TextInputType keyboardType = TextInputType.text,
+    bool obscure = false,
+    Widget? suffixIcon,
+    String? Function(String?)? validator,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: _fieldBg,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: _fieldBorder, width: 1),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: GoogleFonts.redHatDisplay(
+              color: _labelColor,
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+            ),
           ),
-        ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: controller,
+                  keyboardType: keyboardType,
+                  obscureText: obscure,
+                  style: GoogleFonts.redHatDisplay(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  decoration: InputDecoration(
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                    border: InputBorder.none,
+                    hintText: hint,
+                    hintStyle: GoogleFonts.redHatDisplay(
+                      color: _hintColor,
+                      fontSize: 15,
+                    ),
+                    errorStyle: const TextStyle(
+                      color: Colors.redAccent,
+                      fontSize: 10,
+                    ),
+                  ),
+                  validator: validator,
+                ),
+              ),
+              if (suffixIcon != null) suffixIcon,
+            ],
+          ),
+        ],
       ),
     );
   }

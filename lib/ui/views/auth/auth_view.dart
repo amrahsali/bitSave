@@ -2,6 +2,7 @@
 import 'package:bitSave/ui/views/auth/registration.dart';
 import 'package:bitSave/ui/views/auth/user_selection.dart';
 import 'package:bitSave/ui/views/auth/verifyEmail.dart';
+import 'package:bitSave/ui/views/auth/create_pin_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:stacked/stacked.dart';
@@ -10,7 +11,7 @@ import 'auth_viewmodel.dart';
 import 'forgetPasswordView.dart';
 import 'login.dart';
 
-enum AuthType { selection, login, adminLogin, register, otpVerify, forgotPassword }
+enum AuthType { selection, login, adminLogin, register, otpVerify, forgotPassword, createPin }
 
 class AuthView extends StatefulWidget {
   final AuthType authType;
@@ -27,6 +28,7 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
   late AuthType currentAuthType;
   String emailForOtp = "";
   String password = "";
+  bool isSignupFlow = false;
 
   @override
   void initState() {
@@ -45,7 +47,11 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
   }
 
   void updateAuthPage(AuthType type, {String? email}) {
+    bool comingFromRegister = currentAuthType == AuthType.register;
     setState(() {
+      if (type == AuthType.otpVerify) {
+        isSignupFlow = comingFromRegister;
+      }
       currentAuthType = type;
       _animationController.forward(from: 0);
     });
@@ -75,21 +81,10 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
       body: ViewModelBuilder<AuthViewModel>.reactive(
         onViewModelReady: (model) {},
         viewModelBuilder: () => AuthViewModel(),
-        builder: (context, model, child) => SingleChildScrollView(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 0),
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    child: getAuthScreen(),
-                  ),
-                ),
-              ],
-            ),
+        builder: (context, model, child) => SizedBox.expand(
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: getAuthScreen(),
           ),
         ),
       ),
@@ -107,9 +102,14 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
       case AuthType.register:
         return RegisterScreen(onSwitch: updateAuthPage);
       case AuthType.otpVerify:
-        return OTPVerificationScreen(onSwitch: updateAuthPage, email: emailForOtp);
+        return OTPVerificationScreen(
+            onSwitch: updateAuthPage, 
+            email: emailForOtp, 
+            isSignup: isSignupFlow);
       case AuthType.forgotPassword:
         return ForgotPasswordView(onSwitch: updateAuthPage);
+      case AuthType.createPin:
+        return CreatePinScreen(onSwitch: updateAuthPage);
     }
   }
 }

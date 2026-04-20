@@ -8,8 +8,8 @@ import 'package:stacked_services/stacked_services.dart';
 import 'firebase_options.dart';
 import 'package:bitSave/state.dart';
 import 'package:bitSave/ui/common/app_colors.dart';
-import '../../../core/utils/local_stotage.dart';
-import '../../../core/utils/local_store_dir.dart';
+import 'core/utils/local_stotage.dart';
+import 'core/utils/local_store_dir.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = "1.9.25" // match latest stable
+    ext.kotlin_version = "2.1.0" // match latest stable
     repositories {
         google()
         mavenCentral()

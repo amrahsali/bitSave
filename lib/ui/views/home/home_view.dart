@@ -18,122 +18,101 @@ class HomeView extends StackedView<HomeViewModel> {
 
   @override
   Widget builder(BuildContext context, HomeViewModel viewModel, Widget? child) {
-    return Scaffold(
-      appBar: _buildAppBar(context, viewModel),
-      body: PageView(
-        controller: viewModel.pageController,
-        physics: const NeverScrollableScrollPhysics(),
-        children: viewModel.pages,
+    // Automatically enforce Dark mode logic behind the scenes so the inner text colors adapt correctly if components read it
+    uiMode.value = AppUiModes.dark;
+
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFF3B2490),
+            Color(0xFF0F0A1E),
+          ],
+          stops: [0.0, 0.4],
+        ),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(viewModel),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        extendBody: true, // Crucial so content slips under floating nave
+        body: PageView(
+          controller: viewModel.pageController,
+          physics: const NeverScrollableScrollPhysics(),
+          children: viewModel.pages,
+        ),
+        bottomNavigationBar: _buildFloatingBottomBar(viewModel),
+      ),
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context, HomeViewModel viewModel) {
-    return AppBar(
-      toolbarHeight: 50,
-      // backgroundColor: Colors.white,
-      elevation: 0,
-      automaticallyImplyLeading: false,
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'BitSave',
-            style: GoogleFonts.redHatDisplay(
-              color: Theme.of(context).brightness == Brightness.dark ? kcBlackColor : kcPrimaryColor,
-              fontWeight: FontWeight.bold,
-              fontSize: 30,
+  Widget _buildFloatingBottomBar(HomeViewModel viewModel) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, right: 16, bottom: 24),
+      child: Container(
+        height: 75,
+        decoration: BoxDecoration(
+          color: const Color(0xFF151126), // Dark capsule bg
+          borderRadius: BorderRadius.circular(35),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.5),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
             ),
-          ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildNavItem(Icons.home_filled, 'Home', 0, viewModel),
+            _buildNavItem(Icons.account_balance_wallet_rounded, 'Savings', 1, viewModel),
+            _buildNavItem(Icons.bar_chart_rounded, 'Insights', 2, viewModel),
+            _buildNavItem(Icons.card_giftcard_rounded, 'Invite', 3, viewModel),
+          ],
+        ),
+      ),
+    );
+  }
 
-          Row(
-            children: [
-              // 🌙 Theme Toggle
-              ValueListenableBuilder<AppUiModes>(
-                valueListenable: uiMode,
-                builder: (context, mode, _) {
-                  final isDark = mode == AppUiModes.dark;
-                  return IconButton(
-                    tooltip: isDark ? 'Switch to light mode' : 'Switch to dark mode',
-                    onPressed: () async {
-                      uiMode.value = isDark ? AppUiModes.light : AppUiModes.dark;
+  Widget _buildNavItem(IconData icon, String label, int index, HomeViewModel viewModel) {
+    final isSelected = viewModel.selectedIndex == index;
+    final color = isSelected ? const Color(0xFF6B4EE6) : Colors.grey.shade500;
 
-                      // update system UI overlay
-                      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                        statusBarColor: Colors.transparent,
-                        statusBarIconBrightness: uiMode.value == AppUiModes.dark
-                            ? Brightness.light
-                            : Brightness.dark,
-                        statusBarBrightness: uiMode.value == AppUiModes.dark
-                            ? Brightness.dark
-                            : Brightness.light,
-                      ));
-
-                      try {
-                        await locator<LocalStorage>().save(
-                          LocalStorageDir.uiMode,
-                          uiMode.value == AppUiModes.dark ? 'dark' : 'light',
-                        );
-                      } catch (e) {
-                        // ignore if saving fails
-                      }
-                    },
-                    icon: Icon(
-                      isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? kcBlackColor
-                          : kcPrimaryColor,
-                    ),
-                  );
-                },
+    return GestureDetector(
+      onTap: () => viewModel.changeSelectedPage(index),
+      behavior: HitTestBehavior.opaque,
+      child: SizedBox(
+        width: 65,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: color, size: 24),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: GoogleFonts.redHatDisplay(
+                fontSize: 10,
+                color: color,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
               ),
-              // 🤖 AI Icon
-              IconButton(
-                tooltip: 'Ask AI',
-                onPressed: () {
-                  // TODO: open your AI assistant page or dialog
-                },
-                icon: Icon(
-                  Icons.smart_toy_rounded, // You can also use Icons.auto_awesome
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? kcBlackColor
-                      : kcPrimaryColor,
+            ),
+            if (isSelected) ...[
+              const SizedBox(height: 4),
+              Container(
+                width: 4,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: color,
+                  shape: BoxShape.circle,
                 ),
               ),
-            ],
-          ),
-
-        ],
+            ] else ...[
+              const SizedBox(height: 8), // Keep uniform height
+            ]
+          ],
+        ),
       ),
-    );
-  }
-
-  Widget _buildBottomNavigationBar(HomeViewModel viewModel) {
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      currentIndex: viewModel.selectedIndex,
-      onTap: (index) => viewModel.changeSelectedPage(index),
-      selectedItemColor:kcPrimaryColor,
-      unselectedItemColor: Colors.grey,
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.savings),
-          label: 'Savings',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.insights),
-          label: 'Insights',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.people),
-          label: 'Invite',
-        ),
-      ],
     );
   }
 

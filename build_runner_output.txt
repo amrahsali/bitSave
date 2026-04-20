@@ -1,0 +1,46 @@
+  0s stacked_generator:stackedRouterGenerator on 72 inputs; lib/app/app.dart
+  0s stacked_generator:stackedRouterGenerator on 72 inputs: 1 skipped; lib/core/data/models/converdionsal_model.dart
+  0s stacked_generator:stackedRouterGenerator on 72 inputs: 72 skipped
+  0s stacked_generator:stackedLoggerGenerator on 144 inputs; lib/app/app.dart
+  0s stacked_generator:stackedLoggerGenerator on 144 inputs: 144 skipped
+  0s stacked_generator:stackedLocatorGenerator on 288 inputs; lib/app/app.dart
+  0s stacked_generator:stackedLocatorGenerator on 288 inputs: 288 skipped
+  0s stacked_generator:stackedFormGenerator on 576 inputs; lib/app/app.dart
+  0s stacked_generator:stackedFormGenerator on 576 inputs: 576 skipped
+  0s stacked_generator:stackedDialogGenerator on 1152 inputs; lib/app/app.dart
+  0s stacked_generator:stackedDialogGenerator on 1152 inputs: 1152 skipped
+  0s stacked_generator:stackedBottomsheetGenerator on 2304 inputs; lib/app/app.dart
+  0s stacked_generator:stackedBottomsheetGenerator on 2304 inputs: 2304 skipped
+E stacked_generator:stackedBottomsheetGenerator on lib/app/app.dart:
+  An error `StateError` occurred while formatting the generated source for
+    `package:bitSave/app/app.dart`
+  which was output to
+    `lib/app/app.bottomsheets.dart`.
+  This may indicate an issue in the generator, the input source code, or in the
+  source formatter.
+  Bad state: No element
+  #0      ListBase.last (dart:collection/list.dart:74:22)
+  #1      SourceVisitor.visitEnumDeclaration (package:dart_style/src/short/source_visitor.dart:1032:40)
+  #2      EnumDeclarationImpl.accept (package:analyzer/src/dart/ast/ast.dart:7371:50)
+  #3      SourceVisitor.visit (package:dart_style/src/short/source_visitor.dart:3079:10)
+  #4      SourceVisitor.visitCompilationUnit (package:dart_style/src/short/source_visitor.dart:676:7)
+  #5      CompilationUnitImpl.accept (package:analyzer/src/dart/ast/ast.dart:3992:50)
+  #6      SourceVisitor.visit (package:dart_style/src/short/source_visitor.dart:3079:10)
+  #7      SourceVisitor.run (package:dart_style/src/short/source_visitor.dart:109:5)
+  #8      DartFormatter.formatSource (package:dart_style/src/dart_formatter.dart:241:24)
+  #9      DartFormatter.format (package:dart_style/src/dart_formatter.dart:114:12)
+  #10     _defaultFormatOutput (package:source_gen/src/builder.dart:432:45)
+  #11     _defaultFormatUnit (package:source_gen/src/builder.dart:444:10)
+  #12     _Builder._generateForLibrary (package:source_gen/src/builder.dart:187:36)
+  <asynchronous suspension>
+  #13     _Builder.build (package:source_gen/src/builder.dart:108:5)
+  <asynchronous suspension>
+  #14     runBuilder.buildForInput (package:build_runner/src/build/run_builder.dart:85:7)
+  <asynchronous suspension>
+  #15     Future.wait.<anonymous closure> (dart:async/future.dart:546:21)
+  <asynchronous suspension>
+  #16     BuildLogLogger.scopeLogAsync.<anonymous closure> (package:build_runner/src/logging/build_log_logger.dart:58:13)
+  <asynchronous suspension>
+  
+  Failed to build with build_runner/jit in 2s; wrote 0 outputs.
+Failed to update packages.

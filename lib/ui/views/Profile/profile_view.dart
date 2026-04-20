@@ -4,7 +4,6 @@ import 'package:bitSave/ui/views/Profile/profile_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked/stacked.dart';
-import 'package:bitSave/state.dart';
 import '../../common/ui_helpers.dart';
 
 class UserProfilePage extends StatelessWidget {
@@ -12,32 +11,150 @@ class UserProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return ViewModelBuilder<ProfileViewModel>.reactive(
       viewModelBuilder: () => ProfileViewModel(),
       builder: (context, model, child) => Scaffold(
+        backgroundColor: Colors.transparent,
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildHeader(context),
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                const SizedBox(height: 20),
+                Text(
+                  "Invite and earn  50 SATS",
+                  style: GoogleFonts.redHatDisplay(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 60),
+                // Custom Graphic Collage Section
+                Center(
+                  child: SizedBox(
+                    height: 160,
+                    width: MediaQuery.of(context).size.width,
+                    child: Stack(
+                      alignment: Alignment.center,
                       children: [
-                        verticalSpaceMedium,
-                        _buildInviteCard(model, kcPrimaryColor),
-                        verticalSpaceMedium,
-                        _buildInviteOptions(model, kcPrimaryColor),
-                        const SizedBox(height: 40),
+                        // Left Bitcoin Icon Outline Overlay
+                        Positioned(
+                          left: 0,
+                          child: Transform.rotate(
+                            angle: -0.1,
+                            child: const Icon(
+                              Icons.currency_bitcoin,
+                              size: 100,
+                              color: Color(0xFF6B4EE6),
+                            ),
+                          ),
+                        ),
+                        // Right Bitcoin Icon Outline Overlay
+                        Positioned(
+                          right: 10,
+                          child: Transform.rotate(
+                            angle: 0.1,
+                            child: const Icon(
+                              Icons.currency_bitcoin,
+                              size: 90,
+                              color: Color(0xFF6B4EE6),
+                            ),
+                          ),
+                        ),
+                        // Left Avatar (Male)
+                        Positioned(
+                          left: 45,
+                          child: Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.grey[800]!, width: 3),
+                              image: const DecorationImage(
+                                image: AssetImage('assets/images/default_user.png'),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Paper Airplane / Send Graphic
+                        Positioned(
+                          child: Transform.rotate(
+                            angle: -0.2,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.yellow.withValues(alpha: 0.2),
+                                    blurRadius: 20,
+                                    spreadRadius: 10,
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.send,
+                                color: Colors.yellowAccent,
+                                size: 40,
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Right Avatar (Female)
+                        Positioned(
+                          right: 60,
+                          child: Container(
+                            width: 70,
+                            height: 70,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.grey[800]!, width: 2),
+                              image: const DecorationImage(
+                                image: AssetImage('assets/images/lady.png'),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ),
+                const SizedBox(height: 50),
+                // Reward Details Text
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: GoogleFonts.redHatDisplay(
+                      fontSize: 16,
+                      color: Colors.white70,
+                      height: 1.5,
+                    ),
+                    children: const [
+                      TextSpan(text: "Earn "),
+                      TextSpan(
+                        text: "50 SATS",
+                        style: TextStyle(color: Color(0xFF6B4EE6), fontWeight: FontWeight.bold),
+                      ),
+                      TextSpan(text: " for every 3 friends who transfer over 200 SATS. They'll get a fee-free transfer up to "),
+                      TextSpan(
+                        text: "500SATS",
+                        style: TextStyle(color: Color(0xFF6B4EE6), fontWeight: FontWeight.bold),
+                      ),
+                      TextSpan(text: "."),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 60),
+                // Buttons
+                _buildActionCard("Invite a friend", model.copyfriendsLink),
+                const SizedBox(height: 16),
+                _buildActionCard("Share via an app", model.shareViaApp),
+                const SizedBox(height: 16),
+                _buildActionCard("Copy the invite link", model.copyInviteLink),
               ],
             ),
           ),
@@ -46,169 +163,27 @@ class UserProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
-    return SizedBox(
-      height: 40,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "Invite and earn  50 SATS",
-            style: GoogleFonts.redHatDisplay(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).brightness == Brightness.dark ? kcWhiteColor : kcBlackColor,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInviteCard(ProfileViewModel model, Color primaryColor) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [primaryColor, primaryColor.withOpacity(0.8)],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: primaryColor.withOpacity(0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Text(
-            "Invite and earn 50 SATS",
-            style: GoogleFonts.redHatDisplay(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            "Earn 50 SATS for every 3 friends who transfer over 200 SATS. They'll get a fee-free transfer up to 500SATS.",
-            style: GoogleFonts.redHatDisplay(
-              fontSize: 14,
-              color: Colors.white.withOpacity(0.9),
-              height: 1.4,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInviteOptions(ProfileViewModel model, Color primaryColor) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Share via",
-          style: GoogleFonts.redHatDisplay(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
-          ),
-        ),
-        verticalSpaceSmall,
-        _buildInviteOption(
-          icon: Icons.people_alt_outlined,
-          title: "Invite friends",
-          subtitle: "Copy and share your personal invite link",
-          onTap: model.copyfriendsLink,
-          primaryColor: primaryColor,
-        ),
-verticalSpaceSmall,
-        // Share via app option
-        _buildInviteOption(
-          icon: Icons.share_outlined,
-          title: "Share via an app",
-          subtitle: "Share through social media or messaging apps",
-          onTap: model.shareViaApp,
-          primaryColor: primaryColor,
-        ),
-        verticalSpaceSmall,
-        // Copy invite link option
-        _buildInviteOption(
-          icon: Icons.link_outlined,
-          title: "Copy the invite link",
-          subtitle: "Copy and share your personal invite link",
-          onTap: model.copyInviteLink,
-          primaryColor: primaryColor,
-        ),
-
-
-
-      ],
-    );
-  }
-
-  Widget _buildInviteOption({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required Function onTap,
-    required Color primaryColor,
-  }) {
+  Widget _buildActionCard(String title, Function onTap) {
     return GestureDetector(
       onTap: () => onTap(),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 20),
         decoration: BoxDecoration(
-          color: uiMode.value == AppUiModes.dark ? kcDarkGreyColor : kcWhiteColor,
+          color: const Color(0xFF1C1A22),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey[200]!),
+          border: Border.all(color: const Color(0xFF6B4EE6).withValues(alpha: 0.3), width: 1.5),
         ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: primaryColor.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, size: 24, color: primaryColor),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: GoogleFonts.redHatDisplay(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: uiMode.value == AppUiModes.dark ? kcWhiteColor : kcBlackColor,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: GoogleFonts.redHatDisplay(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.grey[400]),
-          ],
+        alignment: Alignment.center,
+        child: Text(
+          title,
+          style: GoogleFonts.redHatDisplay(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       ),
     );
   }
-
-  }
+}

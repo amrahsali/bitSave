@@ -77,7 +77,7 @@ class ApiService {
     try {
       switch (method) {
         case HttpMethod.post:
-          Response response = await apiService.dio.post(
+          Response response = await dio.post(
             endpoint,
             queryParameters: reqParams,
             data: useFormData ? formData : reqBody,
@@ -90,7 +90,7 @@ class ApiService {
 
 
         case HttpMethod.postRefresh:
-          Response response = await apiService.dio.post(
+          Response response = await dio.post(
             endpoint,
             queryParameters: reqParams,
             data: useFormData ? formData : reqBody,
@@ -102,7 +102,7 @@ class ApiService {
           return ApiResponse(response);
 
         case HttpMethod.get:
-          Response response = await apiService.dio.get(
+          Response response = await dio.get(
             queryParameters: reqParams,
             endpoint,
             options: Options(
@@ -112,7 +112,7 @@ class ApiService {
           );
           return ApiResponse(response);
         case HttpMethod.patch:
-          Response response = await apiService.dio.patch(
+          Response response = await dio.patch(
             endpoint,
             data: useFormData ? formData : reqBody,
             options: Options(
@@ -122,7 +122,7 @@ class ApiService {
           );
           return ApiResponse(response);
         case HttpMethod.put:
-          Response response = await apiService.dio.put(
+          Response response = await dio.put(
             endpoint,
             data: useFormData ? formData : reqBody,
             options: Options(
@@ -132,7 +132,7 @@ class ApiService {
           );
           return ApiResponse(response);
         case HttpMethod.delete:
-          Response response = await apiService.dio.delete(
+          Response response = await dio.delete(
             endpoint,
             data: useFormData ? formData : reqBody,
             options: Options(
