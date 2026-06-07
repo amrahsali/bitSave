@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 import '../../common/app_colors.dart';
+import '../../../app/app.locator.dart';
+import '../../../app/app.router.dart';
 import 'auth_view.dart';
 import 'auth_viewmodel.dart';
 
@@ -242,11 +245,10 @@ class _RegisterState extends State<RegisterScreen> {
                                     if (_formKey.currentState!.validate()) {
                                       model.register(
                                         fullName: model.firstname.text.trim(),
+                                        dob: _dobController.text.trim(),
                                         onSuccess: () {
-                                          widget.onSwitch(
-                                            AuthType.otpVerify,
-                                            email: model.email.text.trim(),
-                                          );
+                                          locator<NavigationService>()
+                                              .clearStackAndShow(Routes.homeView);
                                         },
                                       );
                                     }
