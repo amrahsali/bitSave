@@ -31,10 +31,10 @@ A non-custodial Bitcoin savings wallet for emerging markets, designed to help us
 
 ## Tech Stack
 
-- **Frontend:** [Flutter / React Native – adjust as needed]
-- **Backend:** [Node.js / Python – adjust as needed]
+- **Frontend:** [Flutter / React Native ]
+- **Backend:** [Node.js / Python ]
 - **Storage:** Local encrypted database (no cloud dependency)
-- **Bitcoin node:** [Electrum server / Esplora – adjust as needed]
+- **Bitcoin node:** [Electrum server / Esplora ]
 
 ---
 
@@ -42,7 +42,7 @@ A non-custodial Bitcoin savings wallet for emerging markets, designed to help us
 
 - **Frontend:** Flutter
 - **Backend:** Firebase / Dart APIs
-- **Blockchain Layer:** Bitcoin Lightning Network (Breez SDK)
+- **Blockchain Layer:** Bitcoin Lightning Network (Breez SDK) ( future implementation)
 - **AI Layer:** LlamaIndex + Gemini API
 - **Communication Layer:** Nostr Protocol
 
