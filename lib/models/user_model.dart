@@ -1,8 +1,4 @@
 class UserModel {
-
-/// Wondering if I should import something here, just for the sake of it.🤣
-
-
   final String uid;
   final String fullName;
   final String email;
@@ -16,28 +12,46 @@ class UserModel {
     required this.fullName,
     required this.email,
     required this.dob,
-    this.walletBalanceNGN = 0.0, // Defaults to empty wallet for MVP deposit
+    this.walletBalanceNGN = 0.0,
     this.createdAt,
     this.isProfileComplete = false,
   });
 
-  /// Factory constructor to create a UserModel DTO from Firestore JSON map
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    final walletValue = json['walletBalanceNGN'];
+    double balance;
+
+    if (walletValue is int) {
+      balance = walletValue.toDouble();
+    } else if (walletValue is double) {
+      balance = walletValue;
+    } else if (walletValue is String) {
+      balance = double.tryParse(walletValue) ?? 0.0;
+    } else {
+      balance = 0.0;
+    }
+
+    DateTime? createdAt;
+    final createdAtValue = json['createdAt'];
+    if (createdAtValue is DateTime) {
+      createdAt = createdAtValue;
+    } else if (createdAtValue != null) {
+      createdAt = DateTime.tryParse(createdAtValue.toString());
+    }
+
     return UserModel(
-      uid: json['uid'] ?? '',
-      fullName: json['fullName'] ?? '',
-      email: json['email'] ?? '',
-      dob: json['dob'] ?? '',
-      // Ensure we safely parse integers or doubles from JSON into a double
-      walletBalanceNGN: (json['walletBalanceNGN'] ?? 0.0).toDouble(),
-      createdAt: json['createdAt'] != null 
-          ? DateTime.tryParse(json['createdAt'].toString()) 
-          : null,
-      isProfileComplete: json['isProfileComplete'] ?? false,
+      uid: json['uid']?.toString() ?? '',
+      fullName: json['fullName']?.toString() ?? '',
+      email: json['email']?.toString() ?? '',
+      dob: json['dob']?.toString() ?? '',
+      walletBalanceNGN: balance,
+      createdAt: createdAt,
+      isProfileComplete: json['isProfileComplete'] is bool
+          ? json['isProfileComplete'] as bool
+          : false,
     );
   }
 
-  /// Converts the current UserModel instance into a JSON Map for Firestore writes
   Map<String, dynamic> toJson() {
     return {
       'uid': uid,
@@ -50,8 +64,6 @@ class UserModel {
     };
   }
 
-  /// Optional but highly recommended helper method to quickly clone a user object 
-  /// with modified values (e.g., when updating wallet balance after a deposit webhook)
   UserModel copyWith({
     String? uid,
     String? fullName,

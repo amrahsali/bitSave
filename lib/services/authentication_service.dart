@@ -3,61 +3,49 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user_model.dart';
 
 class AuthenticationService {
-  // Initialize the Firebase instances
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Track the currently logged-in user model in memory
   UserModel? _currentUser;
   UserModel? get currentUser => _currentUser;
-  
-  /// STREAM: Listens to the authentication state changes.
-  /// This lets the app instantly know if a user logs out or logs in.
+  FirebaseAuth get firebaseAuth => _auth;
+  FirebaseFirestore get firestore => _firestore;
+
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
-  /// STEP 1: Register User with Email and basic 
-  /// Because Firebase Auth requires a password to create an account, for the MVP
-  /// we can temporarily pass a placeholder password or combine this step with a later profile completion step where the user sets their password.  
-  Future<UserCredential?> registerNewUser({
+  Future<UserCredential> registerNewUser({
     required String email,
     required String password,
     required String fullName,
     required String dob,
   }) async {
     try {
-      // 1. Create the credential inside Firebase Authentication
-      UserCredential credential = await _auth.createUserWithEmailAndPassword(
+      final credential = await _auth.createUserWithEmailAndPassword(
         email: email.trim(),
         password: password,
       );
 
       final String uid = credential.user!.uid;
 
-      // 2. Wrapping the form data into our structured DTO
       _currentUser = UserModel(
         uid: uid,
         fullName: fullName.trim(),
         email: email.trim(),
         dob: dob,
-        walletBalanceNGN: 0.0, // New users start with 0 Naira
+        walletBalanceNGN: 0.0,
         createdAt: DateTime.now(),
         isProfileComplete: true,
       );
 
-      // 3. Provision the profile inside Cloud Firestore using the DTO
-      await _firestore
-          .collection('users')
-          .doc(uid)
-          .set(_currentUser!.toJson());
+      await _firestore.collection('users').doc(uid).set(_currentUser!.toJson());
 
       return credential;
     } on FirebaseAuthException catch (e) {
-      // Catch specific Firebase issues (e.g., email-already-in-use)
-      print("Firebase Auth Error: ${e.message}");
-      return null;
+      print('Firebase Auth Error: ${e.message}');
+      rethrow;
     } catch (e) {
-      print("General Backend Error during provisioning: $e");
-      return null;
+      print('General Backend Error during provisioning: $e');
+      rethrow;
     }
   }
 
@@ -68,10 +56,10 @@ class AuthenticationService {
         password: password,
       );
     } on FirebaseAuthException catch (e) {
-      print("Firebase Auth SignIn Error: ${e.message}");
+      print('Firebase Auth SignIn Error: ${e.message}');
       return null;
     } catch (e) {
-      print("General sign-in error: $e");
+      print('General sign-in error: $e');
       return null;
     }
   }
