@@ -2,11 +2,11 @@
 # Bitsave – Bitcoin Savings Wallet for Emerging Markets
 A non-custodial Bitcoin savings wallet for emerging markets, designed to help users save, track, and understand their Bitcoin holdings easily.
 
+
 **Bitsave** is a non‑custodial, Bitcoin‑only savings wallet designed for mobile users in emerging markets – starting with Nigeria. It focuses on one clear goal: helping users save Bitcoin easily, track their savings goals, and understand their financial progress through a simple, accessible interface.
 
 **Hackathon recognition** – Second place in a Bitcoin‑only hackathon (2025). Hack4freedom Hackathon Organized by Evento.
 
----
 
 ## Features
 
@@ -17,7 +17,6 @@ A non-custodial Bitcoin savings wallet for emerging markets, designed to help us
 - **Mobile‑first** – Optimized for lower‑end devices and slower networks.
 - **Accessibility ready** – Built with WCAG 2.1 AA principles (in progress).
 
----
 
 ## Project Status
 
@@ -27,7 +26,6 @@ A non-custodial Bitcoin savings wallet for emerging markets, designed to help us
 - **Accessibility audit:** Planned
 - **Usability testing:** Planned 
 
----
 
 ## Tech Stack
 
@@ -36,7 +34,6 @@ A non-custodial Bitcoin savings wallet for emerging markets, designed to help us
 - **Storage:** Local encrypted database (no cloud dependency)
 - **Bitcoin node:** [Electrum server / Esplora ]
 
----
 
 ## BitSave
 
@@ -46,7 +43,6 @@ A non-custodial Bitcoin savings wallet for emerging markets, designed to help us
 - **AI Layer:** LlamaIndex + Gemini API
 - **Communication Layer:** Nostr Protocol
 
----
 
 ## Future Enhancements
 
@@ -54,7 +50,6 @@ A non-custodial Bitcoin savings wallet for emerging markets, designed to help us
 - AI-based personalized investment tips
 - Offline savings mode
 
----
 
 ## Team
 
@@ -62,7 +57,6 @@ A non-custodial Bitcoin savings wallet for emerging markets, designed to help us
 - **Karimta muhammad Hussaini** — UI/UX Designer
 - **Abubakar Salihu** - Backend Developer
 
----
 
 ## License
 This project is licensed under the MIT License.
