@@ -22,26 +22,8 @@
 
 ## 🙌 Team
 
-- **Amrah Uthman Sali** — Mobile Developer & Project Lead
-- **Karima muhammad sani ** — UI/UX Designer
-
+- **Amrah Uthman Sali** — Mobile / Frontend Developer
+- **Karimta muhammad Hussaini** — UI/UX Designer
+- **Abubakar** - Backend Developer
 ---
 
-## 🏁 Hackathon Note
-
-BitSave was developed during **Hack4Freedom 2025** — a mission-driven hackathon focused on building decentralized, censorship-resistant, and empowering digital tools for freedom.
-
-Despite the challenges faced integrating the Breez SDK (which kept breaking initially 😅), the experience pushed us to learn, grow, and build something truly meaningful.
-
----
-
-## 💖 Acknowledgment
-
-Special thanks to the Hack4Freedom organizers, mentors, and fellow hackers —  
-**With BitSave, we saved the day! 🥳❤️**
-
----
-
-## 📱 Demo
-
-> Coming soon — stay tuned for our beta release!
