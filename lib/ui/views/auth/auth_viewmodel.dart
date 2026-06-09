@@ -13,12 +13,10 @@ import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.locator.dart';
 import '../../../app/app.router.dart';
 import '../../../core/data/models/user_model.dart';
-import '../../../core/network/api_response.dart';
-import '../../../core/network/interceptors.dart';
+import '../../../services/authentication_service.dart';
 import '../../../core/utils/local_store_dir.dart';
 import '../../../core/utils/local_stotage.dart';
 import '../../../state.dart';
-import 'auth_view.dart';
 import './reset_password/reset_password_view.dart';
 
 enum RegistrationResult { success, failure }
@@ -35,7 +33,6 @@ class AuthViewModel extends BaseViewModel {
   bool remember = false;
   late PhoneNumber phoneNumber;
   final otp = TextEditingController();
-  String selectedEstateId = '';
   final email = TextEditingController();
   final password = TextEditingController();
   int countdown = 0;
@@ -44,7 +41,7 @@ class AuthViewModel extends BaseViewModel {
   bool obscure = true;
   String? errorMessage;
   bool codeSent = false;
-  final _auth = FirebaseAuth.instance;
+  final AuthenticationService _authService = locator<AuthenticationService>();
 
   @override
   void dispose() {
@@ -82,9 +79,10 @@ class AuthViewModel extends BaseViewModel {
 
   /// Registers a new user with Firebase Auth and sends an email verification.
   /// On success, calls [onSuccess] with the registered email so the caller
-  /// can switch to the OTP/verify-email screen.
+  /// can switch to the verify-email screen.
   Future<void> register({
     required String fullName,
+    required String dob,
     required VoidCallback onSuccess,
   }) async {
     setBusy(true);
@@ -96,16 +94,28 @@ class AuthViewModel extends BaseViewModel {
         return;
       }
 
-      final credential = await _auth.createUserWithEmailAndPassword(
+      final credential = await _authService.registerNewUser(
         email: email.text.trim(),
         password: password.text.trim(),
+        fullName: fullName,
+        dob: dob,
       );
 
-      // Save display name
-      await credential.user?.updateDisplayName(fullName);
+      final firebaseUser = credential.user;
+      if (firebaseUser == null) {
+        locator<SnackbarService>().showSnackbar(
+          message: 'Registration failed. Please try again.',
+        );
+        return;
+      }
 
-      // Send verification email
-      await credential.user?.sendEmailVerification();
+      await firebaseUser.updateDisplayName(fullName);
+      await firebaseUser.sendEmailVerification();
+
+      profile.value = User.fromFirebase(firebaseUser);
+      userLoggedIn.value = true;
+      await locator<LocalStorage>()
+          .save(LocalStorageDir.authUser, jsonEncode(profile.value.toJson()));
 
       onSuccess();
     } on FirebaseAuthException catch (e) {
@@ -144,13 +154,20 @@ class AuthViewModel extends BaseViewModel {
         return;
       }
 
-      final credential = await _auth.signInWithEmailAndPassword(
-        email: email.text.trim(),
-        password: password.text.trim(),
+      final credential = await _authService.signIn(
+        email.text.trim(),
+        password.text.trim(),
       );
 
-// Convert Firebase user → App User
-      final loggedInUser = User.fromFirebase(credential.user!);
+      final firebaseUser = credential?.user;
+      if (firebaseUser == null) {
+        locator<SnackbarService>().showSnackbar(
+          message: 'Login failed. Please check your credentials.',
+        );
+        return;
+      }
+
+      final loggedInUser = User.fromFirebase(firebaseUser);
 
 // Save globally
       profile.value = loggedInUser;

@@ -50,19 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAh-IHuNeXSfJBjRWUOr67XCSGIsyQkHhI',
-    appId: '1:494897050275:android:bc3970526fb91e6d258516',
-    messagingSenderId: '494897050275',
-    projectId: 'bitsave-c7b57',
-    storageBucket: 'bitsave-c7b57.firebasestorage.app',
+    apiKey: 'AIzaSyAP-MajsNXEJhJroW2aTxaFo1l4bu-zDgI',
+    appId: '1:716785227447:android:84e993cddfa89590e69f32',
+    messagingSenderId: '716785227447',
+    projectId: 'am-ka-ab-beetsave',
+    storageBucket: 'am-ka-ab-beetsave.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyArbEhRhe9QnI46Fh_ntB8hohL2uoyCXJE',
-    appId: '1:494897050275:ios:94b62e9c98ca88ab258516',
-    messagingSenderId: '494897050275',
-    projectId: 'bitsave-c7b57',
-    storageBucket: 'bitsave-c7b57.firebasestorage.app',
+    apiKey: 'AIzaSyDIz1nBcFEgc4aHiAdanMvpujSPircQGDE',
+    appId: '1:716785227447:ios:a4394074736d76bce69f32',
+    messagingSenderId: '716785227447',
+    projectId: 'am-ka-ab-beetsave',
+    storageBucket: 'am-ka-ab-beetsave.firebasestorage.app',
     iosBundleId: 'com.AmrahSali.bitSave',
   );
+
 }

@@ -9,6 +9,7 @@ import '../ui/dialogs/info_alert/info_alert_dialog.dart';
 import '../ui/views/auth/auth_view.dart';
 import '../ui/views/dashboard/dashboard_view.dart';
 import '../ui/views/home/home_view.dart';
+import '../services/authentication_service.dart';
 
 import '../ui/views/onboarding/onboarding_view.dart';
 import '../ui/views/startup/startup_view.dart';
@@ -39,6 +40,7 @@ import '../ui/views/startup/startup_view.dart';
     LazySingleton(classType: ApiService),
     LazySingleton(classType: LocalStorage),
     LazySingleton(classType: Repository),
+    LazySingleton(classType: AuthenticationService),
 
     // @stacked-service
   ],

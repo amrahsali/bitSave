@@ -77,18 +77,12 @@ class StartupViewModel extends BaseViewModel {
         }
         _navigationService.clearStackAndShow(Routes.homeView);
       } else {
-        // Check if user has been onboarded
-        String? onboarded = await locator<LocalStorage>().fetch(LocalStorageDir.onboarded);
-        if (onboarded == "true") {
-          _navigationService.replaceWithAuthView(authType: AuthType.adminLogin);
-        } else {
-          _navigationService.replaceWithOnboardingView();
-        }
+        _navigationService.replaceWithAuthView(authType: AuthType.register);
       }
     } catch (e, st) {
       print('Startup init error: $e\n$st');
       // fallback to auth to avoid blocking the user
-      _navigationService.replaceWithAuthView(authType: AuthType.adminLogin);
+      _navigationService.replaceWithAuthView(authType: AuthType.register);
     } finally {
       setBusy(false);
     }

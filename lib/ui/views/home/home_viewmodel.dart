@@ -2,12 +2,9 @@
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.locator.dart';
 import '../../../app/app.logger.dart';
-import '../../../core/network/api_response.dart';
-import '../../../core/network/interceptors.dart';
-import '../../../state.dart';
+import '../../../services/authentication_service.dart';
 import '../dashboard/dashboard_view.dart';
 import '../profile/profile_view.dart';
 import '../reports/reports.dart';
@@ -15,6 +12,15 @@ import '../reports/savings.dart';
 
 class HomeViewModel extends BaseViewModel {
   final log = getLogger("HomeViewModel");
+
+  final AuthenticationService _authenticationService =
+      locator<AuthenticationService>();
+
+  double get walletBalance =>
+      _authenticationService.currentUser?.walletBalanceNGN ?? 0.0;
+
+  String get userName =>
+      _authenticationService.currentUser?.fullName ?? 'User';
 
   int selectedIndex = 0;
   bool isCreateEmergencyLoading = false;

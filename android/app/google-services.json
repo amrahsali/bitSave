@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "494897050275",
-    "project_id": "bitsave-c7b57",
-    "storage_bucket": "bitsave-c7b57.firebasestorage.app"
+    "project_number": "716785227447",
+    "project_id": "am-ka-ab-beetsave",
+    "storage_bucket": "am-ka-ab-beetsave.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:494897050275:android:bc3970526fb91e6d258516",
+        "mobilesdk_app_id": "1:716785227447:android:84e993cddfa89590e69f32",
         "android_client_info": {
           "package_name": "com.AmrahSali.bitSave"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAh-IHuNeXSfJBjRWUOr67XCSGIsyQkHhI"
+          "current_key": "AIzaSyAP-MajsNXEJhJroW2aTxaFo1l4bu-zDgI"
         }
       ],
       "services": {
