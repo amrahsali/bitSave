@@ -41,6 +41,9 @@ import '../ui/views/startup/startup_view.dart';
     LazySingleton(classType: LocalStorage),
     LazySingleton(classType: Repository),
     LazySingleton(classType: AuthenticationService),
+    LazySingleton(classType: WalletService),
+
+    // @stacked-service
 
     // @stacked-service
   ],

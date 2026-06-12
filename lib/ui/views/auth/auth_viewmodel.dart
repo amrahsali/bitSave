@@ -18,6 +18,7 @@ import '../../../core/utils/local_store_dir.dart';
 import '../../../core/utils/local_stotage.dart';
 import '../../../state.dart';
 import './reset_password/reset_password_view.dart';
+import '../../../core/data/repositories/repository.dart';
 
 enum RegistrationResult { success, failure }
 
@@ -42,6 +43,7 @@ class AuthViewModel extends BaseViewModel {
   String? errorMessage;
   bool codeSent = false;
   final AuthenticationService _authService = locator<AuthenticationService>();
+  final Repository _repo = locator<Repository>();
 
   @override
   void dispose() {
@@ -221,7 +223,7 @@ Future<void> resendOtp(String email) async {
   setBusy(true);
 
   try {
-    final resp = await repo.resetPasswordRequest({ "email": email });
+    final resp = await _repo.resetPasswordRequest({ "email": email });
     final elapsed = DateTime.now().difference(startTime);
     debugPrint("Resend OTP latency: ${elapsed.inMilliseconds}ms");
 
@@ -285,8 +287,8 @@ Future<void> resendOtp(String email) async {
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
       appVersion = packageInfo.version;
 
-      // Send to backend
-      final response = await repo.updateDeviceId({
+// Send to backend
+       final response = await _repo.updateDeviceId({
         "deviceId": deviceId,
         "deviceType": deviceType,
         "operatingSystem": operatingSystem,
