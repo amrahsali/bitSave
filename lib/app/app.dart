@@ -10,7 +10,7 @@ import '../ui/views/auth/auth_view.dart';
 import '../ui/views/dashboard/dashboard_view.dart';
 import '../ui/views/home/home_view.dart';
 import '../services/authentication_service.dart';
-
+import '../services/wallet_service.dart';
 import '../ui/views/onboarding/onboarding_view.dart';
 import '../ui/views/startup/startup_view.dart';
 // @stacked-import

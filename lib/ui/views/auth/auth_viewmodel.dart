@@ -13,12 +13,12 @@ import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.locator.dart';
 import '../../../app/app.router.dart';
 import '../../../core/data/models/user_model.dart';
+import '../../../core/data/repositories/repository.dart';
 import '../../../services/authentication_service.dart';
 import '../../../core/utils/local_store_dir.dart';
 import '../../../core/utils/local_stotage.dart';
 import '../../../state.dart';
 import './reset_password/reset_password_view.dart';
-import '../../../core/data/repositories/repository.dart';
 
 enum RegistrationResult { success, failure }
 
@@ -215,36 +215,35 @@ class AuthViewModel extends BaseViewModel {
     );
   }
 
+  Future<void> resendOtp(String email) async {
+    if (isCountdownActive) return;
 
-Future<void> resendOtp(String email) async {
-  if (isCountdownActive) return;
+    final startTime = DateTime.now();
+    setBusy(true);
 
-  final startTime = DateTime.now();
-  setBusy(true);
+    try {
+      final resp = await _repo.resetPasswordRequest({ "email": email });
+      final elapsed = DateTime.now().difference(startTime);
+      debugPrint("Resend OTP latency: ${elapsed.inMilliseconds}ms");
 
-  try {
-    final resp = await _repo.resetPasswordRequest({ "email": email });
-    final elapsed = DateTime.now().difference(startTime);
-    debugPrint("Resend OTP latency: ${elapsed.inMilliseconds}ms");
-
-    if (resp.statusCode == 200) {
-      startCountdown();
-    } else {
+      if (resp.statusCode == 200) {
+        startCountdown();
+      } else {
+        locator<SnackbarService>().showSnackbar(
+          message: resp.data["message"] ?? "Failed to resend OTP",
+          duration: const Duration(seconds: 2),
+        );
+      }
+    } catch (e) {
+      debugPrint("Error resending OTP: $e");
       locator<SnackbarService>().showSnackbar(
-        message: resp.data["message"] ?? "Failed to resend OTP",
+        message: "Error sending OTP: $e",
         duration: const Duration(seconds: 2),
       );
+    } finally {
+      setBusy(false);
     }
-  } catch (e) {
-    debugPrint("Error resending OTP: $e");
-    locator<SnackbarService>().showSnackbar(
-      message: "Error sending OTP: $e",
-      duration: const Duration(seconds: 2),
-    );
-  } finally {
-    setBusy(false);
   }
-}
 
   Future<void> createPin(String pin, VoidCallback onSuccess) async {
     setBusy(true);
@@ -287,8 +286,8 @@ Future<void> resendOtp(String email) async {
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
       appVersion = packageInfo.version;
 
-// Send to backend
-       final response = await _repo.updateDeviceId({
+      // Send to backend
+      final response = await _repo.updateDeviceId({
         "deviceId": deviceId,
         "deviceType": deviceType,
         "operatingSystem": operatingSystem,
