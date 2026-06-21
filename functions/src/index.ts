@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import * as crypto from 'crypto';
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -21,10 +22,33 @@ interface PaymentWebhookPayload {
 
 export const paymentWebhook = functions.https.onRequest(async (req, res) => {
   try {
-    const signature = req.headers['paystack-signature'] as string | undefined;
-    const flutterwaveHash = req.headers['verif-hash'] as string | undefined;
-    
+    const signature = (req.headers['paystack-signature'] || req.headers['x-paystack-signature']) as string | undefined;
+    const flutterwaveHash = (req.headers['verif-hash'] || req.headers['verif_hash']) as string | undefined;
+
     const payload = req.body as PaymentWebhookPayload;
+
+    // Verify Paystack webhook signature (HMAC SHA512)
+    const PAYSTACK_SECRET = functions.config().paystack?.secret || process.env.PAYSTACK_SECRET || '';
+    if (signature && PAYSTACK_SECRET) {
+      const computed = crypto.createHmac('sha512', PAYSTACK_SECRET)
+        .update(JSON.stringify(req.body))
+        .digest('hex');
+      if (computed !== signature) {
+        console.warn('Invalid Paystack signature');
+        res.status(403).send('Invalid signature');
+        return;
+      }
+    }
+
+    // Verify Flutterwave verif-hash header if present
+    const FLUTTERWAVE_HASH = functions.config().flutterwave?.hash || process.env.FLUTTERWAVE_HASH || '';
+    if (flutterwaveHash && FLUTTERWAVE_HASH) {
+      if (flutterwaveHash !== FLUTTERWAVE_HASH) {
+        console.warn('Invalid Flutterwave verif-hash');
+        res.status(403).send('Invalid signature');
+        return;
+      }
+    }
     
     if (!payload?.data) {
       res.status(400).send('Invalid payload');
@@ -56,14 +80,14 @@ export const paymentWebhook = functions.https.onRequest(async (req, res) => {
     await db.runTransaction(async (t) => {
       const userRef = db.collection('users').doc(userId!);
       const userDoc = await t.get(userRef);
-      
+
       if (!userDoc.exists) {
         throw new Error('User not found');
       }
 
-      const currentBalance = userDoc.data()?.walletBalanceNGN ?? 0;
+      // Use atomic increment to avoid race conditions
       t.update(userRef, {
-        walletBalanceNGN: currentBalance + amount!,
+        walletBalanceNGN: admin.firestore.FieldValue.increment(amount!),
       });
 
       t.set(db.collection('transactions').doc(txId), {
