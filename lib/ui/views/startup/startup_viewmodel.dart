@@ -13,12 +13,7 @@ import '../../../core/network/interceptors.dart';
 import '../../../core/utils/local_store_dir.dart';
 import '../../../core/utils/local_stotage.dart';
 import '../../../state.dart';
-import '../../../core/network/noodless_sdk.dart';
-import '../../../core/utils/config.dart';
-import '../../../core/utils/constant.dart';
 import '../auth/auth_view.dart';
-import 'package:flutter_breez_liquid/flutter_breez_liquid.dart';
-import 'package:breez_liquid/breez_liquid.dart' as breez;
 
 
 class StartupViewModel extends BaseViewModel {
@@ -32,38 +27,7 @@ class StartupViewModel extends BaseViewModel {
     try {
       // small delay to show splash nicely (optional)
       await Future.delayed(const Duration(seconds: 1));
-
-      // 0) Initialize the rust bridge via the breez_liquid helper BEFORE any rust calls
-      try {
-        await breez.initialize(); // <-- this calls RustLib.init(...) internally
-        print('breez_liquid rust bridge initialized');
-      } catch (e, st) {
-        print('Failed to initialize breez_liquid rust bridge: $e\n$st');
-        // continue but be aware SDK features may not work if init actually failed
-      }
-
-      // 1) Secure storage: read / create mnemonic
-      final _secureStorage = const FlutterSecureStorage();
-      var mnemonic = await _secureStorage.read(key: "mnemonic");
-      if (mnemonic == null) {
-        mnemonic = bip39.generateMnemonic();
-        await _secureStorage.write(key: "mnemonic", value: mnemonic);
-      }
-
-      // 2) Create and connect SDK (now safe because rust bridge was initialized)
-      final sdk = NodelessSdk();
-      // If you want to reuse sdk across app:
-      // locator.registerSingleton<NodelessSdk>(sdk);
-
-      // initialize streams that call into rust
-      sdk.initializeLogStream();
-
-      final config = await getConfig(
-        network: LiquidNetwork.mainnet,
-        breezApiKey: breezApiKey,
-      );
-      final req = ConnectRequest(mnemonic: mnemonic, config: config);
-      await sdk.connect(req: req);
+    
 
       // 3) Proceed with auth/navigation logic
       final user = _auth.currentUser;

@@ -1,4 +1,3 @@
-import 'package:bitSave/core/network/noodless_sdk.dart';
 import 'package:bitSave/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -7,16 +6,11 @@ import 'package:stacked/stacked.dart';
 import '../../../state.dart';
 import '../../common/app_colors.dart';
 import '../../common/ui_helpers.dart';
-import '../../dialogs/recieve_dialog.dart';
-import '../../dialogs/send_dialog.dart';
 import '../../dialogs/add_naira_dialog.dart';
-import 'balance.dart';
 import 'dashboard_viewmodel.dart';
 
 class DashboardView extends StackedView<DashboardViewModel> {
-  final NodelessSdk sdk = NodelessSdk();
-
-  DashboardView({Key? key}) : super(key: key);
+DashboardView({Key? key}) : super(key: key);
 
   @override
   Widget builder(BuildContext context, DashboardViewModel viewModel, Widget? child) {

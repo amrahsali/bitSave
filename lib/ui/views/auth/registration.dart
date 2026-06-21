@@ -149,7 +149,8 @@ class _RegisterState extends State<RegisterScreen> {
                                     r'^[\w-]+(\.[\\w-]+)*@[\w-]+(\.[\w-]+)+$')
                                 .hasMatch(v)) {
                               return 'Invalid email address';
-                            }
+                            } 
+
                             return null;
                           },
                         ),
@@ -253,6 +254,7 @@ class _RegisterState extends State<RegisterScreen> {
                                       );
                                     }
                                   },
+                                  
                             style: ElevatedButton.styleFrom(
                               backgroundColor: kcPrimaryColor,
                               foregroundColor: Colors.white,
@@ -355,6 +357,7 @@ class _RegisterState extends State<RegisterScreen> {
               fontWeight: FontWeight.w500,
             ),
           ),
+          
           const SizedBox(height: 4),
           Row(
             children: [
