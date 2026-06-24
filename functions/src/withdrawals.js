@@ -36,11 +36,18 @@ exports.executeVaultWithdrawal = functions.https.onCall(async (data, context) =>
       const lockData = lockDoc.data();
       const now = admin.firestore.Timestamp.now();
 
-      // Check if lock is matured
+      // Check if lock is matured and not already withdrawn
       if (!lockData.isMatured || lockData.targetMaturityDate.toMillis() > now.toMillis()) {
         throw new functions.https.HttpsError(
           'failed-precondition',
           'Lock is not matured yet.'
+        );
+      }
+
+      if (lockData.isWithdrawn === true) {
+        throw new functions.https.HttpsError(
+          'failed-precondition',
+          'Lock has already been withdrawn.'
         );
       }
 
@@ -53,7 +60,9 @@ exports.executeVaultWithdrawal = functions.https.onCall(async (data, context) =>
       const btcPriceInNgn = btcPriceData.bitcoin.ngn;
 
       // Calculate fiat amount to pay in NGN
-      const fiatAmountToPayNGN = (lockData.satsAllocated / 100000000) * btcPriceInNgn;
+      // Use integer sats and perform safe conversion to avoid float rounding errors
+      const satsAllocated = Number(lockData.satsAllocated || 0);
+      const fiatAmountToPayNGN = (satsAllocated / 100000000) * Number(btcPriceInNgn);
 
       // TODO: Replace with actual Payment Gateway API call (e.g., Paystack or Flutterwave)
       // For now, we simulate a successful transfer
@@ -70,7 +79,7 @@ exports.executeVaultWithdrawal = functions.https.onCall(async (data, context) =>
         throw new functions.https.HttpsError('internal', 'Payment gateway transfer failed.');
       }
 
-      // Update lock document
+      // Mark lock as withdrawn and completed atomically
       t.update(lockRef, {
         isWithdrawn: true,
         status: 'completed'

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.locator.dart';
+import '../../../app/app.router.dart';
 import '../../common/app_colors.dart';
 import '../../common/ui_helpers.dart';
 import '../../components/code_input.dart';
@@ -11,28 +12,21 @@ import '../../components/submit_button.dart';
 import 'auth_view.dart';
 import 'auth_viewmodel.dart';
 
-class OTPVerificationScreen extends StatefulWidget {
-  final Function(AuthType) onSwitch;
-  final String email;
-  final bool isSignup;
-
-  const OTPVerificationScreen({
-    required this.onSwitch, 
-    required this.email,
-    this.isSignup = false,
-    Key? key,
-  }) : super(key: key);
+class EmailVerificationView extends StatefulWidget {
+  const EmailVerificationView({Key? key}) : super(key: key);
 
   @override
-  State<OTPVerificationScreen> createState() => _OTPVerificationState();
+  State<EmailVerificationView> createState() => _EmailVerificationViewState();
 }
 
-class _OTPVerificationState extends State<OTPVerificationScreen> {
+class _EmailVerificationViewState extends State<EmailVerificationView> {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<AuthViewModel>.reactive(
       viewModelBuilder: () => AuthViewModel(),
       builder: (context, model, child) {
+       
+        const displayEmail = "your email address";
         return Scaffold(
           backgroundColor: const Color(0xFF0F0A1E),
           body: Container(
@@ -69,8 +63,10 @@ class _OTPVerificationState extends State<OTPVerificationScreen> {
                         Row(
                           children: [
                             GestureDetector(
-                              // Going back to register screen (or selection)
-                              onTap: () => widget.onSwitch(AuthType.register),
+                              onTap: () {
+                                // Clear stack back to the main login/auth route
+                                locator<NavigationService>().clearStackAndShow(Routes.authView);
+                              },
                               child: const Icon(
                                 Icons.arrow_back,
                                 color: Colors.white,
@@ -109,7 +105,7 @@ class _OTPVerificationState extends State<OTPVerificationScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Please enter the code sent to ${widget.email}',
+                          'Please enter the code sent to $displayEmail',
                           style: GoogleFonts.redHatDisplay(
                             color: Colors.white.withValues(alpha: 0.55),
                             fontSize: 13,
@@ -125,11 +121,7 @@ class _OTPVerificationState extends State<OTPVerificationScreen> {
                           child: CodeInputWidget(
                             codeController: model.otp,
                             onCompleted: (code) {
-                              if (widget.isSignup) {
-                                widget.onSwitch(AuthType.createPin);
-                              } else {
-                                model.submitOtp(widget.email, code);
-                              }
+                              model.submitOtp(displayEmail, code);
                             },
                           ),
                         ),
@@ -150,14 +142,14 @@ class _OTPVerificationState extends State<OTPVerificationScreen> {
                             GestureDetector(
                               onTap: model.isCountdownActive
                                   ? null
-                                  : () => model.resendOtp(widget.email),
+                                  : () => model.resendOtp(displayEmail),
                               child: Text(
                                 model.isCountdownActive
                                     ? "Resend in ${model.countdown}s"
                                     : "Resend it.",
                                 style: const TextStyle(
                                   fontSize: 13,
-                                  color: Color(0xFF6B4EE6), // matching purpleish
+                                  color: Color(0xFF6B4EE6), 
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -173,26 +165,22 @@ class _OTPVerificationState extends State<OTPVerificationScreen> {
                           height: 54,
                           child: ElevatedButton(
                             onPressed: model.isBusy 
-                                // Disable if exactly 6 isn't typed yet? 
-                                // We'll just rely on `isBusy` or user typing the code. PinCodeTextField auto-submits on complete.
                                 ? null
                                 : () {
                                     final code = model.otp.text.trim();
                                     if (code.length == 6) {
-                                      if (widget.isSignup) {
-                                        widget.onSwitch(AuthType.createPin);
-                                      } else {
-                                        model.submitOtp(widget.email, code);
-                                      }
+                                      model.submitOtp(displayEmail, code);
                                     } else {
-                                       locator<SnackbarService>().showSnackbar(message: "Please enter the full 6-digit code.");
+                                       locator<SnackbarService>().showSnackbar(
+                                         message: "Please enter the full 6-digit code."
+                                       );
                                     }
                                   },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF5A5A5A), // slightly disabled grey look or primary based on logic
+                              backgroundColor: const Color(0xFF6B4EE6), // Swapped out gray for your layout's active purple brand color
                               foregroundColor: Colors.white,
                               disabledBackgroundColor:
-                                  const Color(0xFF5A5A5A).withValues(alpha: 0.6),
+                                  const Color(0xFF6B4EE6).withValues(alpha: 0.6),
                               elevation: 0,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
@@ -212,7 +200,7 @@ class _OTPVerificationState extends State<OTPVerificationScreen> {
                                     style: GoogleFonts.redHatDisplay(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
-                                      color: Colors.white.withValues(alpha: 0.7),
+                                      color: Colors.white,
                                     ),
                                   ),
                           ),

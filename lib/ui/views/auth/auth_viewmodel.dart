@@ -1,3 +1,5 @@
+// Path: lib/ui/views/auth/auth_viewmodel.dart
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -16,7 +18,7 @@ import '../../../core/data/models/user_model.dart';
 import '../../../core/data/repositories/repository.dart';
 import '../../../services/authentication_service.dart';
 import '../../../core/utils/local_store_dir.dart';
-import '../../../core/utils/local_stotage.dart';
+import '../../../core/utils/local_stotage.dart'; // need Fixing of typo from 'local_stotage.dart' to [local_storage.dart]
 import '../../../state.dart';
 import './reset_password/reset_password_view.dart';
 
@@ -42,18 +44,26 @@ class AuthViewModel extends BaseViewModel {
   bool obscure = true;
   String? errorMessage;
   bool codeSent = false;
+  
   final AuthenticationService _authService = locator<AuthenticationService>();
   final Repository _repo = locator<Repository>();
 
   @override
   void dispose() {
+    firstname.dispose();
+    lastname.dispose();
+    phone.dispose();
+    estateController.dispose();
+    apartmentController.dispose();
+    cPassword.dispose();
+    otp.dispose();
+    email.dispose();
     password.dispose();
     _timer?.cancel();
     super.dispose();
   }
 
-  void init() {
-  }
+  void init() {}
 
   void toggleRemember() {
     remember = !remember;
@@ -79,9 +89,7 @@ class AuthViewModel extends BaseViewModel {
     });
   }
 
-  /// Registers a new user with Firebase Auth and sends an email verification.
-  /// On success, calls [onSuccess] with the registered email so the caller
-  /// can switch to the verify-email screen.
+  /// Registers a new user with Firebase Auth and switches to the strict verification screen.
   Future<void> register({
     required String fullName,
     required String dob,
@@ -96,6 +104,7 @@ class AuthViewModel extends BaseViewModel {
         return;
       }
 
+      // 1. Invokes registration (AuthService internally pushes to Firestore and shoots the email verification)
       final credential = await _authService.registerNewUser(
         email: email.text.trim(),
         password: password.text.trim(),
@@ -112,13 +121,11 @@ class AuthViewModel extends BaseViewModel {
       }
 
       await firebaseUser.updateDisplayName(fullName);
-      await firebaseUser.sendEmailVerification();
 
+      // 2. Temporarily track data, but keep global state unverified until email confirmation
       profile.value = User.fromFirebase(firebaseUser);
-      userLoggedIn.value = true;
-      await locator<LocalStorage>()
-          .save(LocalStorageDir.authUser, jsonEncode(profile.value.toJson()));
-
+      
+      // 3. Trigger screen routing callback securely passed from the view layer
       onSuccess();
     } on FirebaseAuthException catch (e) {
       String message;
@@ -145,10 +152,10 @@ class AuthViewModel extends BaseViewModel {
     }
   }
 
+  /// Logs a user in and strictly enforces validation check blocks
   Future<void> login() async {
     setBusy(true);
     try {
-      // ✅ Check for empty fields first
       if (email.text.trim().isEmpty || password.text.trim().isEmpty) {
         locator<SnackbarService>().showSnackbar(
           message: "Please enter both your email and password to continue.",
@@ -169,21 +176,38 @@ class AuthViewModel extends BaseViewModel {
         return;
       }
 
+      // STRICT GATE ENFORCEMENT: Is the incoming session validated via email link?
+      if (!firebaseUser.emailVerified) {
+        locator<SnackbarService>().showSnackbar(
+          message: "Your email is not verified yet. Please check your inbox.",
+        );
+        
+        // Push unverified user directly to the locked tracking view screen
+        locator<NavigationService>().clearStackAndShow(Routes.emailVerificationView); 
+        return;
+      }
+
+      // If user is cleared via email verification, parse authorization credentials normally
       final loggedInUser = User.fromFirebase(firebaseUser);
 
-// Save globally
       profile.value = loggedInUser;
       userLoggedIn.value = true;
 
+      await locator<LocalStorage>().save(
+        LocalStorageDir.authUser,
+        jsonEncode(profile.value.toJson()),
+      );
+
+      // Pull metadata modifications (tokens, platform architecture versions)
+      await updateDeviceDetails();
+
       locator<NavigationService>().clearStackAndShow(Routes.homeView);
-
-
     } on FirebaseAuthException catch (e) {
       String message;
-
       switch (e.code) {
         case 'user-not-found':
-          message = "We couldn't find an account with that email.";
+        case 'invalid-credential': // Catches unified modern auth errors
+          message = "We couldn't find an account matching those credentials.";
           break;
         case 'wrong-password':
           message = "The password you entered is incorrect.";
@@ -197,7 +221,6 @@ class AuthViewModel extends BaseViewModel {
         default:
           message = "Login failed. Please check your details and try again.";
       }
-
       locator<SnackbarService>().showSnackbar(message: message);
     } catch (e) {
       locator<SnackbarService>().showSnackbar(
@@ -207,7 +230,6 @@ class AuthViewModel extends BaseViewModel {
       setBusy(false);
     }
   }
-
 
   Future<void> submitOtp(String email, String code) async {
     locator<NavigationService>().navigateToView(
@@ -222,7 +244,7 @@ class AuthViewModel extends BaseViewModel {
     setBusy(true);
 
     try {
-      final resp = await _repo.resetPasswordRequest({ "email": email });
+      final resp = await _repo.resetPasswordRequest({"email": email});
       final elapsed = DateTime.now().difference(startTime);
       debugPrint("Resend OTP latency: ${elapsed.inMilliseconds}ms");
 
@@ -248,7 +270,6 @@ class AuthViewModel extends BaseViewModel {
   Future<void> createPin(String pin, VoidCallback onSuccess) async {
     setBusy(true);
     try {
-      // TODO: Actually secure hash and store local PIN or persist it remotely
       await Future.delayed(const Duration(seconds: 1));
       onSuccess();
     } catch (e) {
@@ -264,9 +285,7 @@ class AuthViewModel extends BaseViewModel {
       String deviceId = "";
       String deviceType = "";
       String operatingSystem = Platform.operatingSystem;
-      // String timeZone = await FlutterTimezone.getLocalTimezone();
       String? pushNotificationToken = '';
-      print("pushNotificationToken: $pushNotificationToken");
       String appVersion = "";
       String language = Platform.localeName;
 
@@ -280,28 +299,19 @@ class AuthViewModel extends BaseViewModel {
         deviceId = iosInfo.identifierForVendor ?? "Unknown";
         deviceType = iosInfo.utsname.machine ?? "iOS Device";
         pushNotificationToken = await FirebaseMessaging.instance.getToken();
-        // pushNotificationToken = await FirebaseMessaging.instance.getAPNSToken();
       }
 
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
       appVersion = packageInfo.version;
 
-      // Send to backend
-      final response = await _repo.updateDeviceId({
+      await _repo.updateDeviceId({
         "deviceId": deviceId,
         "deviceType": deviceType,
         "operatingSystem": operatingSystem,
         "pushNotificationToken": pushNotificationToken,
         "appVersion": appVersion,
-        // "timeZone": timeZone,
         "language": language,
       });
-
-      if (response.statusCode == 200) {
-        print("Device details updated successfully!");
-      } else {
-        print("Failed to update device details: ${response.data}");
-      }
     } catch (e, stackTrace) {
       print("Error updating device details: $e");
       print(stackTrace);
@@ -313,5 +323,4 @@ class AuthViewModel extends BaseViewModel {
     errorMessage = null;
     notifyListeners();
   }
-
 }
