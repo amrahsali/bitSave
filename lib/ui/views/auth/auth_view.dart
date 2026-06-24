@@ -1,7 +1,6 @@
-
 import 'package:bitSave/ui/views/auth/registration.dart';
 import 'package:bitSave/ui/views/auth/user_selection.dart';
-import 'package:bitSave/ui/views/auth/verifyEmail.dart';
+import 'package:bitSave/ui/views/auth/verifyEmail.dart'; // Your developer's verifyEmail file
 import 'package:bitSave/ui/views/auth/create_pin_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -11,7 +10,8 @@ import 'auth_viewmodel.dart';
 import 'forgetPasswordView.dart';
 import 'login.dart';
 
-enum AuthType { selection, login, adminLogin, register, otpVerify, forgotPassword, createPin }
+// 1. Updated enum containing the strict verification lock screen flag
+enum AuthType { selection, login, adminLogin, register, otpVerify, forgotPassword, createPin, emailVerification }
 
 class AuthView extends StatefulWidget {
   final AuthType authType;
@@ -61,13 +61,10 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
     }
   }
 
-
   String getBackgroundImage() {
     switch (currentAuthType) {
       case AuthType.adminLogin:
-        return "assets/svg_icons/new_logo.svg";
       case AuthType.login:
-        return "assets/svg_icons/new_logo.svg";
       case AuthType.register:
         return "assets/svg_icons/new_logo.svg";
       default:
@@ -91,6 +88,7 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
     );
   }
 
+  // 2. Updated router mapping logic to show the verification screen
   Widget getAuthScreen() {
     switch (currentAuthType) {
       case AuthType.selection:
@@ -101,15 +99,16 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
         return LoginScreen(onSwitch: updateAuthPage, isAdmin: true);
       case AuthType.register:
         return RegisterScreen(onSwitch: updateAuthPage);
-      case AuthType.otpVerify:
-        return OTPVerificationScreen(
-            onSwitch: updateAuthPage, 
-            email: emailForOtp, 
-            isSignup: isSignupFlow);
+     case AuthType.otpVerify:
+        return const EmailVerificationView(); 
+        
       case AuthType.forgotPassword:
         return ForgotPasswordView(onSwitch: updateAuthPage);
       case AuthType.createPin:
         return CreatePinScreen(onSwitch: updateAuthPage);
+        
+      case AuthType.emailVerification:
+        return const EmailVerificationView();
     }
   }
 }
