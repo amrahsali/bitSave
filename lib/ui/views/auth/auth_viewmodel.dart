@@ -20,6 +20,7 @@ import '../../../services/authentication_service.dart';
 import '../../../core/utils/local_store_dir.dart';
 import '../../../core/utils/local_stotage.dart'; // need Fixing of typo from 'local_stotage.dart' to [local_storage.dart]
 import '../../../state.dart';
+import 'auth_view.dart';
 import './reset_password/reset_password_view.dart';
 
 enum RegistrationResult { success, failure }
@@ -60,6 +61,7 @@ class AuthViewModel extends BaseViewModel {
     email.dispose();
     password.dispose();
     _timer?.cancel();
+    _verificationTimer?.cancel();
     super.dispose();
   }
 
@@ -183,7 +185,10 @@ class AuthViewModel extends BaseViewModel {
         );
         
         // Push unverified user directly to the locked tracking view screen
-        locator<NavigationService>().clearStackAndShow(Routes.emailVerificationView); 
+        locator<NavigationService>().clearStackAndShow(
+          Routes.authView,
+          arguments: const AuthViewArguments(authType: AuthType.emailVerification),
+        ); 
         return;
       }
 
@@ -199,7 +204,7 @@ class AuthViewModel extends BaseViewModel {
       );
 
       // Pull metadata modifications (tokens, platform architecture versions)
-      await updateDeviceDetails();
+      updateDeviceDetails();
 
       locator<NavigationService>().clearStackAndShow(Routes.homeView);
     } on FirebaseAuthException catch (e) {
@@ -229,6 +234,84 @@ class AuthViewModel extends BaseViewModel {
     } finally {
       setBusy(false);
     }
+  }
+
+  Timer? _verificationTimer;
+
+  void startVerificationCheckTimer(VoidCallback onVerified) {
+    _verificationTimer?.cancel();
+    _verificationTimer = Timer.periodic(const Duration(seconds: 4), (timer) async {
+      final user = _authService.firebaseAuth.currentUser;
+      if (user != null) {
+        await user.reload();
+        final updatedUser = _authService.firebaseAuth.currentUser;
+        if (updatedUser != null && updatedUser.emailVerified) {
+          timer.cancel();
+          // Update profile and log in
+          final loggedInUser = User.fromFirebase(updatedUser);
+          profile.value = loggedInUser;
+          userLoggedIn.value = true;
+
+          await locator<LocalStorage>().save(
+            LocalStorageDir.authUser,
+            jsonEncode(profile.value.toJson()),
+          );
+
+          updateDeviceDetails();
+          onVerified();
+        }
+      }
+    });
+  }
+
+  void cancelVerificationTimer() {
+    _verificationTimer?.cancel();
+  }
+
+  Future<void> sendVerificationEmail() async {
+    try {
+      final user = _authService.firebaseAuth.currentUser;
+      if (user != null) {
+        await user.sendEmailVerification();
+        locator<SnackbarService>().showSnackbar(
+          message: "A new verification link has been sent to your email.",
+        );
+      }
+    } catch (e) {
+      locator<SnackbarService>().showSnackbar(
+        message: "Failed to send verification link: $e",
+      );
+    }
+  }
+
+  Future<bool> checkEmailVerificationStatus() async {
+    setBusy(true);
+    try {
+      final user = _authService.firebaseAuth.currentUser;
+      if (user != null) {
+        await user.reload();
+        final updatedUser = _authService.firebaseAuth.currentUser;
+        if (updatedUser != null && updatedUser.emailVerified) {
+          // Update user profile status
+          final loggedInUser = User.fromFirebase(updatedUser);
+          profile.value = loggedInUser;
+          userLoggedIn.value = true;
+
+          await locator<LocalStorage>().save(
+            LocalStorageDir.authUser,
+            jsonEncode(profile.value.toJson()),
+          );
+
+          updateDeviceDetails();
+          setBusy(false);
+          return true;
+        }
+      }
+    } catch (e) {
+      debugPrint("Error checking email verification: $e");
+    }
+    setBusy(false);
+    return false;
   }
 
   Future<void> submitOtp(String email, String code) async {

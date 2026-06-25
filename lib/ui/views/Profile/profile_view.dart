@@ -1,10 +1,7 @@
-import 'package:bitSave/state.dart';
-import 'package:bitSave/ui/common/app_colors.dart';
 import 'package:bitSave/ui/views/Profile/profile_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked/stacked.dart';
-import '../../common/ui_helpers.dart';
 
 class UserProfilePage extends StatelessWidget {
   const UserProfilePage({Key? key}) : super(key: key);
@@ -16,8 +13,8 @@ class UserProfilePage extends StatelessWidget {
       builder: (context, model, child) => Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.only(left: 24.0, right: 24.0, bottom: 110.0, top: 20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -155,6 +152,8 @@ class UserProfilePage extends StatelessWidget {
                 _buildActionCard("Share via an app", model.shareViaApp),
                 const SizedBox(height: 16),
                 _buildActionCard("Copy the invite link", model.copyInviteLink),
+                const SizedBox(height: 16),
+                _buildActionCard("Log Out", model.logout, isDestructive: true),
               ],
             ),
           ),
@@ -163,7 +162,7 @@ class UserProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildActionCard(String title, Function onTap) {
+  Widget _buildActionCard(String title, Function onTap, {bool isDestructive = false}) {
     return GestureDetector(
       onTap: () => onTap(),
       child: Container(
@@ -172,7 +171,12 @@ class UserProfilePage extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xFF1C1A22),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFF6B4EE6).withValues(alpha: 0.3), width: 1.5),
+          border: Border.all(
+            color: isDestructive
+                ? Colors.redAccent.withValues(alpha: 0.5)
+                : const Color(0xFF6B4EE6).withValues(alpha: 0.3),
+            width: 1.5,
+          ),
         ),
         alignment: Alignment.center,
         child: Text(
@@ -180,7 +184,7 @@ class UserProfilePage extends StatelessWidget {
           style: GoogleFonts.redHatDisplay(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: isDestructive ? Colors.redAccent : Colors.white,
           ),
         ),
       ),

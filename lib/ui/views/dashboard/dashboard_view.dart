@@ -7,6 +7,7 @@ import '../../../state.dart';
 import '../../common/app_colors.dart';
 import '../../common/ui_helpers.dart';
 import '../../dialogs/add_naira_dialog.dart';
+import '../transactions/all_transactions_view.dart';
 import 'dashboard_viewmodel.dart';
 
 class DashboardView extends StackedView<DashboardViewModel> {
@@ -39,7 +40,7 @@ DashboardView({Key? key}) : super(key: key);
             const SizedBox(height: 20),
             _buildPromoBanner(),
             const SizedBox(height: 32),
-            _buildTransactionsSection(viewModel),
+            _buildTransactionsSection(context, viewModel),
           ],
         ),
       ),
@@ -123,24 +124,10 @@ DashboardView({Key? key}) : super(key: key);
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
-                      width: 16,
-                      height: 12,
-                      decoration: BoxDecoration(
-                        color: Colors.green,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(child: Container(color: Colors.green)),
-                          Expanded(child: Container(color: Colors.white)),
-                          Expanded(child: Container(color: Colors.green)),
-                        ],
-                      ),
-                    ),
+                    Icon(Icons.account_balance_wallet, color: Colors.white70, size: 16),
                     const SizedBox(width: 8),
                     Text(
-                      'Bitcoin',
+                      'Naira Wallet',
                       style: GoogleFonts.redHatDisplay(
                         color: Colors.white70,
                         fontSize: 12,
@@ -174,7 +161,7 @@ DashboardView({Key? key}) : super(key: key);
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '₿ 20,999.99',
+                    '₦ ${viewModel.totalBalance.toStringAsFixed(2)}',
                     style: GoogleFonts.redHatDisplay(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -216,17 +203,46 @@ DashboardView({Key? key}) : super(key: key);
                       onPressed: () {
                          showDialog(
                           context: context,
-                          builder: (context) => AddNairaDialog(
-                            userId: "user_123",
-                            onFundsAdded: (nairaAmount, satsAmount) {
-                              viewModel.addNairaFunds(nairaAmount, satsAmount);
-                            },
-                          ),
+                          builder: (dialogContext) {
+                            final TextEditingController amountController = TextEditingController();
+                            return AlertDialog(
+                              title: Text(
+                                'Add Funds with Paystack',
+                                style: GoogleFonts.redHatDisplay(fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              content: TextField(
+                                controller: amountController,
+                                decoration: const InputDecoration(
+                                  labelText: 'Amount (NGN)',
+                                  prefixText: '₦ ',
+                                  border: OutlineInputBorder(),
+                                ),
+                                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(dialogContext).pop(),
+                                  child: const Text('Cancel'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    final amount = double.tryParse(amountController.text);
+                                    if (amount != null && amount > 0) {
+                                      Navigator.of(dialogContext).pop();
+                                      viewModel.initiatePaystackPayment(amount, context);
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF6B4EE6), foregroundColor: Colors.white),
+                                  child: const Text('Continue'),
+                                ),
+                              ],
+                            );
+                          },
                         );
                       },
                       icon: const Icon(Icons.add, size: 18),
                       label: Text(
-                        'Quick Save',
+                        'top up wallet',
                         style: GoogleFonts.redHatDisplay(fontWeight: FontWeight.w700),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -242,13 +258,11 @@ DashboardView({Key? key}) : super(key: key);
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: () {
-                       ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Withdraw coming soon")),
-                        );
+                        _showSaveDialog(context, viewModel);
                       },
-                      icon: const Icon(Icons.send_outlined, size: 16),
+                      icon: const Icon(Icons.lock_outline, size: 16),
                       label: Text(
-                        'Withdraw',
+                        'Save',
                         style: GoogleFonts.redHatDisplay(fontWeight: FontWeight.w600),
                       ),
                       style: OutlinedButton.styleFrom(
@@ -319,7 +333,7 @@ DashboardView({Key? key}) : super(key: key);
     );
   }
 
-  Widget _buildTransactionsSection(DashboardViewModel viewModel) {
+  Widget _buildTransactionsSection(BuildContext context, DashboardViewModel viewModel) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -335,7 +349,15 @@ DashboardView({Key? key}) : super(key: key);
               ),
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => AllTransactionsView(
+                      transactions: viewModel.transactions,
+                    ),
+                  ),
+                );
+              },
               child: Text(
                 'See all',
                 style: GoogleFonts.redHatDisplay(
@@ -348,16 +370,60 @@ DashboardView({Key? key}) : super(key: key);
           ],
         ),
         const SizedBox(height: 12),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: viewModel.transactions.length,
-          itemBuilder: (context, index) {
-            final transaction = viewModel.transactions[index];
-            return _buildTransactionItem(transaction);
-          },
-        ),
+        if (viewModel.transactions.isEmpty)
+          _buildEmptyTransactions()
+        else
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: viewModel.transactions.length,
+            itemBuilder: (context, index) {
+              final transaction = viewModel.transactions[index];
+              return _buildTransactionItem(transaction);
+            },
+          ),
       ],
+    );
+  }
+
+  Widget _buildEmptyTransactions() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 40),
+      child: Column(
+        children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: const Color(0xFF6B4EE6).withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.receipt_long_rounded,
+              size: 32,
+              color: Color(0xFF6B4EE6),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'No transactions yet',
+            style: GoogleFonts.redHatDisplay(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.white70,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Your activity will show up here.',
+            style: GoogleFonts.redHatDisplay(
+              fontSize: 13,
+              color: Colors.white38,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -468,6 +534,129 @@ DashboardView({Key? key}) : super(key: key);
 
   void _showTransactionDetails(Transaction transaction) {
     // Implement transaction details dialog
+  }
+
+  void _showSaveDialog(BuildContext context, DashboardViewModel viewModel) {
+    final amountController = TextEditingController();
+    int selectedMonths = 3;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (stfContext, setDialogState) {
+            return AlertDialog(
+              backgroundColor: const Color(0xFF1C1A22),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              title: Text(
+                'Save to Bitcoin',
+                style: GoogleFonts.redHatDisplay(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Enter Naira amount to convert and lock as Bitcoin savings.',
+                    style: GoogleFonts.redHatDisplay(fontSize: 13, color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: amountController,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Amount (NGN)',
+                      labelStyle: const TextStyle(color: Colors.white54),
+                      prefixText: '₦ ',
+                      prefixStyle: const TextStyle(color: Colors.white),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Colors.white24),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFF6B4EE6)),
+                      ),
+                    ),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Lock Duration',
+                    style: GoogleFonts.redHatDisplay(fontSize: 13, color: Colors.white70),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [3, 6, 12].map((months) {
+                      final selected = selectedMonths == months;
+                      return Expanded(
+                        child: GestureDetector(
+                          onTap: () => setDialogState(() => selectedMonths = months),
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            decoration: BoxDecoration(
+                              color: selected
+                                  ? const Color(0xFF6B4EE6)
+                                  : Colors.white.withValues(alpha: 0.06),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: selected ? const Color(0xFF6B4EE6) : Colors.white24,
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                '$months mo',
+                                style: GoogleFonts.redHatDisplay(
+                                  color: Colors.white,
+                                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: Text(
+                    'Cancel',
+                    style: GoogleFonts.redHatDisplay(color: Colors.white54),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    final amount = double.tryParse(amountController.text);
+                    if (amount != null && amount >= 100) {
+                      Navigator.of(dialogContext).pop();
+                      viewModel.saveToBitcoin(amount, selectedMonths, context);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6B4EE6),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  child: Text(
+                    'Save Now',
+                    style: GoogleFonts.redHatDisplay(fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   @override

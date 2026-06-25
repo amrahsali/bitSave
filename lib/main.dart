@@ -8,7 +8,6 @@ import 'package:stacked_services/stacked_services.dart';
 import 'firebase_options.dart';
 import 'package:bitSave/state.dart';
 import 'package:bitSave/ui/common/app_colors.dart';
-import 'services/authentication_service.dart';
 import 'core/utils/local_stotage.dart';
 import 'core/utils/local_store_dir.dart';
 
@@ -18,7 +17,6 @@ Future<void> main() async {
 
   // Register services / locator for use in viewmodels
   setupLocator();
-  locator.registerLazySingleton(() => AuthenticationService());
 
   runApp(const MyApp());
 }

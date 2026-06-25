@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:dio/dio.dart';
 import '../../core/network/mavapay_service.dart';
 import '../../core/data/models/mavapay_models.dart';
 import '../../core/data/models/mavapay_models.dart';
@@ -44,13 +45,39 @@ class _AddNairaDialogState extends State<AddNairaDialog> {
     try {
       final response = await _mavapayService.getBitcoinExchangeRate();
       if (response.statusCode == 200 && response.data['success'] == true) {
+        final rate = (response.data['data']['rate'] ?? 150000000.0).toDouble();
         setState(() {
-          _exchangeRate = (response.data['data']['rate'] ?? 50000.0).toDouble();
+          _exchangeRate = rate;
+        });
+      } else {
+        await _fetchCoinGeckoRate();
+      }
+    } catch (e) {
+      debugPrint('Failed to fetch Mavapay exchange rate: $e. Trying CoinGecko...');
+      await _fetchCoinGeckoRate();
+    }
+  }
+
+  Future<void> _fetchCoinGeckoRate() async {
+    try {
+      final dio = Dio();
+      final resp = await dio.get('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=ngn');
+      if (resp.statusCode == 200 && resp.data['bitcoin']?['ngn'] != null) {
+        final rate = (resp.data['bitcoin']['ngn'] as num).toDouble();
+        setState(() {
+          _exchangeRate = rate;
+        });
+        debugPrint('Fetched live rate from CoinGecko: 1 BTC = ₦$rate');
+      } else {
+        setState(() {
+          _exchangeRate = 150000000.0; // Fallback
         });
       }
     } catch (e) {
-      // Use default rate if API fails
-      debugPrint('Failed to fetch exchange rate: $e');
+      debugPrint('Failed to fetch CoinGecko rate: $e. Using fallback rate.');
+      setState(() {
+        _exchangeRate = 150000000.0;
+      });
     }
   }
 

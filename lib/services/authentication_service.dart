@@ -39,6 +39,9 @@ class AuthenticationService {
 
       await _firestore.collection('users').doc(uid).set(_currentUser!.toJson());
 
+      // Send Firebase Email Verification link
+      await credential.user!.sendEmailVerification();
+
       return credential;
     } on FirebaseAuthException catch (e) {
       print('Firebase Auth Error: ${e.message}');
@@ -77,6 +80,21 @@ class AuthenticationService {
     } catch (e) {
       print("Error fetching user profile DTO: $e");
       rethrow;
+    }
+  }
+
+  Future<void> addFundsToWallet(double amount) async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception("User is not authenticated");
+    
+    await _firestore.collection('users').doc(user.uid).update({
+      'walletBalanceNGN': FieldValue.increment(amount),
+    });
+    
+    if (_currentUser != null) {
+      _currentUser = _currentUser!.copyWith(
+        walletBalanceNGN: _currentUser!.walletBalanceNGN + amount,
+      );
     }
   }
 

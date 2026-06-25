@@ -1,15 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.locator.dart';
 import '../../../app/app.router.dart';
-import '../../common/app_colors.dart';
-import '../../common/ui_helpers.dart';
-import '../../components/code_input.dart';
-import '../../components/submit_button.dart';
-import 'auth_view.dart';
 import 'auth_viewmodel.dart';
 
 class EmailVerificationView extends StatefulWidget {
@@ -24,9 +19,21 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
   Widget build(BuildContext context) {
     return ViewModelBuilder<AuthViewModel>.reactive(
       viewModelBuilder: () => AuthViewModel(),
+      onViewModelReady: (model) {
+        model.startVerificationCheckTimer(() {
+          if (mounted) {
+            locator<NavigationService>().clearStackAndShow(Routes.homeView);
+          }
+        });
+      },
+      onDispose: (model) {
+        model.cancelVerificationTimer();
+      },
       builder: (context, model, child) {
-       
-        const displayEmail = "your email address";
+        final displayEmail = model.email.text.isNotEmpty
+            ? model.email.text
+            : (FirebaseAuth.instance.currentUser?.email ?? "your email address");
+
         return Scaffold(
           backgroundColor: const Color(0xFF0F0A1E),
           body: Container(
@@ -105,35 +112,65 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Please enter the code sent to $displayEmail',
+                          'We\'ve sent a verification link to $displayEmail. Please click the link inside the email to activate your account.',
                           style: GoogleFonts.redHatDisplay(
                             color: Colors.white.withValues(alpha: 0.55),
-                            fontSize: 13,
+                            fontSize: 14,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
 
-                        const SizedBox(height: 60),
+                        const SizedBox(height: 48),
 
-                        // ── Code Input Boxes ───────────────────────────────
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: CodeInputWidget(
-                            codeController: model.otp,
-                            onCompleted: (code) {
-                              model.submitOtp(displayEmail, code);
-                            },
+                        // ── Verification Status Card / Illustration ────────
+                        Center(
+                          child: Container(
+                            padding: const EdgeInsets.all(24),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.05),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.1),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                const Icon(
+                                  Icons.mark_email_unread_outlined,
+                                  color: Color(0xFF8B6EF5),
+                                  size: 72,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Awaiting Verification',
+                                  style: GoogleFonts.redHatDisplay(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'The app will automatically log you in once your email is verified.',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.redHatDisplay(
+                                    color: Colors.white.withValues(alpha: 0.45),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        
-                        const SizedBox(height: 16),
+
+                        const SizedBox(height: 40),
 
                         // ── Resend Code ────────────────────────────────────
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Didn't get the code? ",
+                              "Didn't get the email? ",
                               style: TextStyle(
                                 fontSize: 13,
                                 color: Colors.white.withValues(alpha: 0.55),
@@ -142,14 +179,24 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
                             GestureDetector(
                               onTap: model.isCountdownActive
                                   ? null
-                                  : () => model.resendOtp(displayEmail),
+                                  : () async {
+                                      await model.sendVerificationEmail();
+                                      model.startCountdown();
+                                      if (!mounted) return;
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text("Verification link resent!"),
+                                          behavior: SnackBarBehavior.floating,
+                                        ),
+                                      );
+                                    },
                               child: Text(
                                 model.isCountdownActive
                                     ? "Resend in ${model.countdown}s"
                                     : "Resend it.",
                                 style: const TextStyle(
                                   fontSize: 13,
-                                  color: Color(0xFF6B4EE6), 
+                                  color: Color(0xFF8B6EF5), 
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -157,27 +204,37 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
                           ],
                         ),
 
-                        const SizedBox(height: 40),
+                        const SizedBox(height: 32),
 
-                        // ── Continue Button ────────────────────────────────
+                        // ── Check Status Button ────────────────────────────
                         SizedBox(
                           width: double.infinity,
                           height: 54,
                           child: ElevatedButton(
                             onPressed: model.isBusy 
                                 ? null
-                                : () {
-                                    final code = model.otp.text.trim();
-                                    if (code.length == 6) {
-                                      model.submitOtp(displayEmail, code);
+                                : () async {
+                                    final isVerified = await model.checkEmailVerificationStatus();
+                                    if (!mounted) return;
+                                    if (isVerified) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text("Email verified successfully!"),
+                                          behavior: SnackBarBehavior.floating,
+                                        ),
+                                      );
+                                      locator<NavigationService>().clearStackAndShow(Routes.homeView);
                                     } else {
-                                       locator<SnackbarService>().showSnackbar(
-                                         message: "Please enter the full 6-digit code."
-                                       );
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text("Email is not verified yet. Please check your inbox."),
+                                          behavior: SnackBarBehavior.floating,
+                                        ),
+                                      );
                                     }
                                   },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF6B4EE6), // Swapped out gray for your layout's active purple brand color
+                              backgroundColor: const Color(0xFF6B4EE6),
                               foregroundColor: Colors.white,
                               disabledBackgroundColor:
                                   const Color(0xFF6B4EE6).withValues(alpha: 0.6),
@@ -196,7 +253,7 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
                                     ),
                                   )
                                 : Text(
-                                    'Continue',
+                                    'Check Verification Status',
                                     style: GoogleFonts.redHatDisplay(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
@@ -205,7 +262,7 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
                                   ),
                           ),
                         ),
-
+                        const SizedBox(height: 24),
                       ],
                     ),
                   ),

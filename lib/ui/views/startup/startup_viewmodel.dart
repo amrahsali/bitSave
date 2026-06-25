@@ -32,14 +32,24 @@ class StartupViewModel extends BaseViewModel {
       // 3) Proceed with auth/navigation logic
       final user = _auth.currentUser;
       if (user != null) {
-        userLoggedIn.value = true;
-        String? userJson =
-        await locator<LocalStorage>().fetch(LocalStorageDir.authUser);
-        if (userJson != null) {
-          profile.value =
-              User.fromJson(Map<String, dynamic>.from(jsonDecode(userJson)));
+        await user.reload();
+        final updatedUser = _auth.currentUser;
+        
+        if (updatedUser != null && updatedUser.emailVerified) {
+          userLoggedIn.value = true;
+          String? userJson =
+              await locator<LocalStorage>().fetch(LocalStorageDir.authUser);
+          if (userJson != null) {
+            profile.value =
+                User.fromJson(Map<String, dynamic>.from(jsonDecode(userJson)));
+          }
+          _navigationService.clearStackAndShow(Routes.homeView);
+        } else {
+          _navigationService.clearStackAndShow(
+            Routes.authView,
+            arguments: const AuthViewArguments(authType: AuthType.emailVerification),
+          );
         }
-        _navigationService.clearStackAndShow(Routes.homeView);
       } else {
         _navigationService.replaceWithAuthView(authType: AuthType.register);
       }

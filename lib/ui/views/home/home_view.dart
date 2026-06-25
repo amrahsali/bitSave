@@ -17,9 +17,13 @@ class HomeView extends StackedView<HomeViewModel> {
   const HomeView({Key? key}) : super(key: key);
 
   @override
-  Widget builder(BuildContext context, HomeViewModel viewModel, Widget? child) {
-    // Automatically enforce Dark mode logic behind the scenes so the inner text colors adapt correctly if components read it
+  void onViewModelReady(HomeViewModel viewModel) {
     uiMode.value = AppUiModes.dark;
+    super.onViewModelReady(viewModel);
+  }
+
+  @override
+  Widget builder(BuildContext context, HomeViewModel viewModel, Widget? child) {
 
     return Container(
       decoration: const BoxDecoration(

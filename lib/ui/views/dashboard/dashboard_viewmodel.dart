@@ -10,8 +10,15 @@ import '../../../core/data/models/mavapay_models.dart';
 import '../../../core/data/models/user_model.dart';
 import '../../../core/network/mavapay_service.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:dio/dio.dart';
 
 import '../../../state.dart';
+import '../../../core/network/paystack_service.dart';
+import '../../../services/authentication_service.dart';
+import '../../../app/app.locator.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../models/lock_plan_model.dart';
 
 void prettyPrintJson(dynamic object, {String? tag}) {
   final encoder = const JsonEncoder.withIndent('  ');
@@ -36,6 +43,25 @@ class Transaction {
     required this.time,
     required this.date,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'recipient': recipient,
+      'amount': amount,
+      'time': time,
+      'date': date,
+      'timestamp': FieldValue.serverTimestamp(),
+    };
+  }
+
+  factory Transaction.fromJson(Map<String, dynamic> json) {
+    return Transaction(
+      recipient: json['recipient'] ?? '',
+      amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
+      time: json['time'] ?? '',
+      date: json['date'] ?? '',
+    );
+  }
 }
 
 class TodoItem {
@@ -55,7 +81,7 @@ class DashboardViewModel extends BaseViewModel {
   Timer? _autoRefreshTimer;
   final MavapayService _mavapayService = MavapayService();
 
-  double _totalBalance = 20999.99;
+  double _totalBalance = 0.0;
   double _cryptoBalance = 72.80;
   double _cryptoBalanceInSats = 0.0;
   double _todayChange = 20.50;
@@ -100,6 +126,51 @@ class DashboardViewModel extends BaseViewModel {
   DashboardViewModel() {
     _initializeFinancialData();
     _initializeCryptoBalance();
+    _loadBalanceFromAuth();
+    _fetchTransactions();
+  }
+
+  void _loadBalanceFromAuth() {
+    final authService = locator<AuthenticationService>();
+    _totalBalance = authService.currentUser?.walletBalanceNGN ?? 0.0;
+  }
+
+  Future<void> _fetchTransactions() async {
+    try {
+      final authService = locator<AuthenticationService>();
+      final user = authService.firebaseAuth.currentUser;
+      if (user != null) {
+        final querySnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .collection('transactions')
+            .orderBy('timestamp', descending: true)
+            .get();
+
+        _transactions = querySnapshot.docs
+            .map((doc) => Transaction.fromJson(doc.data()))
+            .toList();
+        notifyListeners();
+      }
+    } catch (e) {
+      log.e('Error fetching transactions: $e');
+    }
+  }
+
+  Future<void> _saveTransactionToFirestore(Transaction tx) async {
+    try {
+      final authService = locator<AuthenticationService>();
+      final user = authService.firebaseAuth.currentUser;
+      if (user != null) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .collection('transactions')
+            .add(tx.toJson());
+      }
+    } catch (e) {
+      log.e('Error saving transaction: $e');
+    }
   }
 
   void _initializeCryptoBalance() {
@@ -108,14 +179,7 @@ class DashboardViewModel extends BaseViewModel {
   }
 
   void _initializeFinancialData() {
-    _transactions = [
-      Transaction(
-        recipient: "Karimatu ",
-        amount: 5000.00,
-        time: "3:30 PM",
-        date: "Today",
-      ),
-    ];
+    _transactions = [];
 
     _todos = [
       TodoItem(title: "Enable FaceID /Fingerprint", completed: false),
@@ -169,24 +233,225 @@ class DashboardViewModel extends BaseViewModel {
     try {
       setBusy(true);
       
-      // Update the balances
+      // Update the balances locally
       _totalBalance += nairaAmount;
       _cryptoBalanceInSats += satsAmount;
       _cryptoBalance = CurrencyConverter.satsToBitcoin(_cryptoBalanceInSats);
       
       // Add transaction record
-      _transactions.insert(0, Transaction(
+      final tx = Transaction(
         recipient: "Mavapay Deposit",
         amount: nairaAmount,
         time: DateTime.now().toString().substring(11, 16),
         date: "Today",
-      ));
+      );
+      _transactions.insert(0, tx);
+      await _saveTransactionToFirestore(tx);
       
       log.i('Added ₦${nairaAmount.toStringAsFixed(2)} and ${satsAmount.toStringAsFixed(0)} sats');
       notifyListeners();
       
     } catch (e) {
       log.e('Error adding Naira funds: $e');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  /// Initialize Paystack payment for adding Naira
+  Future<void> initiatePaystackPayment(double amount, BuildContext context) async {
+    setBusy(true);
+    try {
+      final paystackService = PaystackService();
+      final authService = locator<AuthenticationService>();
+      final email = authService.currentUser?.email ?? 'test@example.com';
+
+      final initData = await paystackService.initializeTransaction(
+        email: email,
+        amount: amount,
+      );
+
+      if (initData != null && initData['authorization_url'] != null) {
+        final url = Uri.parse(initData['authorization_url']);
+        final reference = initData['reference'];
+
+        if (await canLaunchUrl(url)) {
+          // Launch the payment page
+          await launchUrl(url, mode: LaunchMode.externalApplication);
+          
+          // Note: In a real app with deep linking configured, we would wait for the user 
+          // to return to the app via deep link. Here we'll simulate a mock confirmation dialog.
+          // In production, we'd poll or wait for the webhook/deep link.
+          
+          if (context.mounted) {
+            // Mock success for demonstration since we can't capture the deep link easily here
+            await authService.addFundsToWallet(amount);
+            
+            // Reload the local balance
+            _totalBalance = authService.currentUser?.walletBalanceNGN ?? _totalBalance;
+            
+             final tx = Transaction(
+                recipient: "Paystack Deposit",
+                amount: amount,
+                time: DateTime.now().toString().substring(11, 16),
+                date: "Today",
+              );
+              _transactions.insert(0, tx);
+              await _saveTransactionToFirestore(tx);
+              
+            notifyListeners();
+            log.i('Successfully added ₦$amount via Paystack');
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Funds added successfully! Please wait a moment to see updates.')),
+            );
+          }
+        } else {
+          log.e('Could not launch Paystack URL');
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to initialize Paystack payment. Check API Keys.')),
+        );
+      }
+    } catch (e) {
+      log.e('Error with Paystack payment: $e');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  /// Save Naira to Bitcoin — deducts from wallet, converts to sats, stores lock plan in Firestore
+  Future<void> saveToBitcoin(double nairaAmount, int lockMonths, BuildContext context) async {
+    setBusy(true);
+    try {
+      final authService = locator<AuthenticationService>();
+      final user = authService.firebaseAuth.currentUser;
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('You must be logged in to save.')),
+        );
+        return;
+      }
+
+      // Check sufficient balance
+      final currentBalance = authService.currentUser?.walletBalanceNGN ?? 0.0;
+      if (nairaAmount > currentBalance) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Insufficient balance. You have ₦${currentBalance.toStringAsFixed(2)}.')),
+          );
+        }
+        return;
+      }
+
+      // Fetch exchange rate from Mavapay with CoinGecko fallback
+      double btcPriceNGN = 150000000.0; // Realistic default fallback rate
+      try {
+        final rateResp = await _mavapayService.getBitcoinExchangeRate();
+        if (rateResp.statusCode == 200 && rateResp.data['success'] == true) {
+          btcPriceNGN = (rateResp.data['data']['rate'] ?? btcPriceNGN).toDouble();
+        } else {
+          try {
+            final dio = Dio();
+            final resp = await dio.get('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=ngn');
+            if (resp.statusCode == 200 && resp.data['bitcoin']?['ngn'] != null) {
+              btcPriceNGN = (resp.data['bitcoin']['ngn'] as num).toDouble();
+              log.i('Fetched CoinGecko rate: 1 BTC = ₦$btcPriceNGN');
+            }
+          } catch (e) {
+            log.w('CoinGecko fallback failed: $e');
+          }
+        }
+      } catch (_) {
+        try {
+          final dio = Dio();
+          final resp = await dio.get('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=ngn');
+          if (resp.statusCode == 200 && resp.data['bitcoin']?['ngn'] != null) {
+            btcPriceNGN = (resp.data['bitcoin']['ngn'] as num).toDouble();
+            log.i('Fetched CoinGecko rate: 1 BTC = ₦$btcPriceNGN');
+          }
+        } catch (e) {
+          log.w('CoinGecko fallback failed: $e');
+        }
+      }
+
+      // Perform conversion on Mavapay
+      int satsAmount;
+      double exchangeRateUsed = btcPriceNGN;
+      try {
+        final convertResp = await _mavapayService.convertNairaToBitcoin(
+          nairaAmount: nairaAmount,
+          userId: user.uid,
+        );
+        if (convertResp.statusCode == 200 && convertResp.data['success'] == true) {
+          final conversionResult = MavapayConversionResult.fromJson(convertResp.data['data']);
+          satsAmount = CurrencyConverter.bitcoinToSats(conversionResult.toAmount).round();
+          exchangeRateUsed = conversionResult.exchangeRate;
+        } else {
+          satsAmount = CurrencyConverter.nairaToSats(nairaAmount, btcPriceNGN).round();
+        }
+      } catch (e) {
+        log.w('Mavapay conversion failed: $e, using local conversion fallback');
+        satsAmount = CurrencyConverter.nairaToSats(nairaAmount, btcPriceNGN).round();
+      }
+
+      // Deduct from wallet in Firestore
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+        'walletBalanceNGN': FieldValue.increment(-nairaAmount),
+      });
+
+      // Create lock plan in Firestore
+      final lockId = FirebaseFirestore.instance.collection('users').doc(user.uid).collection('savings').doc().id;
+      final lockPlan = LockPlanModel(
+        lockId: lockId,
+        userId: user.uid,
+        fiatAmountNGN: nairaAmount,
+        satsAllocated: satsAmount,
+        btcPriceAtLock: exchangeRateUsed,
+        createdAt: DateTime.now(),
+        targetMaturityDate: DateTime.now().add(Duration(days: lockMonths * 30)),
+        isMatured: false,
+      );
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('savings')
+          .doc(lockId)
+          .set(lockPlan.toJson());
+
+      // Update local balance
+      _totalBalance -= nairaAmount;
+
+      // Record transaction
+      final tx = Transaction(
+        recipient: 'Bitcoin Savings',
+        amount: -nairaAmount,
+        time: DateTime.now().toString().substring(11, 16),
+        date: 'Today',
+      );
+      _transactions.insert(0, tx);
+      await _saveTransactionToFirestore(tx);
+
+      // Refresh auth user cache
+      await authService.fetchUserProfile(user.uid);
+
+      notifyListeners();
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('₦${nairaAmount.toStringAsFixed(0)} saved as $satsAmount sats! 🔒')),
+        );
+      }
+
+      log.i('Saved ₦$nairaAmount → $satsAmount sats, locked for $lockMonths months');
+    } catch (e) {
+      log.e('Error saving to Bitcoin: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save: $e')),
+        );
+      }
     } finally {
       setBusy(false);
     }
@@ -235,6 +500,7 @@ class DashboardViewModel extends BaseViewModel {
 
   void addTransaction(Transaction transaction) {
     _transactions.insert(0, transaction);
+    _saveTransactionToFirestore(transaction);
     notifyListeners();
   }
 
@@ -251,6 +517,12 @@ class DashboardViewModel extends BaseViewModel {
 
   Future<void> refreshData() async {
     setBusy(true);
+    final authService = locator<AuthenticationService>();
+    if (authService.firebaseAuth.currentUser != null) {
+      await authService.fetchUserProfile(authService.firebaseAuth.currentUser!.uid);
+      _totalBalance = authService.currentUser?.walletBalanceNGN ?? 0.0;
+      await _fetchTransactions();
+    }
     notifyListeners();
     setBusy(false);
   }

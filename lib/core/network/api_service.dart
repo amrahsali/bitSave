@@ -7,7 +7,6 @@ import '../utils/local_store_dir.dart';
 import '../utils/local_stotage.dart';
 import 'api_response.dart';
 import 'interceptors.dart';
-import 'dart:io';
 
 
 /// @author Amrah sali
@@ -103,8 +102,8 @@ class ApiService {
 
         case HttpMethod.get:
           Response response = await dio.get(
-            queryParameters: reqParams,
             endpoint,
+            queryParameters: reqParams,
             options: Options(
                 headers: !protected
                     ? {}

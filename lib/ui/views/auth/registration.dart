@@ -248,8 +248,7 @@ class _RegisterState extends State<RegisterScreen> {
                                         fullName: model.firstname.text.trim(),
                                         dob: _dobController.text.trim(),
                                         onSuccess: () {
-                                          locator<NavigationService>()
-                                              .clearStackAndShow(Routes.homeView);
+                                          widget.onSwitch(AuthType.emailVerification);
                                         },
                                       );
                                     }

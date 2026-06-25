@@ -4,6 +4,13 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../app/app.locator.dart';
+import '../../../app/app.router.dart';
+import '../../../core/data/models/user_model.dart';
+import '../../../core/utils/local_stotage.dart';
+import '../../../core/utils/local_store_dir.dart';
+import '../../../services/authentication_service.dart';
+import '../../../state.dart';
+import '../auth/auth_view.dart';
 
 class ProfileViewModel extends BaseViewModel {
   final oldPassword = TextEditingController();
@@ -166,6 +173,33 @@ Let's earn SATS together! 🚀""";
   void shareViaApp() {
     // Handle share via app action
     _snackbarService.showSnackbar(message: 'Share via app functionality');
+  }
+
+  Future<void> logout() async {
+    setBusy(true);
+    try {
+      final authService = locator<AuthenticationService>();
+      await authService.logout();
+
+      final localStorage = locator<LocalStorage>();
+      await localStorage.delete(LocalStorageDir.authUser);
+      await localStorage.delete(LocalStorageDir.authToken);
+      await localStorage.delete(LocalStorageDir.authRefreshToken);
+
+      profile.value = User();
+      userLoggedIn.value = false;
+
+      locator<NavigationService>().clearStackAndShow(
+        Routes.authView,
+        arguments: const AuthViewArguments(authType: AuthType.login),
+      );
+    } catch (e) {
+      _snackbarService.showSnackbar(
+        message: "Error during logout: $e",
+      );
+    } finally {
+      setBusy(false);
+    }
   }
 
 }
