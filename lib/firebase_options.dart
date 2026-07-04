@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAP-MajsNXEJhJroW2aTxaFo1l4bu-zDgI',
-    appId: '1:716785227447:android:84e993cddfa89590e69f32',
+    appId: '1:716785227447:android:4f4cdd2affd0a0e4e69f32',
     messagingSenderId: '716785227447',
     projectId: 'am-ka-ab-beetsave',
     storageBucket: 'am-ka-ab-beetsave.firebasestorage.app',

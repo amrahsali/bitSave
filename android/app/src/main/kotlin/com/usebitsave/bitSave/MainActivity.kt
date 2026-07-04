@@ -1,4 +1,4 @@
-package com.AmrahSali.bitSave
+package com.usebitsave.bitSave
 
 import io.flutter.embedding.android.FlutterActivity
 

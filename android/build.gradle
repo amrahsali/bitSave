@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = "2.1.0" // match latest stable
+    ext.kotlin_version = "2.1.0"
     repositories {
         google()
         mavenCentral()
@@ -31,6 +31,15 @@ subprojects {
             force 'androidx.core:core:1.13.1'
             force 'androidx.core:core-ktx:1.13.1'
             force 'androidx.browser:browser:1.8.0'
+        }
+    }
+}
+
+// Suppress Kotlin metadata version mismatch warnings from firebase-auth
+subprojects {
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+        kotlinOptions {
+            freeCompilerArgs += ["-Xskip-metadata-version-check"]
         }
     }
 }
